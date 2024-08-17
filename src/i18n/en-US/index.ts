@@ -2,6 +2,14 @@
 // so you can safely delete all default props below
 
 export default {
-  failed: 'Action failed',
-  success: 'Action was successful'
+  global: {
+    welcome: 'Welcome',
+    welcomeMessage: 'Please sign-in to your account and start',
+    email: 'Email',
+    password: 'Password',
+  },
+
+  validation: {
+    requiredField: 'Required field',
+  },
 };

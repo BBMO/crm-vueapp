@@ -1,1 +1,36 @@
 // app global css in SCSS form
+
+.gap-sm { gap: 10px; }
+.gap-md { gap: 20px; }
+.gap-lg { gap: 30px; }
+.gap-xl { gap: 40px; }
+
+/* ------------------------------ Quasar overrides ------------------------------ */
+
+// q-field overrides
+.q-field {
+  .q-field__native {
+    padding: 2px 0 !important;
+  }
+
+  .q-field__label {
+    top: -20px;
+    left: -12px;
+    transform: none !important;
+  }
+
+
+}
+
+.q-field--outlined .q-field__control:hover:before {
+  border-color: $grey !important;
+}
+
+.q-field--error .q-field__bottom {
+  padding: 5px 0;
+}
+
+// q-btn overrides
+.q-btn {
+  border-radius: 5px;
+}
