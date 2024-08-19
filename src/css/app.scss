@@ -1,9 +1,21 @@
 // app global css in SCSS form
 
+@import 'fonts';
+
 .gap-sm { gap: 10px; }
 .gap-md { gap: 20px; }
 .gap-lg { gap: 30px; }
 .gap-xl { gap: 40px; }
+
+body {
+  color: $typography-font-color;
+}
+
+.q-page-general {
+  max-inline-size: 1440px;
+  margin: auto;
+  padding: 2rem 1.5rem;
+}
 
 /* ------------------------------ Quasar overrides ------------------------------ */
 
@@ -18,8 +30,6 @@
     left: -12px;
     transform: none !important;
   }
-
-
 }
 
 .q-field--outlined .q-field__control:hover:before {
@@ -33,4 +43,59 @@
 // q-btn overrides
 .q-btn {
   border-radius: 5px;
+  text-transform: none;
+  padding: 0 10px;
+
+  .q-btn__content {
+    gap: 5px;
+  }
+}
+
+.q-btn:before {
+  box-shadow: none;
+}
+
+// q-card
+.q-card {
+  box-shadow: 0 3px 8px rgba(34, 48, 32, 0.1), 0 0 transparent, 0 0 transparent;
+  border-radius: 6px;
+}
+
+// q-table
+.q-table__card {
+  box-shadow: none;
+  margin-top: 30px;
+  border-radius: 0;
+
+  thead > tr > th:first-child {
+    text-align: start;
+  }
+
+  thead > tr > th {
+    color: $typography-font-color;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  tbody > tr > td:before {
+    background: none;
+  }
+
+  tbody .actions {
+    .q-btn {
+      border-radius: 50%;
+
+      .q-focus-helper {
+        left: 5px;
+      }
+
+      .q-btn__content {
+        justify-content: end;
+      }
+    }
+
+    .q-btn:hover {
+      transform: translateY(-1px);
+    }
+  }
 }

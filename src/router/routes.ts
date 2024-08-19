@@ -2,13 +2,15 @@ import { RouteRecordRaw } from 'vue-router';
 
 // Layouts
 import LoginLayout from 'layouts/LoginLayout/LoginLayout.vue';
+import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 
 // Pages
 import LoginPage from 'pages/LoginPage/LoginPage.vue';
+import SettingPage from 'pages/SettingPage/SettingPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/login',
     component: LoginLayout,
     children: [
       {
@@ -19,9 +21,20 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   {
-    path: '/dashboard',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    path: '',
+    component: MainLayout,
+    children: [
+      {
+        name: 'home',
+        path: '/home',
+        component: () => import('pages/IndexPage.vue')
+      },
+      {
+        name: 'settings',
+        path: '/settings',
+        component: SettingPage,
+      }
+    ],
   },
 
   // Always leave this as last one,
