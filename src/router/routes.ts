@@ -6,6 +6,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 
 // Pages
 import LoginPage from 'pages/LoginPage/LoginPage.vue';
+import CalendarPage from 'pages/CalendarPage.vue';
 import SettingPage from 'pages/SettingPage/SettingPage.vue';
 
 const routes: RouteRecordRaw[] = [
@@ -28,6 +29,11 @@ const routes: RouteRecordRaw[] = [
         name: 'home',
         path: '/home',
         component: () => import('pages/IndexPage.vue')
+      },
+      {
+        name: 'calendar',
+        path: '/calendar',
+        component: CalendarPage
       },
       {
         name: 'settings',

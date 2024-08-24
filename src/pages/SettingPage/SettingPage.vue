@@ -107,17 +107,17 @@ const splitterModel = ref(20);
 }
 
 :deep(.q-tab--active .q-icon) {
-  background: $primary;
+  background: var(--q-primary);
   box-shadow: 0 2px 4px rgba(105, 108, 255, 0.5);
   color: white;
 }
 
 :deep(.q-tab--active .tab-title) {
-  color: $primary;
+  color: var(--q-primary);
 }
 
 :deep(.q-tab--active .tab-subtitle) {
-  color: $typography-font-color !important;
+  color: var(--q-base-text-color) !important;
 }
 
 @media screen and (max-width: 1260px) {

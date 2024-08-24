@@ -10,7 +10,8 @@ export default {
     name: 'Name',
     color: 'Color',
     quantity: 'Quantity',
-    actions: 'Actions'
+    actions: 'Actions',
+    save: 'Save',
   },
   menu: {
     dashboard: 'Dashboard',
@@ -32,5 +33,26 @@ export default {
     addState: 'Add state',
     addType: 'Add type',
     addFeature: 'Add feature'
+  },
+  calendar: {
+    addEvent: 'Add Event',
+    agents: 'Agents',
+    filter: 'Category Filter',
+    form: {
+      title: 'Title',
+      category: 'Category',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      allDay: 'All Day',
+      location: 'Location',
+      description: 'Description',
+    },
+    placeholder: {
+      title: 'Meeting with Jane',
+      category: 'Select a category',
+      startDate: 'Select start date',
+      endDate: 'Select end date',
+      location: 'Meeting room, URL, etc.',
+    }
   }
 };

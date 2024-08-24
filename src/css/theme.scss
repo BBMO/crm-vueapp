@@ -1,0 +1,13 @@
+// General theme colors
+body {
+  --q-border-color: rgba(0, 0, 0, 0.12);
+}
+
+// Light theme colors
+.body--light {
+  --q-primary: var(--q-light-primary);
+  --q-secondary: var(--q-light-secondary);
+  --q-accent: var(--q-light-accent);
+
+  --q-base-text-color: var(--q-light-base-text-color);
+}

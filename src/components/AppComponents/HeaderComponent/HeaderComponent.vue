@@ -1,6 +1,6 @@
 <template>
-  <q-header>
-    <q-toolbar class="flex justify-between">
+  <q-header class="q-px-lg q-mt-md bg-transparent">
+    <q-toolbar class="flex justify-between q-py-sm bg-white shadow-custom">
       <div class="drawer-btn-section">
         <q-btn flat round dense icon="menu" @click="drawer = !drawer" />
       </div>
@@ -52,7 +52,7 @@ const menuItems = [
   { path: 'home', icon: 'mdi-view-dashboard-outline', label: 'menu.dashboard' },
   { path: '', icon: 'mdi-badge-account-outline', label: 'menu.user' },
   { path: '', icon: 'mdi-account-outline', label: 'menu.client' },
-  { path: '', icon: 'mdi-calendar-month-outline', label: 'menu.calendar' },
+  { path: 'calendar', icon: 'mdi-calendar-month-outline', label: 'menu.calendar' },
   { path: '', icon: 'mdi-home-silo-outline', label: 'menu.properties' },
   { path: 'settings', icon: 'mdi-cog-outline', label: 'menu.settings' },
 ]
@@ -68,6 +68,15 @@ const navigateTo = (path: string) => {
 
 <style scoped lang="scss">
 .q-header {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+
+  .shadow-custom {
+    box-shadow: 0 2px 6px #4359711f;
+    border-radius: 6px;
+  }
+
   .drawer-btn-section .q-btn {
     display: none;
   }
@@ -79,7 +88,7 @@ const navigateTo = (path: string) => {
 
 .q-item.q-router-link--active,
 .q-item--active {
-  background: $secondary;
+  background: var(--q-secondary);
 }
 
 .q-item.q-router-link--active::after,
