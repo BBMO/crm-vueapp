@@ -5,9 +5,12 @@ import LoginLayout from 'layouts/LoginLayout/LoginLayout.vue';
 import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 
 // Pages
-import LoginPage from 'pages/LoginPage/LoginPage.vue';
+import LoginPage from 'pages/AuthenticationPage/LoginPage.vue';
+import UserPage from 'pages/UserPage/UserPage.vue';
+import UserDetailsPage from 'pages/UserPage/UserDetailsPage.vue';
+import ContactPage from 'pages/ContactPage.vue';
 import CalendarPage from 'pages/CalendarPage.vue';
-import SettingPage from 'pages/SettingPage/SettingPage.vue';
+import SettingPage from 'pages/SettingPage.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -28,16 +31,42 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'home',
         path: '/home',
+        meta: { module: 'home' },
         component: () => import('pages/IndexPage.vue')
+      },
+      {
+        path: '/user',
+        meta: { module: 'user' },
+        children: [
+          {
+            name: 'user',
+            path: '',
+            component: UserPage
+          },
+          {
+            name: 'userDetails',
+            path: 'details',
+            component: UserDetailsPage
+
+          }
+        ]
+      },
+      {
+        name: 'contact',
+        path: '/contact',
+        meta: { module: 'contact' },
+        component: ContactPage
       },
       {
         name: 'calendar',
         path: '/calendar',
+        meta: { module: 'calendar' },
         component: CalendarPage
       },
       {
         name: 'settings',
         path: '/settings',
+        meta: { module: 'settings' },
         component: SettingPage,
       }
     ],

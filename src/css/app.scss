@@ -4,13 +4,14 @@
 @import 'fonts';
 @import 'calendar';
 
+.gap-xs { gap: 5px; }
 .gap-sm { gap: 10px; }
 .gap-md { gap: 20px; }
 .gap-lg { gap: 30px; }
 .gap-xl { gap: 40px; }
 
 body {
-  color: var(--q-base-text-color)
+  color: var(--q-base-text-color);
 }
 
 .q-page-general {
@@ -63,7 +64,7 @@ body {
 .q-btn {
   border-radius: 5px;
   text-transform: none;
-  padding: 0 10px;
+  box-shadow: 0 2px 4px var(--q-secondary);
 
   .q-btn__content {
     gap: 5px;
@@ -82,8 +83,9 @@ body {
 
 // q-table
 .q-table__card {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: none;
-  margin-top: 30px;
   border-radius: 0;
 
   thead > tr > th:first-child {
@@ -92,8 +94,14 @@ body {
 
   thead > tr > th {
     color: var(--q-base-text-color);
+    font-size: 13px;
     text-transform: uppercase;
     font-weight: 600;
+  }
+
+  tbody > tr > td {
+    color: var(--q-base-text-color);
+    font-size: 15px;
   }
 
   tbody > tr > td:before {
@@ -103,14 +111,7 @@ body {
   tbody .actions {
     .q-btn {
       border-radius: 50%;
-
-      .q-focus-helper {
-        left: 5px;
-      }
-
-      .q-btn__content {
-        justify-content: end;
-      }
+      box-shadow: none;
     }
 
     .q-btn:hover {

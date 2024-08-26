@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div class="flex row justify-between">
-      <h5 class="q-ma-none">{{ $t('modules.property') }} {{ $t('modules.types') }}</h5>
-      <q-btn dense color="primary" icon="mdi-plus-circle-outline" :ripple="false">{{ $t('modules.addType') }}</q-btn>
+    <div class="q-pb-lg flex row justify-between">
+      <h5 class="q-ma-none">{{ $t('setting.property') }} {{ $t('setting.features') }}</h5>
+      <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false">{{ $t('setting.addFeature') }}</q-btn>
     </div>
 
     <div>
       <q-table
-        dense
         hide-bottom
         row-key="name"
         :rows="rows"
@@ -35,39 +34,15 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const columns = [
-  {
-    name: 'name',
-    label: t('global.name'),
-    field: 'name',
-    align: 'left'
-  },
-  {
-    name: 'quantity',
-    label: t('global.quantity'),
-    field: 'quantity',
-    align: 'center'
-  },
-  {
-    name: 'actions',
-    label: t('global.actions'),
-    field: '',
-    align: 'right'
-  },
+  { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
+  { name: 'quantity', label: t('global.quantity'), field: 'quantity', align: 'center' },
+  { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
 const rows = [
-  {
-    name: 'House',
-    quantity: 20,
-  },
-  {
-    name: 'Apartment',
-    quantity: 15,
-  },
-  {
-    name: 'Beach house',
-    quantity: 10,
-  },
+  { name: 'Swimming pool', quantity: 20 },
+  { name: 'Terrace', quantity: 15 },
+  { name: 'Garden', quantity: 10 },
 ]
 </script>
 

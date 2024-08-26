@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 // Components
-import LoginComponent from 'components/LoginComponents/LoginComponent.vue';
+import LoginComponent from 'components/AuthenticationComponents/LoginComponent.vue';
 
 </script>
 

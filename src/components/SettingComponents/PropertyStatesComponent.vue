@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div class="flex row justify-between">
-      <h5 class="q-ma-none">{{ $t('modules.property') }} {{ $t('modules.states') }}</h5>
-      <q-btn dense color="primary" icon="mdi-plus-circle-outline" :ripple="false">{{ $t('modules.addState') }}</q-btn>
+    <div class="q-pb-lg flex row justify-between">
+      <h5 class="q-ma-none">{{ $t('setting.property') }} {{ $t('setting.states') }}</h5>
+      <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false">{{ $t('setting.addState') }}</q-btn>
     </div>
 
     <div>
       <q-table
-        dense
         hide-bottom
         row-key="name"
         :rows="rows"
@@ -35,39 +34,15 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const columns = [
-  {
-    name: 'name',
-    label: t('global.name'),
-    field: 'name',
-    align: 'left'
-  },
-  {
-    name: 'color',
-    label: t('global.color'),
-    field: 'calories',
-    align: 'center'
-  },
-  {
-    name: 'actions',
-    label: t('global.actions'),
-    field: '',
-    align: 'right'
-  },
+  { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
+  { name: 'color', label: t('global.color'), field: 'color', align: 'center' },
+  { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
 const rows = [
-  {
-    name: 'Active',
-    color: '#71DD37',
-  },
-  {
-    name: 'Process',
-    color: '#FFAB00',
-  },
-  {
-    name: 'Decline',
-    color: '#ff3e1d',
-  },
+  { name: 'Active', color: '#71DD37' },
+  { name: 'Process', color: '#FFAB00' },
+  { name: 'Decline', color: '#ff3e1d' },
 ]
 </script>
 

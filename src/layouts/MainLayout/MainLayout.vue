@@ -10,13 +10,13 @@
 
 <script setup lang="ts">
 // Components
-import HeaderComponent from 'components/AppComponents/HeaderComponent/HeaderComponent.vue';
-import FooterComponent from 'components/AppComponents/FooterComponent/FooterComponent.vue';
+import HeaderComponent from 'components/AppComponents/HeaderComponent.vue';
+import FooterComponent from 'components/AppComponents/FooterComponent.vue';
 
 </script>
 
 <style lang="scss" scoped>
 .q-layout {
-  background-color: $grey-base;
+  background-color: var(--q-base-color);
 }
 </style>

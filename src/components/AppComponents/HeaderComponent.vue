@@ -2,7 +2,7 @@
   <q-header class="q-px-lg q-mt-md bg-transparent">
     <q-toolbar class="flex justify-between q-py-sm bg-white shadow-custom">
       <div class="drawer-btn-section">
-        <q-btn flat round dense icon="menu" @click="drawer = !drawer" />
+        <q-btn flat round dense icon="menu" color="primary" @click="drawer = !drawer" />
       </div>
       <div>
         <q-avatar size="lg"><q-img src="https://cdn.quasar.dev/img/boy-avatar.png" /></q-avatar>
@@ -27,7 +27,7 @@
           @click="navigateTo(item.path)"
         >
           <q-icon class="q-pa-none nav-item-icon" :name="item.icon" />
-          <span class="nav-item-title">{{ $t(item.label) }}</span>
+          <span class="nav-item-title">{{ $t(`menu.${item.label}`) }}</span>
         </q-item>
       </q-list>
     </q-scroll-area>
@@ -42,19 +42,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 const router = useRouter();
+const route = useRoute();
 
 const drawer = ref(false);
-const activePath = ref('home');
+const activePath = ref(route.meta?.module);
 
 const menuItems = [
-  { path: 'home', icon: 'mdi-view-dashboard-outline', label: 'menu.dashboard' },
-  { path: '', icon: 'mdi-badge-account-outline', label: 'menu.user' },
-  { path: '', icon: 'mdi-account-outline', label: 'menu.client' },
-  { path: 'calendar', icon: 'mdi-calendar-month-outline', label: 'menu.calendar' },
-  { path: '', icon: 'mdi-home-silo-outline', label: 'menu.properties' },
-  { path: 'settings', icon: 'mdi-cog-outline', label: 'menu.settings' },
+  { path: 'home', icon: 'mdi-view-dashboard-outline', label: 'dashboard' },
+  { path: 'user', icon: 'mdi-badge-account-outline', label: 'user' },
+  { path: 'contact', icon: 'mdi-account-outline', label: 'contact' },
+  { path: 'calendar', icon: 'mdi-calendar-month-outline', label: 'calendar' },
+  { path: '', icon: 'mdi-home-silo-outline', label: 'properties' },
+  { path: 'settings', icon: 'mdi-cog-outline', label: 'settings' },
 ]
 
 const navigateTo = (path: string) => {
@@ -94,7 +96,7 @@ const navigateTo = (path: string) => {
 .q-item.q-router-link--active::after,
 .q-item--active::after {
   position: absolute;
-  background-color: $primary;
+  background-color: var(--q-primary);
   block-size: 2.625rem;
   border-end-start-radius: .375rem;
   border-start-start-radius: .375rem;
