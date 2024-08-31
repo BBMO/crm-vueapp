@@ -40,8 +40,10 @@ export default {
   },
   user: {
     addUser: 'Add User',
+    userList: 'User List',
     amountNegotiations: 'Amount Negotiations',
     numberProperties: 'Number Properties',
+    numberAgent: 'Number Agent',
     identification: 'Identification',
     firstName: 'First Name',
     lastName: 'Last Name',
@@ -83,9 +85,16 @@ export default {
     property: 'Property',
     states: 'States',
     types: 'Types',
+    categories: 'Categories',
     features: 'Features',
+    calendar: 'Calendar',
     addState: 'Add state',
     addType: 'Add type',
-    addFeature: 'Add feature'
+    addFeature: 'Add feature',
+    addCategory: 'Add category',
+    form: {
+      name: 'Name',
+      color: 'Color'
+    }
   },
 };

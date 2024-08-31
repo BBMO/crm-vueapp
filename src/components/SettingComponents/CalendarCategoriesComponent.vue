@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="q-pb-lg flex row justify-between">
-      <h5 class="q-ma-none">{{ $t('setting.property') }} {{ $t('setting.types') }}</h5>
-      <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="typeDialog = true">{{ $t('setting.addType') }}</q-btn>
+      <h5 class="q-ma-none">{{ $t('setting.calendar') }} {{ $t('setting.categories') }}</h5>
+      <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="categoryDialog = true">{{ $t('setting.addCategory') }}</q-btn>
     </div>
 
     <div>
@@ -22,7 +22,7 @@
     </div>
 
     <q-dialog
-      v-model="typeDialog"
+      v-model="categoryDialog"
       full-height
       position="right"
       square
@@ -30,9 +30,9 @@
     >
       <q-card class="dialog-card">
         <div class="q-pa-lg flex items-center dialog-title">
-          <h6 class="text-h6 q-ma-none">{{ $t('setting.addType') }}</h6>
+          <h6 class="text-h6 q-ma-none">{{ $t('setting.addCategory') }}</h6>
           <q-space />
-          <q-icon name="close" size="sm" class="cursor-pointer" @click="typeDialog = false" />
+          <q-icon name="close" size="sm" class="cursor-pointer" @click="categoryDialog = false" />
         </div>
         <q-separator />
         <div class="q-pa-lg">
@@ -51,26 +51,22 @@ import BasicFormComponent from 'components/SettingComponents/Forms/BasicFormComp
 
 const { t } = useI18n();
 
-const typeDialog = ref(false);
+const categoryDialog = ref(false);
 
 const columns = [
   { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
-  { name: 'quantity', label: t('global.quantity'), field: 'quantity', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
 const rows = [
-  { name: 'House', quantity: 20 },
-  { name: 'Apartment', quantity: 15 },
-  { name: 'Beach house', quantity: 10 },
+  { name: 'Meeting' },
+  { name: 'Call' },
+  { name: 'Email' },
+  { name: 'Task' },
+  { name: 'Event' },
 ]
 </script>
 
 <style scoped lang="scss">
-.color-box {
-  width: 20px;
-  height: 20px;
-  border-radius: 50px;
-  display: inline-block;
-}
+
 </style>

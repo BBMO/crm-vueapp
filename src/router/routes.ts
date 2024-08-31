@@ -8,7 +8,8 @@ import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 import LoginPage from 'pages/AuthenticationPage/LoginPage.vue';
 import UserPage from 'pages/UserPage/UserPage.vue';
 import UserDetailsPage from 'pages/UserPage/UserDetailsPage.vue';
-import ContactPage from 'pages/ContactPage.vue';
+import ContactPage from 'pages/ContactPage/ContactPage.vue';
+import ContactDetailsPage from 'pages/ContactPage/ContactDetailsPage.vue';
 import CalendarPage from 'pages/CalendarPage.vue';
 import SettingPage from 'pages/SettingPage.vue';
 
@@ -52,10 +53,20 @@ const routes: RouteRecordRaw[] = [
         ]
       },
       {
-        name: 'contact',
         path: '/contact',
         meta: { module: 'contact' },
-        component: ContactPage
+        children: [
+          {
+            name: 'contact',
+            path: '',
+            component: ContactPage,
+          },
+          {
+            name: 'contactDetails',
+            path: 'details',
+            component: ContactDetailsPage
+          }
+        ]
       },
       {
         name: 'calendar',

@@ -119,3 +119,16 @@ body {
     }
   }
 }
+
+// q-dialog
+.q-dialog {
+  .dialog-card {
+    width: 370px;
+
+    .dialog-title {
+      .text-h6 {
+        font-size: 1.125rem;
+      }
+    }
+  }
+}

@@ -2,26 +2,26 @@
   <q-card class="flex column gap-lg q-pa-lg">
     <div class="flex column items-center">
       <q-avatar rounded size="100px" color="primary" text-color="white">
-        <img :src="userDetails.image" alt="">
+        <img :src="contactDetails.image" alt="">
       </q-avatar>
-      <p class="text-subtitle1 text-weight-medium q-my-sm">{{ userDetails.first_name }} {{ userDetails.last_name }}</p>
+      <p class="text-subtitle1 text-weight-medium q-my-sm">{{ contactDetails.first_name }} {{ contactDetails.last_name }}</p>
       <q-chip square class="text-weight-medium" color="grey-2" text-color="grey">
-        {{ userDetails.role }}
+        {{ contactDetails.role }}
       </q-chip>
     </div>
     <div class="flex gap-md stats-details-section">
       <div class="flex items-center gap-sm">
         <q-icon size="sm" color="primary" name="mdi-cash-check" class="bg-secondary q-pa-sm" />
         <div class="flex column items-start">
-          <span class="text-capitalize text-weight-medium">{{ userDetails.amount_negotiations }}</span>
+          <span class="text-capitalize text-weight-medium">{{ contactDetails.amount_negotiations }}</span>
           <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('user.amountNegotiations') }}</span>
         </div>
       </div>
       <div class="flex items-center gap-sm">
-        <q-icon size="sm" color="primary" name="mdi-home-group" class="bg-secondary q-pa-sm" />
+        <q-icon size="sm" color="primary" name="mdi-account-group" class="bg-secondary q-pa-sm" />
         <div class="flex column items-start">
-          <span class="text-capitalize text-weight-medium">{{ userDetails.number_properties }}</span>
-          <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('user.numberProperties') }}</span>
+          <span class="text-capitalize text-weight-medium">{{ contactDetails.number_agent }}</span>
+          <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('user.numberAgent') }}</span>
         </div>
       </div>
     </div>
@@ -29,10 +29,10 @@
       <p class="text-subtitle1 text-weight-medium q-ma-none">{{ $t('global.details') }}</p>
       <q-separator />
       <div class="q-pt-xs">
-        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.identification') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ userDetails.identification }}</span></p>
-        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.email') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ userDetails.email }}</span></p>
-        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.phone') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ userDetails.phone }}</span></p>
-        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.address') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ userDetails.address }}</span></p>
+        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.identification') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ contactDetails.identification }}</span></p>
+        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.email') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ contactDetails.email }}</span></p>
+        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.phone') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ contactDetails.phone }}</span></p>
+        <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('user.address') }}: <span class="text-capitalize text-weight-regular text-grey-6">{{ contactDetails.address }}</span></p>
       </div>
     </div>
     <div class="flex justify-center gap-sm">
@@ -44,17 +44,17 @@
 
 <script setup lang="ts">
 
-const userDetails = {
+const contactDetails = {
   image: 'https://quasar-prime-admin-template.netlify.app/assets/avatar-1-DMk2FF1-.png',
-  role: 'Admin',
+  role: 'Client',
   first_name: 'Selina',
   last_name: 'Kyle',
   identification : 'V-26.841.892',
-  email: 'irena,dubronvnawayne.com',
+  email: 'irena@dubronvnawayne.com',
   phone: '(123) 123-1234',
   address: 'San Cristóbal',
   amount_negotiations: '1.23K',
-  number_properties: '125'
+  number_agent: '125'
 }
 
 </script>
