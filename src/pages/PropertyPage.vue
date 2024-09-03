@@ -2,7 +2,7 @@
   <q-page class="q-page-general">
     <div class="stats-section">
       <stats-card-component
-        v-for="(item, index) in contactStatistics" :key="index"
+        v-for="(item, index) in propertyStatistics" :key="index"
         :title="item.title"
         :subtitle="item.subtitle"
         :quantity="item.quantity"
@@ -11,7 +11,7 @@
       />
     </div>
     <div class="q-py-lg">
-      <contact-component />
+      <property-component />
     </div>
   </q-page>
 </template>
@@ -19,9 +19,9 @@
 <script setup lang="ts">
 // Components
 import StatsCardComponent from 'components/AppComponents/StatsCardComponent.vue';
-import ContactComponent from 'components/ContactComponents/ContactComponent.vue';
+import PropertyComponent from 'components/PropertyComponents/PropertyComponent.vue';
 
-const contactStatistics = [
+const propertyStatistics = [
   {
     title: 'Session',
     subtitle: 'Total Users',

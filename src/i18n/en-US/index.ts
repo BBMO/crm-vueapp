@@ -54,6 +54,17 @@ export default {
   contact: {
     addContact: 'Add Contact',
     contactList: 'Contact List',
+    client: 'Client',
+    lead: 'Lead',
+    form: {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      phone: 'Phone',
+      address: 'Address',
+      interests: 'Interests',
+      type: 'Type'
+    }
   },
   calendar: {
     addEvent: 'Add Event',

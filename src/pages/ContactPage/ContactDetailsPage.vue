@@ -13,8 +13,8 @@
 
 <script setup lang="ts">
 // Components
-import ContactDetailsComponent from 'components/ContactComponent/ContactDetailsComponent.vue';
-import ContactDetailsAgentComponent from 'components/ContactComponent/ContactDetailsAgentComponent.vue';
+import ContactDetailsComponent from 'components/ContactComponents/ContactDetailsComponent.vue';
+import ContactDetailsAgentComponent from 'components/ContactComponents/ContactDetailsAgentComponent.vue';
 
 </script>
 

@@ -1,4 +1,5 @@
 export const GLOBAL = {
   ACTIVE: 'active',
-  CLIENT: 'client'
+  CLIENT: 'client',
+  LEAD: 'lead'
 };

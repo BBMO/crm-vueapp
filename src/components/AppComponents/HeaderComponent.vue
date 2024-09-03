@@ -55,7 +55,7 @@ const menuItems = [
   { path: 'user', icon: 'mdi-badge-account-outline', label: 'user' },
   { path: 'contact', icon: 'mdi-account-outline', label: 'contact' },
   { path: 'calendar', icon: 'mdi-calendar-month-outline', label: 'calendar' },
-  { path: '', icon: 'mdi-home-silo-outline', label: 'properties' },
+  { path: 'property', icon: 'mdi-home-silo-outline', label: 'properties' },
   { path: 'settings', icon: 'mdi-cog-outline', label: 'settings' },
 ]
 

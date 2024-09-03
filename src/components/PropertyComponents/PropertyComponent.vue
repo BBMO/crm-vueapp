@@ -1,5 +1,5 @@
 <template>
-  <q-card class="contact-container">
+  <q-card class="property-container">
     <div class="q-px-md q-py-lg filters-section">
       <h6 class="q-ma-none q-mb-md text-weight-medium">{{ $t('global.filters') }}</h6>
       <q-select
@@ -20,7 +20,7 @@
         :placeholder="$t('global.search')"
       ></q-input>
       <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
-      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false">{{ $t('contact.addContact') }}</q-btn>
+      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="propertyFormDialog = true">{{ $t('property.addProperty') }}</q-btn>
     </div>
     <q-table
       hide-bottom
@@ -55,6 +55,26 @@
       </template>
     </q-table>
   </q-card>
+
+  <q-dialog
+    v-model="propertyFormDialog"
+    full-height
+    position="right"
+    square
+    maximized
+  >
+    <q-card class="dialog-card">
+      <div class="q-pa-lg flex items-center dialog-title">
+        <h6 class="text-h6 q-ma-none">{{ $t('property.addProperty') }}</h6>
+        <q-space />
+        <q-icon name="close" size="sm" class="cursor-pointer" @click="propertyFormDialog = false" />
+      </div>
+      <q-separator />
+      <div class="q-pa-lg">
+        Formulario de propiedad
+      </div>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +84,8 @@ import { useI18n } from 'vue-i18n';
 import { GLOBAL } from 'src/constants/global.constant';
 
 const { t } = useI18n();
+
+const propertyFormDialog = ref(false);
 
 const roleFilter = ref('');
 const textSearch = ref('');
@@ -90,7 +112,7 @@ const rows = [
 </script>
 
 <style scoped lang="scss">
-.contact-container {
+.property-container {
   .filters-section .q-select {
     width: 30%;
   }

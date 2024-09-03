@@ -11,6 +11,7 @@ import UserDetailsPage from 'pages/UserPage/UserDetailsPage.vue';
 import ContactPage from 'pages/ContactPage/ContactPage.vue';
 import ContactDetailsPage from 'pages/ContactPage/ContactDetailsPage.vue';
 import CalendarPage from 'pages/CalendarPage.vue';
+import PropertyPage from 'pages/PropertyPage.vue';
 import SettingPage from 'pages/SettingPage.vue';
 
 const routes: RouteRecordRaw[] = [
@@ -73,6 +74,12 @@ const routes: RouteRecordRaw[] = [
         path: '/calendar',
         meta: { module: 'calendar' },
         component: CalendarPage
+      },
+      {
+        name: 'property',
+        path: '/property',
+        meta: { module: 'property' },
+        component: PropertyPage
       },
       {
         name: 'settings',
