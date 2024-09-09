@@ -52,23 +52,35 @@ module.exports = configure(function (/* ctx */) {
         node: 'node20'
       },
 
-      vueRouterMode: 'history', // available values: 'hash', 'history'
+      vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: '/wp-content/plugins/crm-plugin/',
       // analyze: true,
-      // env: {},
+      env: {
+        APP_MODE: 'WEB'
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf (viteConf) {
+        viteConf.build.rollupOptions = viteConf.build.rollupOptions || {}
+        viteConf.build.rollupOptions.output = viteConf.build.rollupOptions.output || {}
+
+        const target = viteConf.build.rollupOptions.output
+        const assetsDir = (viteConf.build.assetsDir || 'assets')
+
+        target.entryFileNames = `${ assetsDir }/[name].js`
+        target.chunkFileNames = `${ assetsDir }/[name].js`
+        target.assetFileNames = `${ assetsDir }/[name].[ext]`
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
