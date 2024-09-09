@@ -7,6 +7,8 @@ const useValidate = () => {
 
   const validateRequired = (val: any): boolean => val && val.trim() !== '';
 
+  const validateRequiredSelect = (val: any): boolean => val && val !== '';
+
   /*const validateNumber = (val: any): boolean => val !== null;
 
   const validateFile = (val: any): boolean => val && val.length > 0;
@@ -34,6 +36,7 @@ const useValidate = () => {
 
   return {
     validateRequired,
+    validateRequiredSelect,
   }
 }
 

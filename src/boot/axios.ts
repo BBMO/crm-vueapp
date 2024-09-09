@@ -14,7 +14,12 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'https://api.example.com' });
+const api = axios.create({
+  baseURL: import.meta.env.VITE_APP_API_URL ? `${import.meta.env.VITE_APP_API_URL}/crm/v1` : '/crm/v1',
+  headers: {
+    Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vY3JtLWlubW8ubG9jYWwiLCJpYXQiOjE3MjU4MTU5MDEsIm5iZiI6MTcyNTgxNTkwMSwiZXhwIjoxNzI2NDIwNzAxLCJkYXRhIjp7InVzZXIiOnsiaWQiOiIxIn19fQ.pmZryo4GN9Bjo_f07yVVcQmBOqqi7ies-wuoon5y3Sg'
+  }
+});
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

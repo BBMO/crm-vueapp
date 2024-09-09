@@ -100,9 +100,13 @@ export default {
     features: 'Features',
     calendar: 'Calendar',
     addState: 'Add state',
+    editState: 'Edit state',
     addType: 'Add type',
+    editType: 'Edit type',
     addFeature: 'Add feature',
+    editFeature: 'Edit feature',
     addCategory: 'Add category',
+    editCategory: 'Edit category',
     form: {
       name: 'Name',
       color: 'Color'

@@ -129,6 +129,10 @@ const splitterModel = ref(20);
   color: var(--q-base-text-color) !important;
 }
 
+:deep(.q-panel) {
+  overflow: hidden;
+}
+
 @media screen and (max-width: 1260px) {
   .q-splitter {
     :deep(.q-splitter__before) {

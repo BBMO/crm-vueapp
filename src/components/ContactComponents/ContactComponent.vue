@@ -20,37 +20,37 @@
         :placeholder="$t('global.search')"
       ></q-input>
       <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
-      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="contactFormDialog = true">{{ $t('contact.addContact') }}</q-btn>
+      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('contact.addContact') }}</q-btn>
     </div>
     <q-table
       hide-bottom
-      row-key="name"
-      :rows="rows"
+      row-key="first_name"
+      :rows="contactList"
       :columns="columns"
     >
-      <template v-slot:body-cell-name="props">
+      <template v-slot:body-cell-first_name="props">
         <q-td :props="props">
-          <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.image" alt=""></q-avatar>
-          {{ props.row.name }}
+          <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.attachment_url" alt=""></q-avatar>
+          {{ props.row.first_name }} {{ props.row.last_name }}
         </q-td>
       </template>
-      <template v-slot:body-cell-role="props">
+      <template v-slot:body-cell-type="props">
         <q-td :props="props">
-          <span class="flex items-center gap-xs">
+          <span class="flex items-center gap-xs text-capitalize">
             <q-icon
               size="xs"
-              :name="props.row.role.toLowerCase() === GLOBAL.CLIENT.toLowerCase() ? 'mdi-account-check-outline' : 'mdi-account-clock-outline'"
-              :color="props.row.role.toLowerCase() === GLOBAL.CLIENT.toLowerCase() ? 'positive' : 'orange'"
+              :name="props.row.type.toLowerCase() === GLOBAL.CLIENT ? 'mdi-account-check-outline' : 'mdi-account-clock-outline'"
+              :color="props.row.type.toLowerCase() === GLOBAL.CLIENT ? 'positive' : 'orange'"
             />
-            {{ props.row.role }}
+            {{ props.row.type }}
           </span>
         </q-td>
       </template>
       <template v-slot:body-cell-actions="props">
         <q-td :props="props" class="actions">
           <q-btn dense round flat color="grey" icon="mdi-eye-outline"></q-btn>
-          <q-btn dense round flat color="grey" icon="mdi-square-edit-outline"></q-btn>
-          <q-btn dense round flat color="grey" icon="mdi-trash-can-outline"></q-btn>
+          <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
+          <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteContact(props.row.id)"></q-btn>
         </q-td>
       </template>
     </q-table>
@@ -71,26 +71,37 @@
       </div>
       <q-separator />
       <div class="q-pa-lg">
-        <contact-form-component />
+        <contact-form-component
+          ref="formData"
+          :is-edit="formModeEdit"
+          :form-details="contactDetails"
+        />
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveContact">{{ $t('global.save') }}</q-btn>
       </div>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+// Interfaces
+import type { ContactFormInterface } from 'src/interfaces/contact.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Services
+import ContactsService from 'src/services/contacts.service';
 // Components
 import ContactFormComponent from 'components/ContactComponents/ContactFormComponent.vue';
 
 const { t } = useI18n();
 
-const contactFormDialog = ref(false);
-
-const roleFilter = ref('');
-const textSearch = ref('');
+const columns = [
+  { name: 'first_name', label: t('menu.user'), field: 'first_name', align: 'left' },
+  { name: 'email', label: t('global.email'), field: 'email', align: 'left' },
+  { name: 'type', label: t('global.role'), field: 'type', align: 'left' },
+  { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
+]
 
 const roleOptions = [
   { label: 'Lead', value: 'lead' },
@@ -98,19 +109,100 @@ const roleOptions = [
   { label: 'Select role', value: '' }
 ]
 
-const columns = [
-  { name: 'name', label: t('menu.user'), field: 'name', align: 'left' },
-  { name: 'email', label: t('global.email'), field: 'email', align: 'left' },
-  { name: 'role', label: t('global.role'), field: 'role', align: 'left' },
-  { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
-]
+const contactFormDialog = ref(false);
+const isLoadingSave = ref(false);
 
-const rows = [
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-1-DL1ARROH.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Lead' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-2-D-0hhBDR.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Lead' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-1-DL1ARROH.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Client' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-2-D-0hhBDR.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Client' },
-]
+const formModeEdit = ref(false);
+const contactDetails = ref<ContactFormInterface>({
+  id: '',
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  address: '',
+  interest: '',
+  type: '',
+});
+
+const roleFilter = ref('');
+const textSearch = ref('');
+
+const formData = ref<typeof ContactFormComponent | null>(null);
+const contactList = ref([]);
+
+/**
+ *
+ */
+const validateForm = async () => {
+  return await formData.value?.validateForm();
+}
+
+/**
+ *
+ */
+const getContacts = async () => {
+  const { data } = await ContactsService.getContacts();
+
+  if (data) {
+    contactList.value = data?.data?.items;
+  }
+}
+
+/**
+ *
+ */
+const saveContact = async () => {
+  isLoadingSave.value = true;
+
+  if (await validateForm()) {
+    console.log(formData.value?.formData.form);
+
+    const payload = new FormData();
+    payload.append('first_name', formData.value?.formData.form.first_name);
+    payload.append('last_name', formData.value?.formData.form.last_name);
+    payload.append('email', formData.value?.formData.form.email);
+    payload.append('phone', formData.value?.formData.form.phone);
+    payload.append('address', formData.value?.formData.form.address);
+    payload.append('interests', formData.value?.formData.form.interest);
+    payload.append('type', formData.value?.formData.form.type);
+
+    if (formModeEdit.value) {
+      await ContactsService.updateContact(contactDetails.value.id, payload);
+    } else {
+      await ContactsService.createContact(payload);
+    }
+
+    await getContacts();
+    contactFormDialog.value = false;
+  }
+
+  isLoadingSave.value = false;
+};
+
+/**
+ *
+ */
+const deleteContact = async (contactId: string) => {
+  await ContactsService.deleteContact(contactId);
+  await getContacts();
+}
+
+/**
+ *
+ */
+const openDialogSave = (modeEdit: boolean, details?: ContactFormInterface) => {
+  formModeEdit.value = modeEdit;
+
+  if (details) {
+    contactDetails.value = details;
+  }
+
+  contactFormDialog.value = true;
+}
+
+onMounted(async () => {
+  await getContacts();
+})
 </script>
 
 <style scoped lang="scss">
