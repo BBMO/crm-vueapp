@@ -23,6 +23,9 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding: 1.5rem;
+}
+
+.layout-app .q-page-general {
   margin-top: 1rem;
 }
 
@@ -53,6 +56,12 @@ body {
       padding-top: 10px !important;
       padding-bottom: 10px !important;
     }
+  }
+
+  .q-field__native, .q-field__prefix, .q-field__suffix, .q-field__input {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
   }
 }
 
@@ -126,6 +135,8 @@ body {
 
 // q-dialog
 .q-dialog {
+  z-index: 99999;
+
   .dialog-card {
     width: 370px;
 
@@ -135,4 +146,11 @@ body {
       }
     }
   }
+}
+
+// Body scroll prevention
+.q-body--prevent-scroll {
+  position: relative !important;
+  top: unset !important;
+  left: unset !important;
 }
