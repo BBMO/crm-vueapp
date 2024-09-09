@@ -61,9 +61,7 @@ module.exports = configure(function (/* ctx */) {
 
       publicPath: '/wp-content/plugins/crm-plugin/',
       // analyze: true,
-      env: {
-        APP_MODE: 'WEB'
-      },
+      // env: {},
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,

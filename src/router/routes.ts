@@ -16,7 +16,7 @@ import SettingPage from 'pages/SettingPage.vue';
 import MainLayoutWeb from 'layouts/MainLayout/MainLayoutWeb.vue';
 
 // Check if the app is running in app mode
-const isAppMode = process.env.APP_MODE === 'APP';
+const isAppMode = import.meta.env.VITE_APP_MODE === 'APP';
 
 const routes: RouteRecordRaw[] = [
   {
