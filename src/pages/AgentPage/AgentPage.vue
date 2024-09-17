@@ -11,7 +11,7 @@
       />
     </div>
     <div class="q-py-lg">
-      <user-component />
+      <agent-component />
     </div>
   </q-page>
 </template>
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 // Components
 import StatsCardComponent from 'components/AppComponents/StatsCardComponent.vue';
-import UserComponent from 'components/UserComponents/UserComponent.vue';
+import AgentComponent from 'components/AgentComponents/AgentComponent.vue';
 
 const userStatistics = [
   {

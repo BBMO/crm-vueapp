@@ -38,7 +38,7 @@ body {
   }
 
   .q-field__label {
-    top: -24px;
+    top: -20px;
     left: -12px;
     transform: none !important;
   }
@@ -135,8 +135,6 @@ body {
 
 // q-dialog
 .q-dialog {
-  z-index: 99999;
-
   .dialog-card {
     width: 370px;
 

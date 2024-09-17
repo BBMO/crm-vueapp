@@ -17,7 +17,7 @@ declare module '@vue/runtime-core' {
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL ? `${import.meta.env.VITE_APP_API_URL}/crm/v1` : '/crm/v1',
   headers: {
-    Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vY3JtLWlubW8ubG9jYWwiLCJpYXQiOjE3MjU4MTU5MDEsIm5iZiI6MTcyNTgxNTkwMSwiZXhwIjoxNzI2NDIwNzAxLCJkYXRhIjp7InVzZXIiOnsiaWQiOiIxIn19fQ.pmZryo4GN9Bjo_f07yVVcQmBOqqi7ies-wuoon5y3Sg'
+    Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vY3JtLWlubW8ubG9jYWwiLCJpYXQiOjE3MjY0MzAzNjMsIm5iZiI6MTcyNjQzMDM2MywiZXhwIjoxNzI3MDM1MTYzLCJkYXRhIjp7InVzZXIiOnsiaWQiOiIxIn19fQ.tnYf3Vfy8zEg7-6SJs_AxUAUL9GhnW-5kBdtgAilzc0'
   }
 });
 

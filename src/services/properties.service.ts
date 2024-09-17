@@ -58,6 +58,49 @@ class PropertiesService {
   deletePropertyState(id: string): AxiosPromise {
     return api.delete(`/property-state/${id}`);
   }
+
+  /**
+   *
+   */
+  getProperties(): AxiosPromise {
+    return api.get('/properties');
+  }
+
+  getProperty(id: string): AxiosPromise {
+    return api.get(`/property/${id}`);
+  }
+
+  createProperty(payload: any): AxiosPromise {
+    return api.post('property', payload, {
+      headers: {
+        'Content-type': 'multipart/form-data',
+      },
+    })
+  }
+
+  updateProperty(id: string, payload: any): AxiosPromise {
+    return api.post(`/property/${id}`, payload, {
+      headers: {
+        'Content-type': 'multipart/form-data',
+      },
+    })
+  }
+
+  deleteProperty(id: string): AxiosPromise {
+    return api.delete(`/property/${id}`);
+  }
+
+  uploadPropertyImage(id: string, payload: any): AxiosPromise {
+    return api.post(`/property/${id}/upload`, payload, {
+      headers: {
+        'Content-type': 'multipart/form-data',
+      },
+    })
+  }
+
+  deletePropertyImage(id: string, image_id: string): AxiosPromise {
+    return api.delete(`/property/${id}/upload/${image_id}`);
+  }
 }
 
 export default new PropertiesService();

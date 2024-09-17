@@ -7,16 +7,16 @@ export default {
     welcomeMessage: 'Please sign-in to your account and start',
     email: 'Email',
     password: 'Password',
-    name: 'Name',
-    color: 'Color',
-    quantity: 'Quantity',
     state: 'State',
     role: 'Role',
     actions: 'Actions',
     edit: 'Edit',
     save: 'Save',
+    update: 'Update',
+    back: 'Back',
     suspend: 'Suspend',
     search: 'Search',
+    searchFilters: 'Search filters',
     export: 'Export',
     filters: 'Filters',
     details: 'Details',
@@ -26,8 +26,8 @@ export default {
   menu: {
     dashboard: 'Dashboard',
     calendar: 'Calendar',
-    user: 'User',
-    contact: 'Contact',
+    agent: 'Agents',
+    contact: 'Contacts',
     properties: 'Properties',
     settings: 'Settings',
   },
@@ -38,8 +38,9 @@ export default {
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password'
   },
-  user: {
-    addUser: 'Add User',
+  agent: {
+    addAgent: 'Add Agent',
+    editAgent: 'Edit Agent',
     userList: 'User List',
     amountNegotiations: 'Amount Negotiations',
     numberProperties: 'Number Properties',
@@ -49,10 +50,12 @@ export default {
     lastName: 'Last Name',
     email: 'Email',
     phone: 'Phone',
-    address: 'Address'
+    address: 'Address',
+    name: 'Name'
   },
   contact: {
     addContact: 'Add Contact',
+    editContact: 'Edit Contact',
     contactList: 'Contact List',
     client: 'Client',
     lead: 'Lead',
@@ -68,6 +71,8 @@ export default {
   },
   calendar: {
     addEvent: 'Add Event',
+    editEvent: 'Edit Event',
+    deleteEvent: 'Delete Event',
     agents: 'Agents',
     filter: 'Category Filter',
     form: {
@@ -88,8 +93,43 @@ export default {
     }
   },
   property: {
+    title: 'Property',
+    propertiesList: 'Properties List',
     addProperty: 'Add Property',
-    propertiesList: 'Properties List'
+    editProperty: 'Edit Property',
+    messageProperty: 'Information on each property ',
+    informationProperty: 'Property Information',
+    imagesProperty: 'Property Images',
+    addBrowserImage: 'Add browser image',
+    noImagesAdded: 'No images have been added',
+    browserImages: 'Browser Images',
+    removeFile: 'Remove File',
+    coordinates:'Coordinates',
+    configuration: 'Configuration',
+    attributes: 'Attributes',
+    address: 'Address',
+    sale: 'Sale',
+    rental: 'Rental',
+    form: {
+      name: 'Name',
+      description: 'Description',
+      price: 'Price',
+      availableFor: 'Available For',
+      bedrooms: 'Bedrooms',
+      bathrooms: 'Bathrooms',
+      garages: 'Garages',
+      size: 'Size',
+      address: 'Address',
+      city: 'City',
+      state: 'State',
+      zip: 'Zip',
+      latitude: 'Latitude',
+      longitude: 'Longitude',
+      agent: 'Agent',
+      type: 'Type',
+      images: 'Images',
+      features: 'Features'
+    }
   },
   setting: {
     opportunity: 'Opportunity',
@@ -107,9 +147,10 @@ export default {
     editFeature: 'Edit feature',
     addCategory: 'Add category',
     editCategory: 'Edit category',
+    quantity: 'Quantity',
     form: {
       name: 'Name',
-      color: 'Color'
+      color: 'Color',
     }
   },
 };

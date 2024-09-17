@@ -1,8 +1,12 @@
 <template>
   <q-page class="q-page-general">
+    <div class="flex items-center gap-xs q-mb-lg">
+      <q-icon size="xs" color="primary" name="mdi-arrow-left"/>
+      <p class="text-subtitle2 text-weight-medium text-primary q-ma-none cursor-pointer" @click="backToList">{{ $t('global.back') }}</p>
+    </div>
     <div class="row">
       <div class="col-12 col-md-4 q-mb-lg q-pr-sm user-details-section">
-        <user-details-component />
+        <agent-details-component />
       </div>
       <div class="col-12 col-md-8 q-pl-sm user-information-section">
         <q-tabs
@@ -30,12 +34,12 @@
             class="bg-transparent"
           >
             <q-tab-panel name="general" class="q-pa-none flex gap-lg">
-              <user-details-contact-component />
-              <user-details-property-component />
+              <agent-details-contact-component />
+              <agent-details-property-component />
             </q-tab-panel>
 
             <q-tab-panel name="security" class="q-pa-none flex gap-lg">
-              <user-details-security-component />
+              <agent-details-security-component />
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -46,13 +50,20 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 // Components
-import UserDetailsComponent from 'components/UserComponents/UserDetailsComponent.vue';
-import UserDetailsContactComponent from 'components/UserComponents/UserDetailsContactComponent.vue';
-import UserDetailsPropertyComponent from 'components/UserComponents/UserDetailsPropertyComponent.vue';
-import UserDetailsSecurityComponent from 'components/UserComponents/UserDetailsSecurityComponent.vue';
+import AgentDetailsComponent from 'components/AgentComponents/AgentDetailsComponent.vue';
+import AgentDetailsContactComponent from 'components/AgentComponents/AgentDetailsContactComponent.vue';
+import AgentDetailsPropertyComponent from 'components/AgentComponents/AgentDetailsPropertyComponent.vue';
+import AgentDetailsSecurityComponent from 'components/AgentComponents/AgentDetailsSecurityComponent.vue';
+
+const router = useRouter();
 
 const tab = ref('general');
+
+const backToList = () => {
+  router.push({ name: 'agents' });
+};
 </script>
 
 <style scoped lang="scss">

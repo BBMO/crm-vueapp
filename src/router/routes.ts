@@ -6,12 +6,13 @@ import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 
 // Pages
 import LoginPage from 'pages/AuthenticationPage/LoginPage.vue';
-import UserPage from 'pages/UserPage/UserPage.vue';
-import UserDetailsPage from 'pages/UserPage/UserDetailsPage.vue';
+import AgentPage from 'pages/AgentPage/AgentPage.vue';
+import AgentDetailsPage from 'pages/AgentPage/AgentDetailsPage.vue';
 import ContactPage from 'pages/ContactPage/ContactPage.vue';
 import ContactDetailsPage from 'pages/ContactPage/ContactDetailsPage.vue';
 import CalendarPage from 'pages/CalendarPage.vue';
-import PropertyPage from 'pages/PropertyPage.vue';
+import PropertyPage from 'pages/PropertyPage/PropertyPage.vue';
+import PropertyFormPage from 'pages/PropertyPage/PropertyFormPage.vue';
 import SettingPage from 'pages/SettingPage.vue';
 import MainLayoutWeb from 'layouts/MainLayout/MainLayoutWeb.vue';
 
@@ -41,34 +42,34 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/IndexPage.vue')
       },
       {
-        path: '/user',
-        meta: { module: 'user' },
+        path: '/agents',
+        meta: { module: 'agents' },
         children: [
           {
-            name: 'user',
+            name: 'agents',
             path: '',
-            component: UserPage
+            component: AgentPage
           },
           {
-            name: 'userDetails',
-            path: 'details',
-            component: UserDetailsPage
+            name: 'agentDetails',
+            path: ':id',
+            component: AgentDetailsPage
 
           }
         ]
       },
       {
-        path: '/contact',
-        meta: { module: 'contact' },
+        path: '/contacts',
+        meta: { module: 'contacts' },
         children: [
           {
-            name: 'contact',
+            name: 'contacts',
             path: '',
             component: ContactPage,
           },
           {
             name: 'contactDetails',
-            path: 'details',
+            path: ':id',
             component: ContactDetailsPage
           }
         ]
@@ -80,10 +81,25 @@ const routes: RouteRecordRaw[] = [
         component: CalendarPage
       },
       {
-        name: 'property',
-        path: '/property',
-        meta: { module: 'property' },
-        component: PropertyPage
+        path: '/properties',
+        meta: { module: 'properties' },
+        children: [
+          {
+            name: 'properties',
+            path: '',
+            component: PropertyPage
+          },
+          {
+            name: 'propertyCreate',
+            path: 'create',
+            component: PropertyFormPage
+          },
+          {
+            name: 'propertyEdit',
+            path: 'edit/:id',
+            component: PropertyFormPage
+          }
+        ]
       },
       {
         name: 'settings',

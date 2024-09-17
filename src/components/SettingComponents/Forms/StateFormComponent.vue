@@ -12,8 +12,7 @@
           ]"
         ></q-input>
       </div>
-
-      <div class="q-pb-md form-color-section">
+      <div class="q-pb-xl form-color-section">
         <label>{{ $t('setting.form.color') }}</label>
         <q-color
           v-model="form.color"

@@ -11,6 +11,8 @@
         row-key="name"
         :rows="propertyStatesList"
         :columns="columns"
+        :hide-pagination="true"
+        :rows-per-page-options="[0]"
       >
         <template v-slot:body-cell-color="props">
           <q-td :props="props">
@@ -66,8 +68,8 @@ import StateFormComponent from 'components/SettingComponents/Forms/StateFormComp
 const { t } = useI18n();
 
 const columns = [
-  { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
-  { name: 'color', label: t('global.color'), field: 'color', align: 'center' },
+  { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
+  { name: 'color', label: t('setting.form.color'), field: 'color', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 

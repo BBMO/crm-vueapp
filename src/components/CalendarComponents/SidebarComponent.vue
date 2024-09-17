@@ -1,14 +1,7 @@
 <template>
   <div>
     <div class="sidebar-header">
-      <q-btn
-        class="add-event-btn"
-        color="primary"
-        icon="mdi-plus"
-        :ripple="false"
-        unelevated
-        @click="addEvent"
-      >{{ $t('calendar.addEvent') }}</q-btn>
+      <q-btn unelevated class="add-event-btn" color="primary" icon="mdi-plus" :ripple="false" @click="addEvent">{{ $t('calendar.addEvent') }}</q-btn>
     </div>
 
     <div class="sidebar-body">
@@ -19,18 +12,11 @@
           v-model="agent"
           :label="$t('calendar.agents')"
           :options="agents"
-        >
-        </q-select>
+        ></q-select>
       </div>
 
       <div class="sidebar-agent flex items-center q-mb-xl">
-        <q-avatar
-          size="40px"
-          color="primary"
-          text-color="white"
-        >
-          <img src="https://cdn.quasar.dev/img/boy-avatar.png" alt="">
-        </q-avatar>
+        <q-avatar size="40px" color="primary" text-color="white"><img src="https://cdn.quasar.dev/img/boy-avatar.png" alt=""></q-avatar>
         <div class="q-ml-md">
           <div class="text-subtitle1 q-ma-none text-weight-medium">John Doe</div>
           <div class="text-caption text-grey">Agent</div>
@@ -39,61 +25,40 @@
 
       <div class="sidebar-filter">
         <div class="text-subtitle1 text-weight-medium q-mb-lg">{{ $t('calendar.filter') }}</div>
-
-        <div
-          v-for="item in categories"
-          :key="item.value"
-          class="sidebar-filter-item q-mb-md"
-        >
+        <div v-for="item in quoteCategoriesList" :key="item.id" class="sidebar-filter-item q-mb-md">
           <q-checkbox
-            keep-color
             dense
-            v-model="item.checked"
-            :label="item.label"
-            :color="item.color"
-            :value="item.value"
-          />
+            v-model="item.selected"
+            color="grey"
+            :value="item.id"
+            @update:modelValue="categoriesSelect"
+          >
+            <div class="flex items-center gap-xs">
+              <label>{{ item.name }}</label>
+              <q-icon size="sm" name="mdi-tag" :style="{ color: item.color }"/>
+            </div>
+          </q-checkbox>
         </div>
       </div>
     </div>
-
-    <q-dialog
-      v-model="eventDialog"
-      full-height
-      position="right"
-      square
-      maximized
-    >
-      <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
-          <h6 class="text-h6 q-ma-none">{{ $t('calendar.addEvent') }}</h6>
-          <q-space />
-          <q-icon
-            name="close"
-            class="cursor-pointer"
-            @click="eventDialog = false"
-            size="sm"
-          />
-        </div>
-        <q-separator />
-        <div class="q-pa-lg">
-          <EventFormComponent />
-        </div>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import EventFormComponent from './EventFormComponent.vue';
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
+// Interfaces
+import type { CalendarDropdownInterface } from 'src/interfaces/calendar.interface';
+// Services
+import CalendarService from 'src/services/calendar.service';
+// Store
+import { useCalendarStore } from 'src/stores/calendar.store';
 
-const eventDialog = ref(false);
+const emit = defineEmits(['openEventDialog']);
+
+const calendarStore = useCalendarStore();
+
 const agent = ref(null);
-
-const addEvent = () => {
-  eventDialog.value = true;
-};
 
 const agents = [
   { label: 'John Doe', value: 'john_doe' },
@@ -101,15 +66,39 @@ const agents = [
   { label: 'John Smith', value: 'john_smith' },
 ];
 
-const categories = ref([
-  { label: 'All', value: 'all', color: 'primary', checked: true },
-  { label: 'Meeting', value: 'meeting', color: 'teal', checked: false },
-  { label: 'Call', value: 'call', color: 'orange', checked: false },
-  { label: 'Email', value: 'email', color: 'deep-orange', checked: false },
-  { label: 'Task', value: 'task', color: 'blue', checked: false },
-  { label: 'Event', value: 'event', color: 'purple', checked: false },
-]);
+const quoteCategoriesList: Ref<CalendarDropdownInterface[]> = ref([]);
 
+/**
+ *
+ */
+const getQuoteCategories = async () => {
+  const { data } = await CalendarService.getQuoteCategories();
+  quoteCategoriesList.value = data?.data.map((item: CalendarDropdownInterface) => ({
+    id: item.id,
+    name: item.name,
+    color: item.color,
+    selected: false,
+  }));
+};
+
+/**
+ *
+ */
+const categoriesSelect = () => {
+  const selectedIds = quoteCategoriesList.value.filter(item => item.selected).map(item => item.id);
+  calendarStore.setCategoriesFilter(selectedIds);
+};
+
+/**
+ *
+ */
+const addEvent = () => {
+  emit('openEventDialog');
+};
+
+onMounted(() => {
+  getQuoteCategories();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -130,16 +119,6 @@ const categories = ref([
   .sidebar-agent {
     .text-subtitle1 {
       line-height: 1.3;
-    }
-  }
-}
-
-.dialog-card {
-  width: 370px;
-
-  .dialog-title {
-    .text-h6 {
-      font-size: 1.125rem;
     }
   }
 }

@@ -11,6 +11,8 @@
         row-key="name"
         :rows="opportunityStatesList"
         :columns="columns"
+        :hide-pagination="true"
+        :rows-per-page-options="[0]"
       >
         <template v-slot:body-cell-color="props">
           <q-td :props="props">
@@ -27,11 +29,11 @@
     </div>
 
     <q-dialog
-        v-model="dialogSave"
-        full-height
-        position="right"
-        square
-        maximized
+      v-model="dialogSave"
+      full-height
+      position="right"
+      square
+      maximized
     >
       <q-card class="dialog-card">
         <div class="q-pa-lg flex items-center dialog-title">
@@ -66,8 +68,8 @@ import StateFormComponent from 'components/SettingComponents/Forms/StateFormComp
 const { t } = useI18n();
 
 const columns = [
-  { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
-  { name: 'color', label: t('global.color'), field: 'color', align: 'center' },
+  { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
+  { name: 'color', label: t('setting.form.color'), field: 'color', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 

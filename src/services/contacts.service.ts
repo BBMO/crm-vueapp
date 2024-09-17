@@ -10,7 +10,7 @@ class ContactsService {
   }
 
   getContact(id: string): AxiosPromise {
-    return api.get(`/contacts/${id}`)
+    return api.get(`/contact/${id}`)
   }
 
   createContact(payload: any): AxiosPromise {

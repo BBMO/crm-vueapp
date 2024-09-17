@@ -1,120 +1,422 @@
 <template>
-  <q-card class="property-container">
-    <div class="q-px-md q-py-lg filters-section">
-      <h6 class="q-ma-none q-mb-md text-weight-medium">{{ $t('global.filters') }}</h6>
-      <q-select
-        outlined
-        dense
-        v-model="roleFilter"
-        option-label="label"
-        option-value="value"
-        :options="roleOptions"
-      />
-    </div>
-    <q-separator />
-    <div class="q-px-md q-py-lg flex justify-end gap-md">
-      <q-input
-        outlined
-        dense
-        v-model="textSearch"
-        :placeholder="$t('global.search')"
-      ></q-input>
-      <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
-      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="propertyFormDialog = true">{{ $t('property.addProperty') }}</q-btn>
-    </div>
-    <q-table
-      hide-bottom
-      row-key="name"
-      :rows="rows"
-      :columns="columns"
-    >
-      <template v-slot:body-cell-name="props">
-        <q-td :props="props">
-          <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.image" alt=""></q-avatar>
-          {{ props.row.name }}
-        </q-td>
-      </template>
-      <template v-slot:body-cell-role="props">
-        <q-td :props="props">
-          <span class="flex items-center gap-xs">
-            <q-icon
-              size="xs"
-              :name="props.row.role.toLowerCase() === GLOBAL.CLIENT.toLowerCase() ? 'mdi-account-check-outline' : 'mdi-account-clock-outline'"
-              :color="props.row.role.toLowerCase() === GLOBAL.CLIENT.toLowerCase() ? 'positive' : 'orange'"
-            />
-            {{ props.row.role }}
-          </span>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-actions="props">
-        <q-td :props="props" class="actions">
-          <q-btn dense round flat color="grey" icon="mdi-eye-outline"></q-btn>
-          <q-btn dense round flat color="grey" icon="mdi-square-edit-outline"></q-btn>
-          <q-btn dense round flat color="grey" icon="mdi-trash-can-outline"></q-btn>
-        </q-td>
-      </template>
-    </q-table>
-  </q-card>
+  <div>
+    <q-card v-if="!isLoading" class="property-container">
+      <div class="q-px-md q-py-lg filters-section">
+        <q-expansion-item default-opened>
+          <template v-slot:header>
+            <div class="flex items-center gap-xs">
+              <q-icon size="sm" name="mdi-filter-multiple" />
+              <h6 class="q-ma-none text-weight-medium">{{ $t('global.filters') }}</h6>
+            </div>
+          </template>
+          <q-card>
+            <q-card-section class="q-px-none q-py-sm">
+              <div class="row">
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.price') }}</label>
+                  <q-range
+                    label-always
+                    switch-label-side
+                    v-model="filters.price"
+                    color="primary"
+                    class="q-px-sm"
+                    :min="0"
+                    :max="50"
+                    :left-label-value="filters.price.min + '$'"
+                    :right-label-value="filters.price.max + '$'"
+                  />
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.agent') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.agent"
+                    option-label="name"
+                    option-value="id"
+                    :options="propertyAgentsList"
+                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.address') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.address"
+                    :placeholder="$t('global.search')"
+                  ></q-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.type') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.type"
+                    option-label="name"
+                    option-value="id"
+                    :options="propertyTypesList"
+                  ><template v-slot:prepend><q-icon name="mdi-home-city-outline" /></template></q-select>
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.availableFor') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.available_for"
+                    option-label="label"
+                    option-value="value"
+                    :options="availableFor"
+                  ><template v-slot:prepend><q-icon name="mdi-finance" /></template></q-select>
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.state') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.state"
+                    option-label="name"
+                    option-value="id"
+                    :options="propertyStatesList"
+                  ></q-select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.bedrooms') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.bedrooms"
+                    type="number"
+                    :min="0"
+                  ><template v-slot:prepend><q-icon name="mdi-bed-outline" /></template></q-input>
+                </div>
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.bathrooms') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.bathrooms"
+                    type="number"
+                    :min="0"
+                  ><template v-slot:prepend><q-icon name="mdi-toilet" /></template></q-input>
+                </div>
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.garages') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.garages"
+                    type="number"
+                    :min="0"
+                  ><template v-slot:prepend><q-icon name="mdi-garage" /></template></q-input>
+                </div>
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.size') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.size"
+                    type="number"
+                    :min="0"
+                  >
+                    <template v-slot:prepend><q-icon name="mdi-tape-measure" /></template>
+                    <template v-slot:append><label class="mts-label">m<sup>2</sup></label></template>
+                  </q-input>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-8 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.features') }}</label>
+                  <div>
+                    <q-chip
+                      v-for="(feature, index) in propertyFeaturesList"
+                      :key="index"
+                      v-model:selected="feature.selected"
+                      color="secondary"
+                      text-color="primary"
+                      class="no-box-shadow"
+                    >
+                      {{ feature.name }}
+                    </q-chip>
+                  </div>
+                </div>
+              </div>
 
-  <q-dialog
-    v-model="propertyFormDialog"
-    full-height
-    position="right"
-    square
-    maximized
-  >
-    <q-card class="dialog-card">
-      <div class="q-pa-lg flex items-center dialog-title">
-        <h6 class="text-h6 q-ma-none">{{ $t('property.addProperty') }}</h6>
-        <q-space />
-        <q-icon name="close" size="sm" class="cursor-pointer" @click="propertyFormDialog = false" />
+              <div class="flex justify-end q-pa-sm">
+                <q-btn outline color="primary" icon="mdi-magnify" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </div>
       <q-separator />
-      <div class="q-pa-lg">
-        Formulario de propiedad
+      <div class="q-px-md q-py-lg flex justify-end gap-md">
+        <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+        <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="createProperty">{{ $t('property.addProperty') }}</q-btn>
       </div>
+      <q-table
+        hide-bottom
+        row-key="name"
+        :rows="propertyList"
+        :columns="columns"
+        :hide-pagination="true"
+        :rows-per-page-options="[0]"
+      >
+        <template v-slot:body-cell-title="props">
+          <q-td :props="props">
+            <div class="flex items-center gap-sm">
+              <q-avatar rounded size="40px" color="primary" text-color="white">
+                <img :src="props.row.images.length > 0 ? props.row.images[0].url : 'https://i.ibb.co/0Jmshvb/no-image.png'" alt="">
+              </q-avatar>
+              {{ props.row.title }}
+            </div>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-type="props">
+          <q-td :props="props">{{ props.row.type.name }}</q-td>
+        </template>
+        <template v-slot:body-cell-available_for="props">
+          <q-td :props="props">
+            <span class="flex items-center gap-xs text-capitalize">
+              <span class="relative-position flex items-center justify-center" style="width: 30px; height: 30px;">
+                <span
+                  class="absolute full-width full-height border-radius"
+                  style="top: 0; left: 0; opacity: 0.2;"
+                  :style="{ background: props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
+                ></span>
+                <q-icon
+                  size="xs"
+                  :name="props.row.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
+                  :color="props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
+                />
+              </span>
+              {{ props.row.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
+            </span>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-price="props">
+          <q-td :props="props">${{ props.row.price }}</q-td>
+        </template>
+        <template v-slot:body-cell-p_state="props">
+          <q-td :props="props">
+            <span class="relative-position q-pa-xs">
+              <span
+                class="absolute full-width full-height"
+                style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
+                :style="{ background: props.row.p_state.color }"
+              ></span>
+              <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.p_state.color }"> {{ props.row.p_state.name }} </span>
+            </span>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-actions="props">
+          <q-td :props="props" class="actions">
+            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="editProperty(props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteProperty(props.row.id)"></q-btn>
+          </q-td>
+        </template>
+      </q-table>
     </q-card>
-  </q-dialog>
+
+    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
+      <q-spinner color="primary" size="3em" />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router'
+// Interfaces
+import type {
+  PropertyDropdownInterface,
+  PropertyFeatureDropdownInterface,
+  PropertyFiltersInterface
+} from 'src/interfaces/property.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Services
+import PropertiesService from 'src/services/properties.service';
+import AgentsService from 'src/services/agents.service';
 
 const { t } = useI18n();
-
-const propertyFormDialog = ref(false);
-
-const roleFilter = ref('');
-const textSearch = ref('');
-
-const roleOptions = [
-  { label: 'Lead', value: 'lead' },
-  { label: 'Client', value: 'client' },
-  { label: 'Select role', value: '' }
-]
+const router = useRouter();
 
 const columns = [
-  { name: 'name', label: t('menu.user'), field: 'name', align: 'left' },
-  { name: 'email', label: t('global.email'), field: 'email', align: 'left' },
-  { name: 'role', label: t('global.role'), field: 'role', align: 'left' },
+  { name: 'title', label: t('property.title'), field: 'title', align: 'left' },
+  { name: 'type', label: t('property.form.type'), field: 'type', align: 'left' },
+  { name: 'available_for', label: t('property.form.availableFor'), field: 'available_for', align: 'left' },
+  { name: 'city', label: t('property.form.city'), field: 'city', align: 'left' },
+  { name: 'price', label: t('property.form.price'), field: 'price', align: 'left' },
+  { name: 'p_state', label: t('property.form.state'), field: 'p_state', align: 'left' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
-const rows = [
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-1-DL1ARROH.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Lead' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-2-D-0hhBDR.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Lead' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-1-DL1ARROH.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Client' },
-  { image: 'https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-2-D-0hhBDR.png', name: 'José Pérez', email: 'joseperez@mail.com', role: 'Client' },
+const availableFor = [
+  { label: t('property.sale'), value: GLOBAL.SALE },
+  { label: t('property.rental'), value: GLOBAL.RENTAL },
 ]
+
+const isLoading = ref(false);
+
+const filters = ref<PropertyFiltersInterface>({
+  available_for: {
+    label: '',
+    value: ''
+  },
+  agent: {
+    id: '',
+    name: ''
+  },
+  type: {
+    id: '',
+    name: ''
+  },
+  state: {
+    id: '',
+    name: ''
+  },
+  bedrooms: '',
+  bathrooms: '',
+  garages: '',
+  size: '',
+  address: '',
+  price: {
+    min: 0,
+    max: 0
+  },
+  features: []
+});
+
+const propertyFeaturesList: Ref<PropertyFeatureDropdownInterface[]> = ref([]);
+const propertyStatesList: Ref<PropertyDropdownInterface[]> = ref([]);
+const propertyAgentsList: Ref<PropertyDropdownInterface[]> = ref([]);
+const propertyTypesList: Ref<PropertyDropdownInterface[]> = ref([]);
+
+const propertyList = ref([]);
+
+const getFilterOptions = async () => {
+  let response;
+
+  response = await PropertiesService.getPropertyFeatures();
+  propertyFeaturesList.value = response?.data?.data.map((feature: any) => ({
+    id: feature.id,
+    name: feature.name,
+    selected: false,
+  }));
+
+  response = await PropertiesService.getPropertyStates();
+  propertyStatesList.value = response?.data?.data.map((state: any) => ({
+    id: state.id,
+    name: state.name,
+  }));
+
+  response = await AgentsService.getAgents();
+  propertyAgentsList.value = response?.data?.data?.items.map((agent: any) => ({
+    id: agent.ID,
+    name: agent.display_name,
+  }));
+
+  response = await PropertiesService.getPropertyTypes();
+  propertyTypesList.value = response?.data?.data.map((type: any) => ({
+    id: type.id,
+    name: type.name,
+  }));
+}
+
+/**
+ *
+ */
+const getProperties = async () => {
+  const { data } = await PropertiesService.getProperties();
+
+  if (data) {
+    propertyList.value = data?.data?.items;
+  }
+}
+
+/**
+ *
+ */
+const applyFilters = () => {
+  filters.value.features = [];
+
+  const features = propertyFeaturesList.value.filter(item => item.selected).map(item => item.id);
+  if (features.length > 0) {
+    features.forEach((feature: string) => {
+      filters.value.features.push(feature);
+    })
+  }
+
+  // TODO: Call API to get filtered properties
+}
+
+/**
+ *
+ */
+const createProperty = () => {
+  router.push({ name: 'propertyCreate' });
+}
+
+/**
+ *
+ */
+const editProperty = (id: string) => {
+  router.push({ name: 'propertyEdit', params: { id: id } });
+}
+
+/**
+ *
+ */
+const deleteProperty = async (id: string) => {
+  await PropertiesService.deleteProperty(id);
+  await getProperties();
+}
+
+onMounted(async () => {
+  isLoading.value = true;
+
+  await getFilterOptions();
+  await getProperties();
+
+  isLoading.value = false;
+})
 </script>
 
 <style scoped lang="scss">
 .property-container {
-  .filters-section .q-select {
-    width: 30%;
+  .filters-section {
+    :deep(.q-item) {
+      display: flex;
+      justify-content: space-between;
+      padding: 0;
+    }
+
+    :deep(.q-item .q-focus-helper) {
+      display: none;
+    }
+
+    :deep(.q-item .q-item__section) {
+      padding: 0;
+    }
+
+    .mts-label {
+      font-size: 13px;
+    }
+
+    :deep(.q-chip--selected) {
+      background-color: var(--q-primary) !important;
+    }
+
+    :deep(.q-chip--selected .q-chip__icon),
+    :deep(.q-chip--selected .q-chip__content) {
+      color: white !important;
+    }
   }
 }
 </style>

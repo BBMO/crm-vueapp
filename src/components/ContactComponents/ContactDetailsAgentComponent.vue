@@ -1,8 +1,8 @@
 <template>
   <q-card class="full-width">
     <div class="q-pa-md flex items-center justify-between">
-      <h6 class="text-subtitle1 q-ma-none text-weight-medium">{{ $t('user.userList') }}</h6>
-      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false">{{ $t('user.addUser') }}</q-btn>
+      <h6 class="text-subtitle1 q-ma-none text-weight-medium">{{ $t('agent.userList') }}</h6>
+      <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false">{{ $t('agent.addUser') }}</q-btn>
     </div>
     <q-table
       hide-bottom

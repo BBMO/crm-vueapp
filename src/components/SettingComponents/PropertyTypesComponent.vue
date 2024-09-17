@@ -11,6 +11,8 @@
         row-key="name"
         :rows="propertyTypesList"
         :columns="columns"
+        :hide-pagination="true"
+        :rows-per-page-options="[0]"
       >
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
@@ -61,8 +63,8 @@ import BasicFormComponent from 'components/SettingComponents/Forms/BasicFormComp
 const { t } = useI18n();
 
 const columns = [
-  { name: 'name', label: t('global.name'), field: 'name', align: 'left' },
-  { name: 'properties', label: t('global.quantity'), field: 'properties', align: 'center' },
+  { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
+  { name: 'properties', label: t('setting.quantity'), field: 'properties', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 

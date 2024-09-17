@@ -52,10 +52,10 @@ const activePath = ref(route.meta?.module);
 
 const menuItems = [
   { path: 'home', icon: 'mdi-view-dashboard-outline', label: 'dashboard' },
-  { path: 'user', icon: 'mdi-badge-account-outline', label: 'user' },
-  { path: 'contact', icon: 'mdi-account-outline', label: 'contact' },
+  { path: 'agents', icon: 'mdi-badge-account-outline', label: 'agent' },
+  { path: 'contacts', icon: 'mdi-account-outline', label: 'contact' },
   { path: 'calendar', icon: 'mdi-calendar-month-outline', label: 'calendar' },
-  { path: 'property', icon: 'mdi-home-silo-outline', label: 'properties' },
+  { path: 'properties', icon: 'mdi-home-silo-outline', label: 'properties' },
   { path: 'settings', icon: 'mdi-cog-outline', label: 'settings' },
 ]
 

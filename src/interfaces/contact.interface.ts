@@ -8,3 +8,9 @@ export interface ContactFormInterface {
   interest: string
   type: string
 }
+
+export interface ContactDetailsInterface extends ContactFormInterface {
+  attachment_id: string
+  created_at: string
+  updated_at: string
+}

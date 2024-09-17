@@ -80,6 +80,8 @@
           outlined
           dense
           v-model="form.type"
+          option-label="label"
+          option-value="value"
           :options="typeContact"
           :label="$t('contact.form.type')"
           :rules="[
@@ -120,7 +122,7 @@ const form = ref({
   phone: '',
   address: '',
   interest: '',
-  type: '',
+  type: 'lead',
   attachment: null as string | null,
 });
 const formRef = ref();
