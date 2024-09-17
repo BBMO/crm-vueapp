@@ -432,49 +432,33 @@ const removeFile = async (index: number, image: PropertyImageInterface) => {
 /**
  *
  */
-const selectPropertyFeatures = async () => {
-  const { data } = await PropertiesService.getPropertyFeatures();
+const getDropdownConfiguration = async () => {
+  let response;
 
-  if (data) {
-    propertyFeaturesList.value = data?.data.map((feature: any) => ({
-      id: feature.id,
-      name: feature.name,
-      selected: false,
-    }));
-  }
-}
+  response = await PropertiesService.getPropertyFeatures();
+  propertyFeaturesList.value = response?.data?.data.map((feature: any) => ({
+    id: feature.id,
+    name: feature.name,
+    selected: false,
+  }));
 
-const selectPropertyStates = async () => {
-  const { data } = await PropertiesService.getPropertyStates();
+  response = await PropertiesService.getPropertyStates();
+  propertyStatesList.value = response?.data?.data.map((state: any) => ({
+    id: state.id,
+    name: state.name,
+  }));
 
-  if (data) {
-    propertyStatesList.value = data?.data.map((state: any) => ({
-      id: state.id,
-      name: state.name,
-    }));
-  }
-}
+  response = await AgentsService.getAgents();
+  propertyAgentsList.value = response?.data?.data?.items.map((agent: any) => ({
+    id: agent.ID,
+    name: agent.display_name,
+  }));
 
-const selectAgents = async () => {
-  const { data } = await AgentsService.getAgents();
-
-  if (data) {
-    propertyAgentsList.value = data?.data?.items.map((agent: any) => ({
-      id: agent.ID,
-      name: agent.display_name,
-    }));
-  }
-}
-
-const selectPropertyTypes = async () => {
-  const { data } = await PropertiesService.getPropertyTypes();
-
-  if (data) {
-    propertyTypesList.value = data?.data.map((type: any) => ({
-      id: type.id,
-      name: type.name,
-    }));
-  }
+  response = await PropertiesService.getPropertyTypes();
+  propertyTypesList.value = response?.data?.data.map((type: any) => ({
+    id: type.id,
+    name: type.name,
+  }));
 }
 
 /**
@@ -574,10 +558,7 @@ const saveProperty = async () => {
 onMounted(async () => {
   isLoading.value = true;
 
-  await selectPropertyFeatures();
-  await selectPropertyStates();
-  await selectAgents();
-  await selectPropertyTypes();
+  await getDropdownConfiguration();
 
   if (route.params.id) {
     isEditProperty.value = true;

@@ -1,7 +1,7 @@
 export interface CalendarDropdownInterface {
   id: string
   name: string
-  color: string
+  color?: string
   selected?: boolean
 }
 

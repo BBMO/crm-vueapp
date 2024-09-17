@@ -6,13 +6,15 @@
 
     <div class="sidebar-body">
       <div class="sidebar-select q-mt-md q-mb-lg">
+        <label>{{ $t('calendar.agents') }}</label>
         <q-select
           outlined
           dense
           v-model="agent"
-          :label="$t('calendar.agents')"
-          :options="agents"
-        ></q-select>
+          option-label="name"
+          option-value="id"
+          :options="agentsList"
+        ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
       </div>
 
       <div class="sidebar-agent flex items-center q-mb-xl">
@@ -51,6 +53,7 @@ import type { Ref } from 'vue';
 import type { CalendarDropdownInterface } from 'src/interfaces/calendar.interface';
 // Services
 import CalendarService from 'src/services/calendar.service';
+import AgentsService from 'src/services/agents.service';
 // Store
 import { useCalendarStore } from 'src/stores/calendar.store';
 
@@ -67,6 +70,7 @@ const agents = [
 ];
 
 const quoteCategoriesList: Ref<CalendarDropdownInterface[]> = ref([]);
+const agentsList: Ref<CalendarDropdownInterface[]> = ref([]);
 
 /**
  *
@@ -80,6 +84,17 @@ const getQuoteCategories = async () => {
     selected: false,
   }));
 };
+
+/**
+ *
+ */
+const getAgents = async () => {
+  const { data } = await AgentsService.getAgents();
+  agentsList.value = data?.data?.items.map((agent: any) => ({
+    id: agent.ID,
+    name: agent.display_name,
+  }));
+}
 
 /**
  *
@@ -98,6 +113,7 @@ const addEvent = () => {
 
 onMounted(() => {
   getQuoteCategories();
+  getAgents();
 });
 </script>
 

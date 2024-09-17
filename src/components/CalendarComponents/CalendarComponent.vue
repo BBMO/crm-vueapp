@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Ref } from 'vue';
 import { colors } from 'quasar';
 // Libraries
@@ -89,7 +89,11 @@ const calendarOptions = {
   dayMaxEventRows: 3,
   dateClick: dateClick,
   datesSet: (dateInfo: any) => {
-    currentYear.value = new Date(dateInfo.view.currentStart).getFullYear();
+    const year = new Date(dateInfo.view.currentStart).getFullYear();
+    if (year !== currentYear.value) {
+      currentYear.value = year;
+      getQuote();
+    }
   },
   eventClick: (info: any) => {
     eventModeEdit.value = true;
@@ -176,10 +180,6 @@ watch(
     getQuoteFiltered();
   }
 );
-
-onMounted(() => {
-  getQuote();
-});
 </script>
 
 <style lang="scss" scoped>
