@@ -30,9 +30,12 @@ export interface CalendarEventFormInterface {
 export interface CalendarEventDetailsInterface {
   id: string
   title: string
-  category: string
-  start: string
-  end: string
+  start_date: string
+  end_date: string
   location: string
-  description: string
+  observations: string
+  category_id: string
+  agent_id: string
+  created_at: string
+  updated_at: string
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-form ref="formRef" @submit="saveQuote">
+    <q-form v-if="!isLoading" ref="formRef" @submit="saveQuote">
       <div class="q-py-xs">
         <label>{{ $t('calendar.form.title') }}</label>
         <q-input
@@ -117,7 +117,7 @@
           ]"
         ></q-input>
       </div>
-      <div class="q-py-xs">
+      <div class="q-pt-xs q-pb-md">
         <label>{{ $t('calendar.form.agent') }}</label>
         <q-select
           outlined
@@ -126,26 +126,25 @@
           option-label="name"
           option-value="id"
           :options="agentsSelect"
-          :rules="[
-            (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
-          ]"
         ></q-select>
       </div>
       <div class="q-py-md">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
       </div>
+      <div v-if="props.isEdit" class="q-py-sm">
+        <q-btn
+          outline
+          dense
+          color="negative"
+          icon="delete"
+          :ripple="false"
+          class="full-width no-box-shadow text-capitalize q-px-sm"
+          @click="deleteQuote()"
+        >{{ $t('calendar.deleteEvent') }}</q-btn>
+      </div>
     </q-form>
-
-    <div v-if="props.isEdit" class="q-py-sm">
-      <q-btn
-        outline
-        dense
-        color="negative"
-        icon="delete"
-        :ripple="false"
-        class="full-width no-box-shadow text-capitalize q-px-sm"
-        @click="deleteQuote()"
-      >{{ $t('calendar.deleteEvent') }}</q-btn>
+    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
+      <q-spinner color="primary" size="3em" />
     </div>
   </div>
 </template>
@@ -155,7 +154,7 @@ import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 // Interfaces
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
-import type { CalendarDropdownInterface, CalendarEventFormInterface } from 'src/interfaces/calendar.interface';
+import type { CalendarDropdownInterface, CalendarEventFormInterface, CalendarEventDetailsInterface } from 'src/interfaces/calendar.interface';
 // Composable
 import useValidate  from 'src/composable/useValidate';
 // Services
@@ -164,12 +163,14 @@ import AgentsService from 'src/services/agents.service';
 
 interface Props {
   isEdit: boolean | false;
+  quoteId?: string;
 }
 const props = defineProps<Props>();
 const emit = defineEmits(['closeEventDialog']);
 
 const { validateRequired, validateRequiredSelect } = useValidate();
 
+const isLoading = ref(false);
 const isLoadingSave = ref(false);
 
 const form = ref<CalendarEventFormInterface>({
@@ -188,6 +189,8 @@ const form = ref<CalendarEventFormInterface>({
   }
 });
 const formRef = ref();
+
+const quoteDetails = ref<CalendarEventDetailsInterface | null>(null);
 
 const quoteCategoriesSelect: Ref<CalendarDropdownInterface[]> = ref([]);
 const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
@@ -230,9 +233,17 @@ const saveQuote = async () => {
         location: form.value.location,
         observations: form.value.description,
         category_id: form.value.category.id,
+        agent_id: form.value.agent?.id,
       };
 
-      await CalendarService.createQuote(payload);
+      if (!payload.agent_id) delete payload.agent_id;
+
+      if (props.isEdit) {
+        if (props.quoteId) await CalendarService.updateQuote(props.quoteId, payload);
+      } else {
+        await CalendarService.createQuote(payload);
+      }
+
       emit('closeEventDialog');
     } catch (error) {
       console.error(error);
@@ -246,16 +257,42 @@ const saveQuote = async () => {
  *
  */
 const deleteQuote = async () => {
-  // await CalendarService.deleteQuote(quoteId);
-  emit('closeEventDialog');
+  if (props.quoteId) {
+    await CalendarService.deleteQuote(props.quoteId);
+    emit('closeEventDialog');
+  }
 }
 
 onMounted( async () => {
+  isLoading.value = true;
+
   await getSelectsData();
 
-  if (props.isEdit) {
-    console.log('Formulation edit');
+  if (props.isEdit && props.quoteId) {
+    const { data } = await CalendarService.getQuote(props.quoteId);
+    quoteDetails.value = data?.data;
+
+    if (quoteDetails.value) {
+      form.value = {
+        ...form.value,
+        title: quoteDetails.value.title,
+        category: {
+          id: quoteDetails.value.category_id,
+          name: quoteCategoriesSelect.value.find((category: CalendarDropdownInterface) => category.id === quoteDetails.value?.category_id)?.name || '',
+        },
+        startDate: quoteDetails.value.start_date,
+        endDate: quoteDetails.value.end_date,
+        location: quoteDetails.value.location,
+        description: quoteDetails.value.observations,
+        agent: {
+          id: quoteDetails.value.agent_id,
+          name: agentsSelect.value.find((agent: CommonSelectInterface) => agent.id === quoteDetails.value?.agent_id)?.name || '',
+        }
+      }
+    }
   }
+
+  isLoading.value = false;
 });
 </script>
 

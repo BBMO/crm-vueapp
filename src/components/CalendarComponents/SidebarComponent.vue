@@ -14,19 +14,12 @@
           option-label="name"
           option-value="id"
           :options="agentsList"
+          @update:modelValue="agentSelect"
         ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
       </div>
 
-      <div class="sidebar-agent flex items-center q-mb-xl">
-        <q-avatar size="40px" color="primary" text-color="white"><img src="https://cdn.quasar.dev/img/boy-avatar.png" alt=""></q-avatar>
-        <div class="q-ml-md">
-          <div class="text-subtitle1 q-ma-none text-weight-medium">John Doe</div>
-          <div class="text-caption text-grey">Agent</div>
-        </div>
-      </div>
-
-      <div class="sidebar-filter">
-        <div class="text-subtitle1 text-weight-medium q-mb-lg">{{ $t('calendar.filter') }}</div>
+      <div class="sidebar-filter q-mt-lg">
+        <div class="text-subtitle1 text-weight-medium q-mb-md">{{ $t('calendar.filter') }}</div>
         <div v-for="item in quoteCategoriesList" :key="item.id" class="sidebar-filter-item q-mb-md">
           <q-checkbox
             dense
@@ -63,12 +56,6 @@ const calendarStore = useCalendarStore();
 
 const agent = ref(null);
 
-const agents = [
-  { label: 'John Doe', value: 'john_doe' },
-  { label: 'Jane Doe', value: 'jane_doe' },
-  { label: 'John Smith', value: 'john_smith' },
-];
-
 const quoteCategoriesList: Ref<CalendarDropdownInterface[]> = ref([]);
 const agentsList: Ref<CalendarDropdownInterface[]> = ref([]);
 
@@ -103,6 +90,13 @@ const categoriesSelect = () => {
   const selectedIds = quoteCategoriesList.value.filter(item => item.selected).map(item => item.id);
   calendarStore.setCategoriesFilter(selectedIds);
 };
+
+/**
+ *
+ */
+const agentSelect = (agent: { name: string, id: string }) => {
+  calendarStore.setAgentFilter(agent.id);
+}
 
 /**
  *

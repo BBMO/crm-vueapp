@@ -28,6 +28,10 @@ class CalendarService {
     return api.get(`/quotes?year=${year}`);
   }
 
+  getQuote(id: string): AxiosPromise {
+    return api.get(`/quote/${id}`);
+  }
+
   createQuote(payload: object): AxiosPromise {
     return api.post('/quote', payload);
   }

@@ -29,6 +29,7 @@
         <div class="q-pa-lg">
           <EventFormComponent
             :is-edit="eventModeEdit"
+            :quote-id="currentQuoteId"
             @closeEventDialog="closeEventDialog"
           />
         </div>
@@ -65,6 +66,7 @@ const eventModeEdit = ref(false);
 
 const calendar = ref(null);
 const currentYear = ref();
+const currentQuoteId = ref('');
 
 const quotesScheduled: Ref<CalendarEventInterface[]> = ref([]);
 
@@ -141,7 +143,9 @@ const getQuote = async () => {
 const getQuoteFiltered = () => {
   calendar.value?.getApi().removeAllEvents();
 
-  const quotesToAdd = categoriesFilter.value.length === 0
+  let quotesToAdd;
+
+  quotesToAdd = categoriesFilter.value.length === 0
     ? quotesScheduled.value
     : quotesScheduled.value.filter((quote: CalendarEventInterface) =>
       categoriesFilter.value.includes(quote.categoryId)
@@ -154,7 +158,7 @@ const getQuoteFiltered = () => {
  *
  */
 const detailsQuote = async (quoteId: string) => {
-  console.log(quoteId);
+  currentQuoteId.value = quoteId;
   eventDialog.value = true;
 };
 
@@ -180,6 +184,7 @@ watch(
     getQuoteFiltered();
   }
 );
+
 </script>
 
 <style lang="scss" scoped>
