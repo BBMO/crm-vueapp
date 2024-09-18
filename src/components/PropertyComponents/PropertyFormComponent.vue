@@ -51,7 +51,7 @@
                     option-value="value"
                     :options="availableFor"
                     :rules="[
-                      (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+                      (val: any) => validateRequiredSelect(val.value) || $t('validation.requiredField'),
                     ]"
                   ><template v-slot:prepend><q-icon name="mdi-finance" /></template></q-select>
                 </div>
@@ -152,7 +152,7 @@
                 option-value="id"
                 :options="propertyStatesList"
                 :rules="[
-                  (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+                  (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
               ></q-select>
             </div>
@@ -166,7 +166,7 @@
                 option-value="id"
                 :options="propertyAgentsList"
                 :rules="[
-                  (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+                  (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
               ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
             </div>
@@ -180,7 +180,7 @@
                 option-value="id"
                 :options="propertyTypesList"
                 :rules="[
-                  (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+                  (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
               ><template v-slot:prepend><q-icon name="mdi-home-city-outline" /></template></q-select>
             </div>

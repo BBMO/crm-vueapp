@@ -1,3 +1,5 @@
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
+
 export interface CalendarDropdownInterface {
   id: string
   name: string
@@ -13,6 +15,16 @@ export interface CalendarEventInterface {
   backgroundColor: string
   textColor: string
   categoryId: string
+}
+
+export interface CalendarEventFormInterface {
+  title: string
+  category: CommonSelectInterface
+  startDate: string
+  endDate: string
+  location: string
+  description: string
+  agent?: CommonSelectInterface
 }
 
 export interface CalendarEventDetailsInterface {

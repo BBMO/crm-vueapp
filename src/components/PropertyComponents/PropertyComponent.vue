@@ -34,7 +34,7 @@
                     v-model="filters.agent"
                     option-label="name"
                     option-value="id"
-                    :options="propertyAgentsList"
+                    :options="propertyAgentsSelect"
                   ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
@@ -56,7 +56,7 @@
                     v-model="filters.type"
                     option-label="name"
                     option-value="id"
-                    :options="propertyTypesList"
+                    :options="propertyTypesSelect"
                   ><template v-slot:prepend><q-icon name="mdi-home-city-outline" /></template></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
@@ -78,7 +78,7 @@
                     v-model="filters.state"
                     option-label="name"
                     option-value="id"
-                    :options="propertyStatesList"
+                    :options="propertyStatesSelect"
                   ></q-select>
                 </div>
               </div>
@@ -114,25 +114,26 @@
                   ><template v-slot:prepend><q-icon name="mdi-garage" /></template></q-input>
                 </div>
                 <div class="col-sm-3 col-12 q-pa-sm">
-                  <label>{{ $t('property.form.size') }}</label>
-                  <q-input
-                    outlined
-                    dense
+                  <label>{{ $t('property.form.size') }} m<sup>2</sup></label>
+                  <q-range
+                    label-always
+                    switch-label-side
                     v-model="filters.size"
-                    type="number"
+                    color="primary"
+                    class="q-px-sm"
                     :min="0"
-                  >
-                    <template v-slot:prepend><q-icon name="mdi-tape-measure" /></template>
-                    <template v-slot:append><label class="mts-label">m<sup>2</sup></label></template>
-                  </q-input>
+                    :max="50"
+                    :left-label-value="filters.size.min"
+                    :right-label-value="filters.size.max"
+                  />
                 </div>
               </div>
               <div class="row">
-                <div class="col-sm-8 col-12 q-pa-sm">
+                <div class="col-12 q-pa-sm">
                   <label>{{ $t('property.form.features') }}</label>
                   <div>
                     <q-chip
-                      v-for="(feature, index) in propertyFeaturesList"
+                      v-for="(feature, index) in propertyFeaturesSelect"
                       :key="index"
                       v-model:selected="feature.selected"
                       color="secondary"
@@ -233,11 +234,8 @@ import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router'
 // Interfaces
-import type {
-  PropertyDropdownInterface,
-  PropertyFeatureDropdownInterface,
-  PropertyFiltersInterface
-} from 'src/interfaces/property.interface';
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
+import type { PropertyFiltersInterface } from 'src/interfaces/property.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Services
@@ -284,7 +282,10 @@ const filters = ref<PropertyFiltersInterface>({
   bedrooms: '',
   bathrooms: '',
   garages: '',
-  size: '',
+  size: {
+    min: 0,
+    max: 0
+  },
   address: '',
   price: {
     min: 0,
@@ -293,10 +294,10 @@ const filters = ref<PropertyFiltersInterface>({
   features: []
 });
 
-const propertyFeaturesList: Ref<PropertyFeatureDropdownInterface[]> = ref([]);
-const propertyStatesList: Ref<PropertyDropdownInterface[]> = ref([]);
-const propertyAgentsList: Ref<PropertyDropdownInterface[]> = ref([]);
-const propertyTypesList: Ref<PropertyDropdownInterface[]> = ref([]);
+const propertyFeaturesSelect: Ref<CommonSelectInterface[]> = ref([]);
+const propertyStatesSelect: Ref<CommonSelectInterface[]> = ref([]);
+const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
+const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
 
 const propertyList = ref([]);
 
@@ -304,26 +305,26 @@ const getFilterOptions = async () => {
   let response;
 
   response = await PropertiesService.getPropertyFeatures();
-  propertyFeaturesList.value = response?.data?.data.map((feature: any) => ({
+  propertyFeaturesSelect.value = response?.data?.data.map((feature: any) => ({
     id: feature.id,
     name: feature.name,
     selected: false,
   }));
 
   response = await PropertiesService.getPropertyStates();
-  propertyStatesList.value = response?.data?.data.map((state: any) => ({
+  propertyStatesSelect.value = response?.data?.data.map((state: any) => ({
     id: state.id,
     name: state.name,
   }));
 
   response = await AgentsService.getAgents();
-  propertyAgentsList.value = response?.data?.data?.items.map((agent: any) => ({
+  propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
     id: agent.ID,
     name: agent.display_name,
   }));
 
   response = await PropertiesService.getPropertyTypes();
-  propertyTypesList.value = response?.data?.data.map((type: any) => ({
+  propertyTypesSelect.value = response?.data?.data.map((type: any) => ({
     id: type.id,
     name: type.name,
   }));
@@ -334,10 +335,7 @@ const getFilterOptions = async () => {
  */
 const getProperties = async () => {
   const { data } = await PropertiesService.getProperties();
-
-  if (data) {
-    propertyList.value = data?.data?.items;
-  }
+  propertyList.value = data?.data?.items;
 }
 
 /**
@@ -346,7 +344,7 @@ const getProperties = async () => {
 const applyFilters = () => {
   filters.value.features = [];
 
-  const features = propertyFeaturesList.value.filter(item => item.selected).map(item => item.id);
+  const features = propertyFeaturesSelect.value.filter(item => item.selected).map(item => item.id);
   if (features.length > 0) {
     features.forEach((feature: string) => {
       filters.value.features.push(feature);
@@ -403,10 +401,6 @@ onMounted(async () => {
 
     :deep(.q-item .q-item__section) {
       padding: 0;
-    }
-
-    .mts-label {
-      font-size: 13px;
     }
 
     :deep(.q-chip--selected) {

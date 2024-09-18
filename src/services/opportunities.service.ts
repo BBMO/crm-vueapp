@@ -20,6 +20,25 @@ class OpportunitiesService {
   deleteOpportunityState(id: string): AxiosPromise {
     return api.delete(`/opportunity-state/${id}`);
   }
+
+  /**
+   *
+   */
+  getOpportunities(): AxiosPromise {
+    return api.get('/opportunities');
+  }
+
+  createOpportunity(payload: object): AxiosPromise {
+    return api.post('/opportunity', payload);
+  }
+
+  updateOpportunity(id: string, payload: object): AxiosPromise {
+    return api.put(`/opportunity/${id}`, payload);
+  }
+
+  deleteOpportunity(id: string): AxiosPromise {
+    return api.delete(`/opportunity/${id}`);
+  }
 }
 
 export default new OpportunitiesService();

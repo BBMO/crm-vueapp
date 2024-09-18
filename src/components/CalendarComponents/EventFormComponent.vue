@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pt-md">
+  <div>
     <q-form ref="formRef" @submit="saveQuote">
       <div class="q-py-xs">
         <label>{{ $t('calendar.form.title') }}</label>
@@ -20,13 +20,12 @@
           v-model="form.category"
           option-label="name"
           option-value="id"
-          :options="quoteCategoriesList"
+          :options="quoteCategoriesSelect"
           :rules="[
-            (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+            (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
         ></q-select>
       </div>
-
       <div class="q-py-xs">
         <label>{{ $t('calendar.form.startDate') }}</label>
         <q-input
@@ -118,21 +117,36 @@
           ]"
         ></q-input>
       </div>
+      <div class="q-py-xs">
+        <label>{{ $t('calendar.form.agent') }}</label>
+        <q-select
+          outlined
+          dense
+          v-model="form.agent"
+          option-label="name"
+          option-value="id"
+          :options="agentsSelect"
+          :rules="[
+            (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
+          ]"
+        ></q-select>
+      </div>
       <div class="q-py-md">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
       </div>
-      <div v-if="props.isEdit" class="q-py-sm">
-        <q-btn
-          outline
-          dense
-          color="negative"
-          icon="delete"
-          :ripple="false"
-          class="full-width no-box-shadow text-capitalize q-px-sm"
-          @click="deleteQuote()"
-        >{{ $t('calendar.deleteEvent') }}</q-btn>
-      </div>
     </q-form>
+
+    <div v-if="props.isEdit" class="q-py-sm">
+      <q-btn
+        outline
+        dense
+        color="negative"
+        icon="delete"
+        :ripple="false"
+        class="full-width no-box-shadow text-capitalize q-px-sm"
+        @click="deleteQuote()"
+      >{{ $t('calendar.deleteEvent') }}</q-btn>
+    </div>
   </div>
 </template>
 
@@ -140,11 +154,13 @@
 import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 // Interfaces
-import type { CalendarDropdownInterface } from 'src/interfaces/calendar.interface';
-// Composables
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
+import type { CalendarDropdownInterface, CalendarEventFormInterface } from 'src/interfaces/calendar.interface';
+// Composable
 import useValidate  from 'src/composable/useValidate';
 // Services
 import CalendarService from 'src/services/calendar.service';
+import AgentsService from 'src/services/agents.service';
 
 interface Props {
   isEdit: boolean | false;
@@ -156,7 +172,7 @@ const { validateRequired, validateRequiredSelect } = useValidate();
 
 const isLoadingSave = ref(false);
 
-const form = ref({
+const form = ref<CalendarEventFormInterface>({
   title: '',
   category: {
     id: '',
@@ -166,17 +182,30 @@ const form = ref({
   endDate: '',
   location: '',
   description: '',
+  agent: {
+    id: '',
+    name: '',
+  }
 });
 const formRef = ref();
 
-const quoteCategoriesList: Ref<CalendarDropdownInterface[]> = ref([]);
+const quoteCategoriesSelect: Ref<CalendarDropdownInterface[]> = ref([]);
+const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
 
 /**
  *
  */
-const getQuoteCategories = async () => {
-  const { data } = await CalendarService.getQuoteCategories();
-  quoteCategoriesList.value = data?.data;
+const getSelectsData = async () => {
+  let response;
+
+  response = await CalendarService.getQuoteCategories();
+  quoteCategoriesSelect.value = response.data?.data;
+
+  response = await AgentsService.getAgents();
+  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+    id: agent.ID,
+    name: agent.display_name,
+  }));
 };
 
 /**
@@ -205,8 +234,6 @@ const saveQuote = async () => {
 
       await CalendarService.createQuote(payload);
       emit('closeEventDialog');
-
-      console.log(payload);
     } catch (error) {
       console.error(error);
     }
@@ -224,7 +251,7 @@ const deleteQuote = async () => {
 }
 
 onMounted( async () => {
-  await getQuoteCategories();
+  await getSelectsData();
 
   if (props.isEdit) {
     console.log('Formulation edit');

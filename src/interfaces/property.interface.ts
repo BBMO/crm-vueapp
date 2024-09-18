@@ -27,11 +27,14 @@ export interface PropertyFiltersInterface {
   bedrooms: string
   bathrooms: string
   garages: string
-  size: string
+  size: {
+    min: number
+    max: number
+  }
   address: string
   price: {
     min: number
     max: number
-  },
+  }
   features: Array<string>
 }

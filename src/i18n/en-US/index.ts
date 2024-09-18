@@ -29,6 +29,7 @@ export default {
     agent: 'Agents',
     contact: 'Contacts',
     properties: 'Properties',
+    opportunities: 'Opportunities',
     settings: 'Settings',
   },
   validation: {
@@ -83,6 +84,7 @@ export default {
       allDay: 'All Day',
       location: 'Location',
       description: 'Description',
+      agent: 'Agent'
     },
     placeholder: {
       title: 'Meeting with Jane',
@@ -129,6 +131,18 @@ export default {
       type: 'Type',
       images: 'Images',
       features: 'Features'
+    }
+  },
+  opportunity: {
+    addOpportunity: 'Add Opportunity',
+    editOpportunity: 'Edit Opportunity',
+    form: {
+      contact: 'Contact',
+      agent: 'Agent',
+      amount: 'Amount',
+      property: 'Property',
+      availableFor: 'Available For',
+      state: 'State',
     }
   },
   setting: {
