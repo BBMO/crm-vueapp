@@ -61,7 +61,7 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openContactDetails(props.row.id)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.id)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteContact(props.row.id)"></q-btn>
           </q-td>
         </template>
@@ -86,9 +86,8 @@
           <contact-form-component
             ref="formData"
             :is-edit="formModeEdit"
-            :form-details="contactDetails"
           />
-          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveContact">{{ $t('global.save') }}</q-btn>
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-lg" @click="saveContact">{{ $t('global.save') }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -96,11 +95,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-// Interfaces
-import type { ContactFormInterface } from 'src/interfaces/contact.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Services
@@ -134,19 +131,10 @@ const contactFormDialog = ref(false);
 const isLoadingSave = ref(false);
 const formModeEdit = ref(false);
 
-const contactDetails = ref<ContactFormInterface>({
-  id: '',
-  first_name: '',
-  last_name: '',
-  email: '',
-  phone: '',
-  address: '',
-  interest: '',
-  type: '',
-});
-
 const formData = ref<typeof ContactFormComponent | null>(null);
 const contactList = ref([]);
+
+const contactId = computed(() => contactStore.getContactId);
 
 /**
  *
@@ -193,7 +181,7 @@ const saveContact = async () => {
     payload.append('type', formData.value?.formData.form.type);
 
     if (formModeEdit.value) {
-      await ContactsService.updateContact(contactDetails.value.id, payload);
+      await ContactsService.updateContact(contactId.value, payload);
     } else {
       await ContactsService.createContact(payload);
     }
@@ -216,12 +204,11 @@ const deleteContact = async (contactId: string) => {
 /**
  *
  */
-const openDialogSave = (modeEdit: boolean, details?: ContactFormInterface) => {
+const openDialogSave = (modeEdit: boolean, contactId?: string) => {
   formModeEdit.value = modeEdit;
 
-  if (details) {
-    contactDetails.value = details;
-  }
+  if (contactId)
+    contactStore.setContactId(contactId);
 
   contactFormDialog.value = true;
 }

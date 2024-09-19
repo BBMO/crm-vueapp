@@ -35,8 +35,8 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openAgentDetails(props.row.ID)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteContact(props.row.ID)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.ID)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteAgent(props.row.ID)"></q-btn>
           </q-td>
         </template>
       </q-table>
@@ -57,8 +57,11 @@
         </div>
         <q-separator />
         <div class="q-pa-lg">
-          Formulario
-          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveAgent">{{ $t('global.save') }}</q-btn>
+          <agent-form-component
+            ref="formData"
+            :is-edit="formModeEdit"
+          />
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-lg" @click="saveAgent">{{ $t('global.save') }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -73,6 +76,8 @@ import { useRouter } from 'vue-router';
 import AgentsService from 'src/services/agents.service';
 // Store
 import { useAgentStore } from 'src/stores/agent.store';
+// Components
+import AgentFormComponent from 'components/AgentComponents/AgentFormComponent.vue';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -90,6 +95,7 @@ const agentFormDialog = ref(false);
 const isLoadingSave = ref(false);
 const formModeEdit = ref(false);
 
+const formData = ref<typeof AgentFormComponent | null>(null);
 const agentList = ref([]);
 
 /**
@@ -114,27 +120,55 @@ const openAgentDetails = (agentId: string) => {
 /**
  *
  */
-const saveAgent = () => {
-
+const validateForm = async () => {
+  return await formData.value?.validateForm();
 }
 
 /**
  *
  */
-const deleteContact = async (agentId: string) => {
-  console.log(agentId);
+const saveAgent = async () => {
+  isLoadingSave.value = true;
+
+  if (await validateForm()) {
+    // TODO: Enviar en el formData la imagen del contacto
+
+    const payload = new FormData();
+    payload.append('username', formData.value?.formData.form.username);
+    payload.append('email', formData.value?.formData.form.email);
+    payload.append('password', formData.value?.formData.form.password);
+    payload.append('first_name', formData.value?.formData.form.first_name);
+    payload.append('last_name', formData.value?.formData.form.last_name);
+
+    if (formModeEdit.value) {
+      console.log('Update agent!!')
+    } else {
+      await AgentsService.createAgent(payload);
+    }
+
+    await getAgents();
+    agentFormDialog.value = false;
+  }
+
+  isLoadingSave.value = false;
+}
+
+/**
+ *
+ */
+const deleteAgent = async (agentId: string) => {
+  await AgentsService.deleteAgent(agentId);
   await getAgents();
 }
 
 /**
  *
  */
-const openDialogSave = (modeEdit: boolean, details?: any) => {
+const openDialogSave = (modeEdit: boolean, agentId?: string) => {
   formModeEdit.value = modeEdit;
 
-  if (details) {
-    console.log(details);
-  }
+  if (agentId)
+    agentStore.setAgentId(agentId);
 
   agentFormDialog.value = true;
 }

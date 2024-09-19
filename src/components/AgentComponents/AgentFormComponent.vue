@@ -21,29 +21,18 @@
         />
       </div>
       <div class="q-py-xs">
-        <label>{{ $t('contact.form.firstName') }}</label>
+        <label>{{ $t('agent.form.username') }}</label>
         <q-input
           outlined
           dense
-          v-model="form.first_name"
+          v-model="form.username"
           :rules="[
             (val: any) => validateRequired(val) || $t('validation.requiredField'),
           ]"
         ></q-input>
       </div>
       <div class="q-py-xs">
-        <label>{{ $t('contact.form.lastName') }}</label>
-        <q-input
-          outlined
-          dense
-          v-model="form.last_name"
-          :rules="[
-            (val: any) => validateRequired(val) || $t('validation.requiredField'),
-          ]"
-        ></q-input>
-      </div>
-      <div class="q-py-xs">
-        <label>{{ $t('contact.form.email') }}</label>
+        <label>{{ $t('agent.form.email') }}</label>
         <q-input
           outlined
           dense
@@ -54,41 +43,42 @@
         ></q-input>
       </div>
       <div class="q-py-xs">
-        <label>{{ $t('contact.form.phone') }}</label>
+        <label>{{ $t('agent.form.password') }}</label>
         <q-input
           outlined
           dense
-          v-model="form.phone"
+          v-model="form.password"
+          :type="isPwd ? 'password' : 'text'"
           :rules="[
             (val: any) => validateRequired(val) || $t('validation.requiredField'),
           ]"
-        ></q-input>
+        >
+          <template v-slot:append>
+            <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" size="xs" @click="isPwd = !isPwd"/>
+          </template>
+        </q-input>
       </div>
-      <div class="q-py-md">
-        <label>{{ $t('contact.form.address') }}</label>
+      <div class="q-py-xs">
+        <label>{{ $t('agent.form.firstName') }}</label>
         <q-input
           outlined
           dense
-          v-model="form.address"
+          v-model="form.first_name"
           :rules="[
             (val: any) => validateRequired(val) || $t('validation.requiredField'),
           ]"
         ></q-input>
       </div>
       <div class="q-py-xs">
-        <label>{{ $t('contact.form.type') }}</label>
-        <q-select
+        <label>{{ $t('agent.form.lastName') }}</label>
+        <q-input
           outlined
           dense
-          v-model="form.type"
-          option-label="label"
-          option-value="value"
-          :options="typeContact"
+          v-model="form.last_name"
           :rules="[
-            (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
+            (val: any) => validateRequired(val) || $t('validation.requiredField'),
           ]"
-          @update:modelValue="updateType"
-        ></q-select>
+        ></q-input>
       </div>
     </q-form>
     <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
@@ -99,46 +89,39 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
-import { useI18n } from 'vue-i18n';
-// Constants
-import { GLOBAL } from 'src/constants/global.constant';
+// Interfaces
+import { AgentFormInterface } from 'src/interfaces/agent.interface';
 // Composable
 import useValidate  from 'src/composable/useValidate';
 // Store
-import { useContactStore } from 'src/stores/contact.store';
+import { useAgentStore } from 'src/stores/agent.store';
 // Services
-import ContactsService from 'src/services/contacts.service';
+import AgentsService from 'src/services/agents.service';
 
 interface Props {
-  isEdit: boolean;
+  isEdit: boolean
 }
 const props = defineProps<Props>()
 
-const { t } = useI18n();
-const { validateRequired, validateRequiredSelect } = useValidate();
-const contactStore = useContactStore();
-
-const typeContact = [
-  { label: t('contact.client'), value: GLOBAL.CLIENT },
-  { label: t('contact.lead'), value: GLOBAL.LEAD },
-];
+const { validateRequired } = useValidate();
+const agentStore = useAgentStore();
 
 const isLoading = ref(false);
+const isPwd = ref(true);
 
 const fileInput = ref<HTMLElement | null>(null);
 
-const form = ref({
+const form = ref<AgentFormInterface>({
+  username: '',
+  email: '',
+  password: '',
   first_name: '',
   last_name: '',
-  email: '',
-  phone: '',
-  address: '',
-  type: '',
   attachment: null as string | null,
 });
 const formRef = ref();
 
-const contactId = computed(() => contactStore.getContactId);
+const agentId = computed(() => agentStore.getAgentId);
 const formData = computed(() => {
   return {
     form: form.value,
@@ -171,13 +154,6 @@ const updateImage = (event: any) => {
 /**
  *
  */
-const updateType = (type: {label: string, value: string}) => {
-  form.value.type = type.value;
-};
-
-/**
- *
- */
 const validateForm = async () => {
   return await formRef.value.validate();
 }
@@ -186,17 +162,8 @@ onMounted(async () => {
   if (props.isEdit) {
     isLoading.value = true;
 
-    const { data } = await ContactsService.getContact(contactId.value);
-    form.value = {
-      ...form.value,
-      first_name: data?.data.first_name,
-      last_name: data?.data.last_name,
-      email: data?.data.email,
-      phone: data?.data.phone,
-      address: data?.data.address,
-      type: data?.data.type,
-      attachment: null,
-    };
+    const { data } = await AgentsService.getAgent(agentId.value);
+    console.log(data?.data);
 
     isLoading.value = false;
   }

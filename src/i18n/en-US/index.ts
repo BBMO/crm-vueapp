@@ -51,12 +51,14 @@ export default {
     numberProperties: 'Number Properties',
     numberAgent: 'Number Agent',
     identification: 'Identification',
-    firstName: 'First Name',
-    lastName: 'Last Name',
-    email: 'Email',
-    phone: 'Phone',
-    address: 'Address',
-    name: 'Name'
+    name: 'Name',
+    form: {
+      username: 'Username',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email',
+      password: 'Password',
+    }
   },
   contact: {
     addContact: 'Add Contact',
