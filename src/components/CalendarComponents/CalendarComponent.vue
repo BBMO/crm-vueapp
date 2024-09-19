@@ -71,6 +71,7 @@ const currentQuoteId = ref('');
 const quotesScheduled: Ref<CalendarEventInterface[]> = ref([]);
 
 const categoriesFilter = computed(() => calendarStore.getCategoriesFilter);
+const agentFilter = computed(() => calendarStore.getAgentFilter);
 
 const dateClick = (info: any) => {
   if (calendar.value) {
@@ -130,6 +131,7 @@ const getQuote = async () => {
       backgroundColor: bgColor,
       textColor: quote.category.color,
       categoryId: quote.category.id,
+      agentId: quote.agent_id,
     };
   });
 
@@ -144,12 +146,23 @@ const getQuoteFiltered = () => {
   calendar.value?.getApi().removeAllEvents();
 
   let quotesToAdd;
+  if (agentFilter.value) {
+    quotesToAdd = quotesScheduled.value.filter((quote: CalendarEventInterface) =>
+      quote.agentId === agentFilter.value
+    );
+  } else {
+    quotesToAdd = categoriesFilter.value.length === 0
+      ? quotesScheduled.value
+      : quotesScheduled.value.filter((quote: CalendarEventInterface) =>
+        categoriesFilter.value.includes(quote.categoryId)
+      );
+  }
 
-  quotesToAdd = categoriesFilter.value.length === 0
-    ? quotesScheduled.value
-    : quotesScheduled.value.filter((quote: CalendarEventInterface) =>
+  if (agentFilter.value && categoriesFilter.value.length > 0) {
+    quotesToAdd = quotesToAdd.filter((quote: CalendarEventInterface) =>
       categoriesFilter.value.includes(quote.categoryId)
     );
+  }
 
   calendar.value?.getApi().addEventSource(quotesToAdd);
 };
@@ -180,6 +193,13 @@ const closeEventDialog = async () => {
 
 watch(
   () => categoriesFilter.value,
+  () => {
+    getQuoteFiltered();
+  }
+);
+
+watch(
+  () => agentFilter.value,
   () => {
     getQuoteFiltered();
   }

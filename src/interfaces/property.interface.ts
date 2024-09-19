@@ -29,7 +29,7 @@ export interface PropertyFiltersInterface {
     min: number
     max: number
   }
-  enabled: boolean
+  enabled: PropertyDropdownInterface
   features: Array<string>
 }
 

@@ -63,7 +63,13 @@
       <q-spinner color="primary" size="3em" />
     </div>
 
-    <q-dialog v-model="opportunityFormDialog" full-height position="right" square maximized>
+    <q-dialog
+      v-model="opportunityFormDialog"
+      full-height
+      position="right"
+      square
+      maximized
+    >
       <q-card class="dialog-card">
         <div class="q-pa-lg flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('opportunity.editOpportunity') : $t('opportunity.addOpportunity') }}</h6>
@@ -82,7 +88,10 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="opportunityFinishedDialog" persistent>
+    <q-dialog
+      v-model="opportunityFinishedDialog"
+      persistent
+    >
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap gap-sm">

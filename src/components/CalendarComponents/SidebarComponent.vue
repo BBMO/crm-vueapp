@@ -15,7 +15,10 @@
           option-value="id"
           :options="agentsList"
           @update:modelValue="agentSelect"
-        ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
+        >
+          <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+          <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" @click="cleanAgentSelect" /></template>
+        </q-select>
       </div>
 
       <div class="sidebar-filter q-py-md">
@@ -101,6 +104,14 @@ const agentSelect = (agent: { name: string, id: string }) => {
 /**
  *
  */
+const cleanAgentSelect = () => {
+  agent.value = null;
+  calendarStore.setAgentFilter(null);
+}
+
+/**
+ *
+ */
 const addEvent = () => {
   emit('openEventDialog');
 };
@@ -126,9 +137,15 @@ onMounted(() => {
 .sidebar-body {
   padding: 1.48rem;
 
-  .sidebar-agent {
+  .sidebar-select {
     .text-subtitle1 {
       line-height: 1.3;
+    }
+
+    .clean-agent {
+      font-size: 12px;
+      color: var(--q-negative);
+      line-height: 1;
     }
   }
 }

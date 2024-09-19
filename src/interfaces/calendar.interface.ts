@@ -15,6 +15,7 @@ export interface CalendarEventInterface {
   backgroundColor: string
   textColor: string
   categoryId: string
+  agentId: string
 }
 
 export interface CalendarEventFormInterface {

@@ -22,6 +22,7 @@ export default {
     searchFilters: 'Search filters',
     export: 'Export',
     filters: 'Filters',
+    cleanFilters: 'Clean filters',
     details: 'Details',
     general: 'General',
     security: 'Security'
@@ -120,6 +121,9 @@ export default {
     available: 'Available',
     rented: 'Rented',
     sold: 'Sold',
+    visible: 'Visible',
+    notVisible: 'Not Visible',
+    all: 'All',
     form: {
       name: 'Name',
       description: 'Description',

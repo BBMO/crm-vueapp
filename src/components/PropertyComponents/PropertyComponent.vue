@@ -27,15 +27,15 @@
                   />
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('property.form.status') }}</label>
+                  <label>{{ $t('property.form.agent') }}</label>
                   <q-select
                     outlined
                     dense
-                    v-model="filters.status"
-                    option-label="label"
-                    option-value="value"
-                    :options="statusSelect"
-                  ></q-select>
+                    v-model="filters.agent"
+                    option-label="name"
+                    option-value="id"
+                    :options="propertyAgentsSelect"
+                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.address') }}</label>
@@ -48,7 +48,29 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-sm-4 col-12 q-pa-sm">
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.status') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.status"
+                    option-label="label"
+                    option-value="value"
+                    :options="statusSelect"
+                  ><template v-slot:prepend><q-icon name="mdi-list-status" /></template></q-select>
+                </div>
+                <div class="col-sm-3 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.enabled') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.enabled"
+                    option-label="label"
+                    option-value="value"
+                    :options="enabledSelect"
+                  ><template v-slot:prepend><q-icon name="mdi-eye-outline" /></template></q-select>
+                </div>
+                <div class="col-sm-3 col-12 q-pa-sm">
                   <label>{{ $t('property.form.type') }}</label>
                   <q-select
                     outlined
@@ -59,7 +81,7 @@
                     :options="propertyTypesSelect"
                   ><template v-slot:prepend><q-icon name="mdi-home-city-outline" /></template></q-select>
                 </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
+                <div class="col-sm-3 col-12 q-pa-sm">
                   <label>{{ $t('property.form.availableFor') }}</label>
                   <q-select
                     outlined
@@ -69,17 +91,6 @@
                     option-value="value"
                     :options="availableForSelect"
                   ><template v-slot:prepend><q-icon name="mdi-finance" /></template></q-select>
-                </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('property.form.agent') }}</label>
-                  <q-select
-                    outlined
-                    dense
-                    v-model="filters.agent"
-                    option-label="name"
-                    option-value="id"
-                    :options="propertyAgentsSelect"
-                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
                 </div>
               </div>
               <div class="row">
@@ -144,12 +155,9 @@
                     </q-chip>
                   </div>
                 </div>
-                <div class="col-12 q-px-sm flex items-center gap-sm">
-                    <label>{{ $t('property.form.enabled') }}</label>
-                    <q-toggle v-model="filters.enabled" color="primary" />
-                </div>
               </div>
-              <div class="flex justify-end q-pa-sm">
+              <div class="flex justify-end gap-sm q-pa-sm">
+                <q-btn outline color="negative" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
                 <q-btn outline color="primary" icon="mdi-magnify" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
             </q-card-section>
@@ -262,6 +270,12 @@ const statusSelect = [
   { label: t('property.sold'), value: GLOBAL.SOLD },
 ]
 
+const enabledSelect = [
+  { label: t('property.visible'), value: '1' },
+  { label: t('property.notVisible'), value: '0' },
+  { label: t('property.all'), value: '' },
+]
+
 const isLoading = ref(false);
 
 const filters = ref<PropertyFiltersInterface>({
@@ -293,7 +307,10 @@ const filters = ref<PropertyFiltersInterface>({
     min: 0,
     max: 0
   },
-  enabled: false,
+  enabled: {
+    label: '',
+    value: ''
+  },
   features: []
 });
 
@@ -348,6 +365,52 @@ const applyFilters = () => {
   }
 
   // TODO: Call API to get filtered properties
+}
+
+/**
+ *
+ */
+const cleanFilters = () => {
+  filters.value = {
+    available_for: {
+      label: '',
+      value: ''
+    },
+    status: {
+      label: '',
+      value: ''
+    },
+    agent: {
+      id: '',
+      name: ''
+    },
+    type: {
+      id: '',
+      name: ''
+    },
+    bedrooms: '',
+    bathrooms: '',
+    garages: '',
+    size: {
+      min: 0,
+      max: 0
+    },
+    address: '',
+    price: {
+      min: 0,
+      max: 0
+    },
+    enabled: {
+      label: '',
+      value: ''
+    },
+    features: []
+  }
+
+  propertyFeaturesSelect.value = propertyFeaturesSelect.value.map(item => {
+    item.selected = false;
+    return item;
+  });
 }
 
 /**
