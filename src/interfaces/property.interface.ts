@@ -1,12 +1,8 @@
-export interface PropertyDropdownInterface {
-  id: string
-  name: string
-}
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 
-export interface PropertyFeatureDropdownInterface {
-  id: string
-  name: string
-  selected?: boolean
+export interface PropertyDropdownInterface {
+  label: string
+  value: string
 }
 
 export interface PropertyImageInterface {
@@ -17,13 +13,10 @@ export interface PropertyImageInterface {
 }
 
 export interface PropertyFiltersInterface {
-  available_for: {
-    label: string
-    value: string
-  },
-  agent: PropertyDropdownInterface
-  type: PropertyDropdownInterface
-  state: PropertyDropdownInterface
+  available_for: PropertyDropdownInterface
+  status: PropertyDropdownInterface
+  agent: CommonSelectInterface
+  type: CommonSelectInterface
   bedrooms: string
   bathrooms: string
   garages: string
@@ -36,5 +29,27 @@ export interface PropertyFiltersInterface {
     min: number
     max: number
   }
+  enabled: boolean
   features: Array<string>
+}
+
+export interface PropertyFormInterface {
+  title: string
+  description: string
+  price: string
+  available_for: PropertyDropdownInterface
+  bedrooms: string
+  bathrooms: string
+  garages: string
+  size: string
+  address: string
+  city: string
+  state: string
+  zip: string
+  latitude: string
+  longitude: string
+  status: PropertyDropdownInterface
+  agent_id: CommonSelectInterface
+  type_id: CommonSelectInterface
+  enabled: boolean
 }

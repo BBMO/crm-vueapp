@@ -11,13 +11,6 @@
                 <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.states') }}</span>
               </div>
             </q-tab>
-            <q-tab name="propertyState" class="flex items-center gap-sm q-py-md" :ripple="false">
-              <q-icon size="sm" name="mdi-home-clock-outline" />
-              <div class="flex column items-start">
-                <span class="text-capitalize text-weight-medium tab-title">{{ $t('setting.property') }}</span>
-                <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.states') }}</span>
-              </div>
-            </q-tab>
             <q-tab name="propertyTypes" class="flex items-center gap-sm q-py-md" :ripple="false">
               <q-icon size="sm" name="mdi-home-city-outline" />
               <div class="flex column items-start">
@@ -55,10 +48,6 @@
               <opportunity-states-component />
             </q-tab-panel>
 
-            <q-tab-panel name="propertyState">
-              <property-states-component />
-            </q-tab-panel>
-
             <q-tab-panel name="propertyTypes">
               <property-types-component />
             </q-tab-panel>
@@ -82,7 +71,6 @@
 import { ref } from 'vue';
 // Components
 import OpportunityStatesComponent from 'components/SettingComponents/OpportunityStatesComponent.vue';
-import PropertyStatesComponent from 'components/SettingComponents/PropertyStatesComponent.vue';
 import PropertyTypesComponent from 'components/SettingComponents/PropertyTypesComponent.vue';
 import PropertyFeaturesComponent from 'components/SettingComponents/PropertyFeaturesComponent.vue';
 import CalendarCategoriesComponent from 'components/SettingComponents/CalendarCategoriesComponent.vue';

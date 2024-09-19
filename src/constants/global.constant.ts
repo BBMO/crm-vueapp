@@ -4,4 +4,7 @@ export const GLOBAL = {
   LEAD: 'lead',
   SALE: 'sale',
   RENTAL: 'rent',
+  AVAILABLE: 'available',
+  RENTED: 'rented',
+  SOLD: 'sold'
 };

@@ -7,10 +7,9 @@
           <p class="text-subtitle2 text-weight-regular text-grey q-ma-none">{{ $t('property.messageProperty') }}</p>
         </div>
         <div>
-          <q-btn color="primary" class="full-width text-capitalize" @click="saveProperty">{{ isEditProperty ? $t('global.update') : $t('global.save') }}</q-btn>
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveProperty">{{ isEditProperty ? $t('global.update') : $t('global.save') }}</q-btn>
         </div>
       </div>
-
       <div class="row q-mt-md">
         <div class="col-12 col-md-8 q-pr-sm card-section-one">
           <q-card class="q-mb-md q-pa-lg">
@@ -49,7 +48,7 @@
                     v-model="form.available_for"
                     option-label="label"
                     option-value="value"
-                    :options="availableFor"
+                    :options="availableForSelect"
                     :rules="[
                       (val: any) => validateRequiredSelect(val.value) || $t('validation.requiredField'),
                     ]"
@@ -134,27 +133,31 @@
                 </div>
               </div>
               <div class="col-8">
-                Mapa
+
               </div>
             </div>
           </q-card>
         </div>
         <div class="col-12 col-md-4 q-pl-sm card-section-two">
           <q-card class="q-mb-md q-pa-lg">
-            <p class="text-subtitle1 text-weight-medium text-grey-14 q-ma-none q-mb-md">{{ $t('property.configuration') }}</p>
+            <p class="text-subtitle1 text-weight-medium text-grey-14 q-ma-none q-mb-sm">{{ $t('property.configuration') }}</p>
+            <div class="q-py-xs flex items-center justify-between">
+              <label>{{ $t('property.form.enabled') }}</label>
+              <q-toggle v-model="form.enabled" color="primary" />
+            </div>
             <div class="q-py-xs">
-              <label>{{ $t('property.form.state') }}</label>
+              <label>{{ $t('property.form.status') }}</label>
               <q-select
                 outlined
                 dense
-                v-model="form.state_id"
-                option-label="name"
-                option-value="id"
-                :options="propertyStatesList"
+                v-model="form.status"
+                option-label="label"
+                option-value="value"
+                :options="statusSelect"
                 :rules="[
-                  (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
+                  (val: any) => validateRequiredSelect(val.value) || $t('validation.requiredField'),
                 ]"
-              ></q-select>
+              ><template v-slot:prepend><q-icon name="mdi-list-status" /></template></q-select>
             </div>
             <div class="q-py-xs">
               <label>{{ $t('property.form.agent') }}</label>
@@ -164,7 +167,7 @@
                 v-model="form.agent_id"
                 option-label="name"
                 option-value="id"
-                :options="propertyAgentsList"
+                :options="propertyAgentsSelect"
                 :rules="[
                   (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
@@ -178,7 +181,7 @@
                 v-model="form.type_id"
                 option-label="name"
                 option-value="id"
-                :options="propertyTypesList"
+                :options="propertyTypesSelect"
                 :rules="[
                   (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
@@ -255,6 +258,7 @@
                 >
                   {{ feature.name }}
                 </q-chip>
+                <div v-if="featureRequired" class="feature-required">{{ $t('property.featureRequired') }}</div>
               </div>
             </div>
           </q-card>
@@ -320,11 +324,8 @@ import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router'
 // Interfaces
-import type {
-  PropertyDropdownInterface,
-  PropertyFeatureDropdownInterface,
-  PropertyImageInterface
-} from 'src/interfaces/property.interface';
+import type { PropertyImageInterface, PropertyFormInterface } from 'src/interfaces/property.interface';
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Services
 import PropertiesService from 'src/services/properties.service';
 import AgentsService from 'src/services/agents.service';
@@ -338,16 +339,25 @@ const route = useRoute();
 const router = useRouter();
 const { validateRequired, validateRequiredSelect } = useValidate();
 
-const availableFor = [
+const availableForSelect = [
   { label: t('property.sale'), value: GLOBAL.SALE },
   { label: t('property.rental'), value: GLOBAL.RENTAL },
 ]
 
+const statusSelect = [
+  { label: t('property.available'), value: GLOBAL.AVAILABLE },
+  { label: t('property.rented'), value: GLOBAL.RENTED },
+  { label: t('property.sold'), value: GLOBAL.SOLD },
+]
+
 const isLoading = ref(false);
+const isLoadingSave = ref(false);
+
 const isEditProperty = ref(false);
+const featureRequired = ref(false);
 const propertyId = ref('');
 
-const form = ref({
+const form = ref<PropertyFormInterface>({
   title: '',
   description: '',
   price: '',
@@ -365,6 +375,10 @@ const form = ref({
   zip: '',
   latitude: '',
   longitude: '',
+  status: {
+    label: '',
+    value: ''
+  },
   agent_id: {
     id: '',
     name: ''
@@ -373,17 +387,13 @@ const form = ref({
     id: '',
     name: ''
   },
-  state_id: {
-    id: '',
-    name: ''
-  },
+  enabled: false,
 });
 const formRef = ref();
 
-const propertyFeaturesList: Ref<PropertyFeatureDropdownInterface[]> = ref([]);
-const propertyStatesList: Ref<PropertyDropdownInterface[]> = ref([]);
-const propertyAgentsList: Ref<PropertyDropdownInterface[]> = ref([]);
-const propertyTypesList: Ref<PropertyDropdownInterface[]> = ref([]);
+const propertyFeaturesList: Ref<CommonSelectInterface[]> = ref([]);
+const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
+const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const selectedFiles = ref<PropertyImageInterface[]>([]);
@@ -442,20 +452,14 @@ const getDropdownConfiguration = async () => {
     selected: false,
   }));
 
-  response = await PropertiesService.getPropertyStates();
-  propertyStatesList.value = response?.data?.data.map((state: any) => ({
-    id: state.id,
-    name: state.name,
-  }));
-
   response = await AgentsService.getAgents();
-  propertyAgentsList.value = response?.data?.data?.items.map((agent: any) => ({
+  propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
     id: agent.ID,
     name: agent.display_name,
   }));
 
   response = await PropertiesService.getPropertyTypes();
-  propertyTypesList.value = response?.data?.data.map((type: any) => ({
+  propertyTypesSelect.value = response?.data?.data.map((type: any) => ({
     id: type.id,
     name: type.name,
   }));
@@ -471,12 +475,12 @@ const getPropertyData = async () => {
     ...form.value,
     ...data?.data,
     agent_id: data?.data.agent,
-    state_id: data?.data.p_state,
     type_id: data?.data.type,
     available_for: {
       label: data?.data.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental'),
       value: data?.data.available_for,
-    }
+    },
+    enabled: data?.data.enabled === '1',
   }
 
   data?.data.images.forEach((image: any) => {
@@ -507,7 +511,12 @@ const validateForm = async () => {
  *
  */
 const saveProperty = async () => {
-  if (await validateForm()) {
+  isLoadingSave.value = true;
+
+  const features = propertyFeaturesList.value.filter(item => item.selected).map(item => item.id);
+  if (await validateForm() && features.length > 0) {
+    featureRequired.value = false;
+
     try {
       const payload = new FormData();
 
@@ -527,9 +536,8 @@ const saveProperty = async () => {
       payload.append('longitude', form.value.longitude);
       payload.append('agent_id', form.value.agent_id.id);
       payload.append('type_id', form.value.type_id.id);
-      payload.append('state_id', form.value.state_id.id);
+      payload.append('enabled', form.value.enabled ? '1' : '0');
 
-      const features = propertyFeaturesList.value.filter(item => item.selected).map(item => item.id);
       if (features.length > 0) {
         features.forEach((feature) => {
           payload.append('features[]', feature);
@@ -552,7 +560,14 @@ const saveProperty = async () => {
     } catch (error) {
       console.log(error);
     }
+  } else {
+    featureRequired.value = true;
   }
+
+  isLoadingSave.value = false;
+  setTimeout(() => {
+    featureRequired.value = false;
+  }, 3000)
 }
 
 onMounted(async () => {
@@ -628,6 +643,13 @@ onUnmounted(() => {
   :deep(.q-chip--selected .q-chip__icon),
   :deep(.q-chip--selected .q-chip__content) {
     color: white !important;
+  }
+
+  .feature-required {
+    font-size: 12px;
+    color: var(--q-negative);
+    margin-top: 5px;
+    line-height: 1;
   }
 }
 

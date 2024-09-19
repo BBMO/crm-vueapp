@@ -5,6 +5,7 @@ export interface OpportunityFormInterface {
   property_id: CommonSelectInterface
   amount: string
   state_id: CommonSelectInterface
+  finished: boolean
 }
 
 export interface OpportunityDetailsInterface {
@@ -26,4 +27,6 @@ export interface OpportunityDetailsInterface {
     name: string
     color: string
   }
+  finished_at: string | null
+  finished?: boolean
 }

@@ -94,6 +94,7 @@ const form = ref<OpportunityFormInterface>({
     id: '',
     name: ''
   },
+  finished: false
 });
 const formRef = ref();
 
@@ -154,6 +155,7 @@ onMounted(() => {
       },
       amount: props.formDetails.amount,
       state_id: props.formDetails.state,
+      finished: props.formDetails.finished_at !== null
     };
   }
 });

@@ -122,7 +122,7 @@ const form = ref({
   phone: '',
   address: '',
   interest: '',
-  type: 'lead',
+  type: '',
   attachment: null as string | null,
 });
 const formRef = ref();

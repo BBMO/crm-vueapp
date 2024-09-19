@@ -5,8 +5,8 @@
     </div>
 
     <div class="sidebar-body">
-      <div class="sidebar-select q-mt-md q-mb-lg">
-        <label>{{ $t('calendar.agents') }}</label>
+      <div class="sidebar-select q-py-md">
+        <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ $t('calendar.agents') }}</div>
         <q-select
           outlined
           dense
@@ -18,7 +18,7 @@
         ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
       </div>
 
-      <div class="sidebar-filter q-mt-lg">
+      <div class="sidebar-filter q-py-md">
         <div class="text-subtitle1 text-weight-medium q-mb-md">{{ $t('calendar.filter') }}</div>
         <div v-for="item in quoteCategoriesList" :key="item.id" class="sidebar-filter-item q-mb-md">
           <q-checkbox

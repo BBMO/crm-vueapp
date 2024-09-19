@@ -27,15 +27,15 @@
                   />
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('property.form.agent') }}</label>
+                  <label>{{ $t('property.form.status') }}</label>
                   <q-select
                     outlined
                     dense
-                    v-model="filters.agent"
-                    option-label="name"
-                    option-value="id"
-                    :options="propertyAgentsSelect"
-                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
+                    v-model="filters.status"
+                    option-label="label"
+                    option-value="value"
+                    :options="statusSelect"
+                  ></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.address') }}</label>
@@ -67,19 +67,19 @@
                     v-model="filters.available_for"
                     option-label="label"
                     option-value="value"
-                    :options="availableFor"
+                    :options="availableForSelect"
                   ><template v-slot:prepend><q-icon name="mdi-finance" /></template></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('property.form.state') }}</label>
+                  <label>{{ $t('property.form.agent') }}</label>
                   <q-select
                     outlined
                     dense
-                    v-model="filters.state"
+                    v-model="filters.agent"
                     option-label="name"
                     option-value="id"
-                    :options="propertyStatesSelect"
-                  ></q-select>
+                    :options="propertyAgentsSelect"
+                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
                 </div>
               </div>
               <div class="row">
@@ -144,8 +144,11 @@
                     </q-chip>
                   </div>
                 </div>
+                <div class="col-12 q-px-sm flex items-center gap-sm">
+                    <label>{{ $t('property.form.enabled') }}</label>
+                    <q-toggle v-model="filters.enabled" color="primary" />
+                </div>
               </div>
-
               <div class="flex justify-end q-pa-sm">
                 <q-btn outline color="primary" icon="mdi-magnify" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
@@ -201,16 +204,9 @@
         <template v-slot:body-cell-price="props">
           <q-td :props="props">${{ props.row.price }}</q-td>
         </template>
-        <template v-slot:body-cell-p_state="props">
+        <template v-slot:body-cell-enabled="props">
           <q-td :props="props">
-            <span class="relative-position q-pa-xs">
-              <span
-                class="absolute full-width full-height"
-                style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
-                :style="{ background: props.row.p_state.color }"
-              ></span>
-              <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.p_state.color }"> {{ props.row.p_state.name }} </span>
-            </span>
+            <q-icon size="sm" :name="props.row.enabled === '1' ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" :color="props.row.enabled === '1' ? 'green' : 'red'" />
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
@@ -251,13 +247,19 @@ const columns = [
   { name: 'available_for', label: t('property.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'city', label: t('property.form.city'), field: 'city', align: 'left' },
   { name: 'price', label: t('property.form.price'), field: 'price', align: 'left' },
-  { name: 'p_state', label: t('property.form.state'), field: 'p_state', align: 'left' },
+  { name: 'enabled', label: t('property.form.enabled'), field: 'enabled', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
-const availableFor = [
+const availableForSelect = [
   { label: t('property.sale'), value: GLOBAL.SALE },
   { label: t('property.rental'), value: GLOBAL.RENTAL },
+]
+
+const statusSelect = [
+  { label: t('property.available'), value: GLOBAL.AVAILABLE },
+  { label: t('property.rented'), value: GLOBAL.RENTED },
+  { label: t('property.sold'), value: GLOBAL.SOLD },
 ]
 
 const isLoading = ref(false);
@@ -267,15 +269,15 @@ const filters = ref<PropertyFiltersInterface>({
     label: '',
     value: ''
   },
+  status: {
+    label: '',
+    value: ''
+  },
   agent: {
     id: '',
     name: ''
   },
   type: {
-    id: '',
-    name: ''
-  },
-  state: {
     id: '',
     name: ''
   },
@@ -291,11 +293,11 @@ const filters = ref<PropertyFiltersInterface>({
     min: 0,
     max: 0
   },
+  enabled: false,
   features: []
 });
 
 const propertyFeaturesSelect: Ref<CommonSelectInterface[]> = ref([]);
-const propertyStatesSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
 
@@ -309,12 +311,6 @@ const getFilterOptions = async () => {
     id: feature.id,
     name: feature.name,
     selected: false,
-  }));
-
-  response = await PropertiesService.getPropertyStates();
-  propertyStatesSelect.value = response?.data?.data.map((state: any) => ({
-    id: state.id,
-    name: state.name,
   }));
 
   response = await AgentsService.getAgents();

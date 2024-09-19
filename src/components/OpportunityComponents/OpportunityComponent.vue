@@ -13,54 +13,49 @@
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
-        <template v-slot:body-cell-contact="props">
-          <q-td :props="props">
-            <p class="q-ma-none text-capitalize">{{ props.row.contact.first_name }} {{ props.row.contact.last_name }}</p>
-            <p class="text-caption text-grey q-ma-none">{{ $t('opportunity.form.agent')}}: {{ props.row.agent.name }}</p>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-property="props">
-          <q-td :props="props">{{ props.row.property.title }}</q-td>
-        </template>
-        <template v-slot:body-cell-available_for="props">
-          <q-td :props="props">
-            <span class="flex items-center gap-xs text-capitalize">
-              <span class="relative-position flex items-center justify-center" style="width: 30px; height: 30px;">
-                <span
-                  class="absolute full-width full-height border-radius"
-                  style="top: 0; left: 0; opacity: 0.2;"
-                  :style="{ background: props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
-                ></span>
-                <q-icon
-                  size="xs"
-                  :name="props.row.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
-                  :color="props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
-                />
+        <template v-slot:body="props">
+          <q-tr :props="props" :class="{ disabled: props.row.finished_at !== null }">
+            <q-td>
+              <p class="q-ma-none text-capitalize">{{ props.row.contact.first_name }} {{ props.row.contact.last_name }}</p>
+              <p class="text-caption text-grey q-ma-none">{{ $t('opportunity.form.agent')}}: {{ props.row.agent.name }}</p>
+            </q-td>
+            <q-td>{{ props.row.property.title }}</q-td>
+            <q-td>
+              <span class="flex items-center gap-xs text-capitalize">
+                <span class="relative-position flex items-center justify-center" style="width: 30px; height: 30px;">
+                  <span
+                    class="absolute full-width full-height border-radius"
+                    style="top: 0; left: 0; opacity: 0.2;"
+                    :style="{ background: props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
+                  ></span>
+                  <q-icon
+                    size="xs"
+                    :name="props.row.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
+                    :color="props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
+                  />
+                </span>
+                {{ props.row.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
               </span>
-              {{ props.row.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
-            </span>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-amount="props">
-          <q-td :props="props">${{ props.row.amount }}</q-td>
-        </template>
-        <template v-slot:body-cell-state="props">
-          <q-td :props="props">
-            <span class="relative-position q-pa-xs">
-              <span
-                class="absolute full-width full-height"
-                style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
-                :style="{ background: props.row.state.color }"
-              ></span>
-              <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.state.color }"> {{ props.row.state.name }} </span>
-            </span>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-actions="props">
-          <q-td :props="props" class="actions">
-            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteOpportunity(props.row.id)"></q-btn>
-          </q-td>
+            </q-td>
+            <q-td>${{ props.row.amount }}</q-td>
+            <q-td>
+              <span class="relative-position q-pa-xs">
+                <span
+                  class="absolute full-width full-height"
+                  style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
+                  :style="{ background: props.row.state.color }"
+                ></span>
+                <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.state.color }"> {{ props.row.state.name }} </span>
+              </span>
+            </q-td>
+            <q-td class="text-center">
+              <q-toggle v-model="props.row.finished" color="primary" @update:modelValue="openDialogFinished(props.row)" />
+            </q-td>
+            <q-td class="text-right actions">
+              <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
+              <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteOpportunity(props.row.id)"></q-btn>
+            </q-td>
+          </q-tr>
         </template>
       </q-table>
     </q-card>
@@ -68,13 +63,7 @@
       <q-spinner color="primary" size="3em" />
     </div>
 
-    <q-dialog
-      v-model="opportunityFormDialog"
-      full-height
-      position="right"
-      square
-      maximized
-    >
+    <q-dialog v-model="opportunityFormDialog" full-height position="right" square maximized>
       <q-card class="dialog-card">
         <div class="q-pa-lg flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('opportunity.editOpportunity') : $t('opportunity.addOpportunity') }}</h6>
@@ -90,6 +79,21 @@
           />
           <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveOpportunity">{{ $t('global.save') }}</q-btn>
         </div>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model="opportunityFinishedDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap gap-sm">
+            <q-icon size="md" name="mdi-lock-alert" color="negative"  />
+            <span class="q-ml-sm">{{ $t('opportunity.messageConfirmationFinished') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+            <q-btn outline :label="$t('global.cancel')" color="primary" :ripple="false" @click="cancelDialogFinished" />
+            <q-btn :loading="isLoadingFinished" :label="$t('global.accept')" color="primary" :ripple="false" @click="updateFinished" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
@@ -115,25 +119,34 @@ const columns = [
   { name: 'available_for', label: t('opportunity.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'amount', label: t('opportunity.form.amount'), field: 'amount', align: 'left' },
   { name: 'state', label: t('opportunity.form.state'), field: 'state', align: 'left' },
+  { name: 'finished', label: t('global.finished'), field: '', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
 const isLoading = ref(false);
 const isLoadingSave = ref(false);
+const isLoadingFinished = ref(false);
 
 const opportunityFormDialog = ref(false);
+const opportunityFinishedDialog = ref(false);
 const formModeEdit = ref(false);
 
 const opportunityDetails = ref<OpportunityDetailsInterface | null>(null);
 const formData = ref<typeof OpportunityFormComponent | null>(null);
-const opportunityList = ref([]);
+const opportunityList = ref<OpportunityDetailsInterface[]>([]);
+
+const opportunityId = ref('');
+const opportunityFinished = ref(false);
 
 /**
  *
  */
 const getOpportunities = async () => {
   const { data } = await OpportunitiesService.getOpportunities();
-  opportunityList.value = data?.data?.items;
+  opportunityList.value = data?.data?.items?.map((item: any) => ({
+    ...item,
+    finished: item.finished_at !== null
+  }));
 }
 
 /**
@@ -190,6 +203,47 @@ const deleteOpportunity = async (opportunityId: string) => {
   await getOpportunities();
 }
 
+/**
+ *
+ */
+const updateFinished = async () => {
+  isLoadingFinished.value = true;
+
+  const payload = {
+    finished: opportunityFinished.value
+  }
+
+  await OpportunitiesService.updateOpportunity(opportunityId.value, payload);
+  await getOpportunities();
+  isLoadingFinished.value = false;
+  opportunityFinishedDialog.value = false;
+}
+
+
+/**
+ *
+ */
+const openDialogFinished = (opportunity: OpportunityDetailsInterface) => {
+  opportunityFinishedDialog.value = true;
+  opportunityId.value = opportunity.id;
+  opportunityFinished.value = opportunity.finished ?? false;
+}
+
+/**
+ *
+ */
+const cancelDialogFinished = () => {
+  opportunityFinishedDialog.value = false;
+
+  opportunityList.value = opportunityList.value.map((item) => {
+    if (item.id === opportunityId.value) {
+      item.finished = !opportunityFinished.value;
+    }
+
+    return item;
+  });
+}
+
 onMounted(async () => {
   isLoading.value = true;
   await getOpportunities();
@@ -198,5 +252,13 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.q-table {
+  .disabled {
+    cursor: not-allowed;
 
+    :deep(.q-toggle), :deep(.q-btn) {
+      pointer-events: none;
+    }
+  }
+}
 </style>

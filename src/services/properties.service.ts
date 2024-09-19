@@ -41,25 +41,6 @@ class PropertiesService {
   }
 
   /**
-   * Property states
-   */
-  getPropertyStates(): AxiosPromise {
-    return api.get('/property-states');
-  }
-
-  createPropertyState(payload: object): AxiosPromise {
-    return api.post('/property-state', payload);
-  }
-
-  updatePropertyState(id: string, payload: object): AxiosPromise {
-    return api.put(`/property-state/${id}`, payload);
-  }
-
-  deletePropertyState(id: string): AxiosPromise {
-    return api.delete(`/property-state/${id}`);
-  }
-
-  /**
    *
    */
   getProperties(): AxiosPromise {

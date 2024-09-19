@@ -115,7 +115,7 @@ const router = useRouter();
 const contactStore = useContactStore();
 
 const columns = [
-  { name: 'first_name', label: t('menu.user'), field: 'first_name', align: 'left' },
+  { name: 'first_name', label: t('contact.name'), field: 'first_name', align: 'left' },
   { name: 'email', label: t('global.email'), field: 'email', align: 'left' },
   { name: 'type', label: t('global.role'), field: 'type', align: 'left' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
