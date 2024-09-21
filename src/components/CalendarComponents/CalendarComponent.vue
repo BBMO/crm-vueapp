@@ -75,7 +75,7 @@ const agentFilter = computed(() => calendarStore.getAgentFilter);
 
 const dateClick = (info: any) => {
   if (calendar.value) {
-    //@ts-ignore
+    //@ts-expect-error: calendar.value is not null
     calendar.value.getApi().changeView('timeGridDay', info.dateStr);
   }
 };
@@ -136,9 +136,9 @@ const getQuote = async () => {
     };
   });
 
-  //@ts-ignore
+  //@ts-expect-error: calendar.value is not null
   calendar.value?.getApi().removeAllEvents();
-  //@ts-ignore
+  //@ts-expect-error: calendar.value is not null
   calendar.value?.getApi().addEventSource(quotesScheduled.value);
 };
 
@@ -146,7 +146,7 @@ const getQuote = async () => {
  *
  */
 const getQuoteFiltered = () => {
-  //@ts-ignore
+  //@ts-expect-error: calendar.value is not null
   calendar.value?.getApi().removeAllEvents();
 
   let quotesToAdd;
@@ -168,7 +168,7 @@ const getQuoteFiltered = () => {
     );
   }
 
-  //@ts-ignore
+  //@ts-expect-error: calendar.value is not null
   calendar.value?.getApi().addEventSource(quotesToAdd);
 };
 
