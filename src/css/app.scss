@@ -144,6 +144,11 @@ body {
       }
     }
   }
+
+  &__inner--right {
+    top: 32px;
+    height: calc(100% - 32px);
+  }
 }
 
 // Body scroll prevention

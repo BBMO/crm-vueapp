@@ -22,7 +22,7 @@ class ContactsService {
   }
 
   updateContact(id: string, payload: any): AxiosPromise {
-    return api.put(`/contact/${id}`, payload, {
+    return api.post(`/contact/${id}?_method=PUT`, payload, {
       headers: {
         'Content-type': 'multipart/form-data',
       },

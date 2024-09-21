@@ -60,7 +60,7 @@ class PropertiesService {
   }
 
   updateProperty(id: string, payload: any): AxiosPromise {
-    return api.post(`/property/${id}`, payload, {
+    return api.post(`/property/${id}?_method=PUT`, payload, {
       headers: {
         'Content-type': 'multipart/form-data',
       },
