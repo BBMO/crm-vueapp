@@ -75,6 +75,7 @@ const agentFilter = computed(() => calendarStore.getAgentFilter);
 
 const dateClick = (info: any) => {
   if (calendar.value) {
+    //@ts-ignore
     calendar.value.getApi().changeView('timeGridDay', info.dateStr);
   }
 };
@@ -135,7 +136,9 @@ const getQuote = async () => {
     };
   });
 
+  //@ts-ignore
   calendar.value?.getApi().removeAllEvents();
+  //@ts-ignore
   calendar.value?.getApi().addEventSource(quotesScheduled.value);
 };
 
@@ -143,6 +146,7 @@ const getQuote = async () => {
  *
  */
 const getQuoteFiltered = () => {
+  //@ts-ignore
   calendar.value?.getApi().removeAllEvents();
 
   let quotesToAdd;
@@ -164,6 +168,7 @@ const getQuoteFiltered = () => {
     );
   }
 
+  //@ts-ignore
   calendar.value?.getApi().addEventSource(quotesToAdd);
 };
 
