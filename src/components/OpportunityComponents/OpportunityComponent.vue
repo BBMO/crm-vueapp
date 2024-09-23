@@ -315,7 +315,7 @@ const applyFilters = async () => {
     state_id: filters.value.state.id,
     agent_id: filters.value.agent.id,
     finished: filters.value.finished
-  })
+  });
 
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,

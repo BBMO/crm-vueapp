@@ -7,8 +7,9 @@ class ContactsService {
    */
   getContacts(filters?: any): AxiosPromise {
     if (filters) {
-      const params = new URLSearchParams(filters).toString()
-      return api.get(`/contacts?${params}`)
+      return api.get('/contacts', {
+        params: filters
+      })
     }
 
     return api.get('/contacts')

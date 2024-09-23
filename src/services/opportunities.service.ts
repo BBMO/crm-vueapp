@@ -26,8 +26,9 @@ class OpportunitiesService {
    */
   getOpportunities(filters?: any): AxiosPromise {
     if (filters) {
-      const params = new URLSearchParams(filters).toString()
-      return api.get(`/opportunities?${params}`)
+      return api.get('/opportunities', {
+        params: filters
+      })
     }
 
     return api.get('/opportunities');

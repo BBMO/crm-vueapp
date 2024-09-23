@@ -43,7 +43,13 @@ class PropertiesService {
   /**
    *
    */
-  getProperties(): AxiosPromise {
+  getProperties(filters?: any): AxiosPromise {
+    if (filters) {
+      return api.get('/properties', {
+        params: filters
+      })
+    }
+
     return api.get('/properties');
   }
 

@@ -423,63 +423,91 @@ const getProperties = async () => {
 /**
  *
  */
-const applyFilters = () => {
+const applyFilters = async () => {
   filters.value.features = [];
+
+  const filterFeatures: Array<string> = []
 
   const features = propertyFeaturesSelect.value.filter(item => item.selected).map(item => item.id);
   if (features.length > 0) {
     features.forEach((feature: string) => {
       filters.value.features.push(feature);
+      filterFeatures.push(feature)
     })
+  };
+
+  const payloadFilters: any = {
+    price_min: filters.value.price.min,
+    price_max: filters.value.price.max,
+    agent_id: filters.value.agent.id,
+    address: filters.value.address,
+    status: filters.value.status.value,
+    type_id: filters.value.type.id,
+    available_for: filters.value.available_for.value,
+    bedrooms: filters.value.bedrooms,
+    bathrooms: filters.value.bathrooms,
+    garages: filters.value.garages,
+    size_min: filters.value.size.min,
+    size_max: filters.value.size.max,
+    features: filterFeatures
+  };
+
+  if (filters.value.enabled.value) {
+    payloadFilters.enabled = filters.value.enabled.value
   }
 
-  // TODO: Call API to get filtered properties
+  const { data } = await PropertiesService.getProperties(payloadFilters);
+  propertyList.value = data?.data?.items || [];
 }
 
 /**
  *
  */
 const cleanFilters = () => {
-  filters.value = {
-    available_for: {
-      label: '',
-      value: ''
-    },
-    status: {
-      label: '',
-      value: ''
-    },
-    agent: {
-      id: '',
-      name: ''
-    },
-    type: {
-      id: '',
-      name: ''
-    },
-    bedrooms: '',
-    bathrooms: '',
-    garages: '',
-    size: {
-      min: 0,
-      max: 0
-    },
-    address: '',
-    price: {
-      min: 0,
-      max: 0
-    },
-    enabled: {
-      label: '',
-      value: ''
-    },
-    features: []
+  if (propertyRange.value) {
+    filters.value = {
+      available_for: {
+        label: '',
+        value: ''
+      },
+      status: {
+        label: '',
+        value: ''
+      },
+      agent: {
+        id: '',
+        name: ''
+      },
+      type: {
+        id: '',
+        name: ''
+      },
+      bedrooms: '',
+      bathrooms: '',
+      garages: '',
+      address: '',
+      price: {
+        min: propertyRange.value?.price_min,
+        max: propertyRange.value?.price_max,
+      },
+      size: {
+        min: propertyRange.value?.size_min,
+        max: propertyRange.value?.size_max,
+      },
+      enabled: {
+        label: '',
+        value: ''
+      },
+      features: []
+    }
   }
 
   propertyFeaturesSelect.value = propertyFeaturesSelect.value.map(item => {
     item.selected = false;
     return item;
   });
+
+  getProperties();
 }
 
 /**

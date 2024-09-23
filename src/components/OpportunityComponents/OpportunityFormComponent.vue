@@ -179,7 +179,9 @@ const filterContactSelect = (value: string, update: any) => {
  */
 const filterPropertySelect = (value: string, update: any) => {
   update(async () => {
-    const { data } = await PropertiesService.getProperties();
+    const { data } = await PropertiesService.getProperties({
+      keyword: value,
+    });
     propertiesSelect.value = data?.data?.items.map((item: any) => ({
       id: item.id,
       name: item.title,
