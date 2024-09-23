@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card v-if="!isLoading" class="opportunity-container">
+    <q-card class="opportunity-container">
       <div class="q-px-md q-py-md filters-section">
         <q-expansion-item default-opened>
           <template v-slot:header>
@@ -71,6 +71,7 @@
         row-key="name"
         :rows="opportunityList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
@@ -118,11 +119,11 @@
             </q-td>
           </q-tr>
         </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
+        </template>
       </q-table>
     </q-card>
-    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
-      <q-spinner color="primary" size="3em" />
-    </div>
 
     <q-dialog
       v-model="opportunityFormDialog"
@@ -225,7 +226,7 @@ const filters = ref({
   finished: false,
 });
 
-const isLoading = ref(false);
+const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingFinished = ref(false);
 const isLoadingDelete = ref(false);
@@ -268,11 +269,15 @@ const getSelectsData = async () => {
  *
  */
 const getOpportunities = async () => {
+  loadingTable.value = true;
+
   const { data } = await OpportunitiesService.getOpportunities();
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,
     finished: item.finished_at !== null
   })) || [];
+
+  loadingTable.value = false;
 }
 
 /**
@@ -427,12 +432,8 @@ const openDialogDelete = (id: string) => {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
-
-  await getSelectsData();
   await getOpportunities();
-
-  isLoading.value = false;
+  await getSelectsData();
 })
 </script>
 

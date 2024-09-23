@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-pb-lg flex row justify-between">
+    <div class="q-pb-lg flex row justify-between gap-sm">
       <h5 class="q-ma-none">{{ $t('setting.property') }} {{ $t('setting.types') }}</h5>
       <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="openDialogSave(false)">{{ $t('setting.addType') }}</q-btn>
     </div>
@@ -11,14 +11,18 @@
         row-key="name"
         :rows="propertyTypesList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deletePropertyType(props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
+        </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </div>
@@ -47,6 +51,24 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <q-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deletePropertyType" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -69,7 +91,11 @@ const columns = [
 ]
 
 const dialogSave = ref(false);
+const deleteDialog = ref(false);
+
+const loadingTable = ref(false);
 const isLoadingSave = ref(false);
+const isLoadingDelete = ref(false);
 
 const formModeEdit = ref(false);
 const propertyTypeDetails = ref<AppConfigInterface>({
@@ -80,6 +106,7 @@ const propertyTypeDetails = ref<AppConfigInterface>({
 
 const formData = ref<typeof BasicFormComponent | null>(null);
 const propertyTypesList = ref([]);
+const propertyTypeId = ref('');
 
 /**
  *
@@ -92,11 +119,12 @@ const validateForm = async () => {
  *
  */
 const getPropertyTypes = async () => {
-  const { data } = await PropertiesService.getPropertyTypes();
+  loadingTable.value = true;
 
-  if (data) {
-    propertyTypesList.value = data?.data;
-  }
+  const { data } = await PropertiesService.getPropertyTypes();
+  propertyTypesList.value = data?.data || [];
+
+  loadingTable.value = false;
 }
 
 /**
@@ -124,8 +152,9 @@ const savePropertyType = async () => {
 /**
  *
  */
-const deletePropertyType = async (typeId: string) => {
-  await PropertiesService.deletePropertyType(typeId);
+const deletePropertyType = async () => {
+  await PropertiesService.deletePropertyType(propertyTypeId.value);
+  deleteDialog.value = false;
   await getPropertyTypes();
 }
 
@@ -140,6 +169,14 @@ const openDialogSave = (modeEdit: boolean, details?: AppConfigInterface) => {
   }
 
   dialogSave.value = true;
+}
+
+/**
+ *
+ */
+const openDialogDelete = (id: string) => {
+  propertyTypeId.value = id;
+  deleteDialog.value = true;
 }
 
 onMounted(async () => {

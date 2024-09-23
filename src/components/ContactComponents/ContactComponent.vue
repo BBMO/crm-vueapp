@@ -58,6 +58,7 @@
         row-key="name"
         :rows="contactList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
@@ -94,6 +95,9 @@
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.id)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
+        </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </q-card>
@@ -183,12 +187,12 @@ const filters = ref({
 const contactFormDialog = ref(false);
 const deleteDialog = ref(false);
 
+const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingDelete = ref(false);
 
 const formModeEdit = ref(false);
 const formData = ref<typeof ContactFormComponent | null>(null);
-
 const contactList = ref([]);
 
 const contactId = computed(() => contactStore.getContactId);
@@ -197,8 +201,12 @@ const contactId = computed(() => contactStore.getContactId);
  *
  */
 const getContacts = async () => {
+  loadingTable.value = true;
+
   const { data } = await ContactsService.getContacts();
   contactList.value = data?.data?.items || [];
+
+  loadingTable.value = false;
 }
 
 /**

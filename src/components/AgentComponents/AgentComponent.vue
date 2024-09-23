@@ -24,6 +24,7 @@
         row-key="name"
         :rows="agentList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
@@ -46,6 +47,9 @@
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.id)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
+        </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </q-card>
@@ -120,6 +124,7 @@ const searchText = ref('');
 const agentFormDialog = ref(false);
 const deleteDialog = ref(false);
 
+const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingDelete = ref(false);
 
@@ -133,8 +138,12 @@ const agentId = computed(() => agentStore.getAgentId);
  *
  */
 const getAgents = async () => {
+  loadingTable.value = true;
+
   const { data } = await AgentsService.getAgents();
   agentList.value = data?.data?.items || [];
+
+  loadingTable.value = false;
 }
 
 /**

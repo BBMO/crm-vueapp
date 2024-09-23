@@ -1,7 +1,7 @@
 <template>
   <div>
-    <q-card v-if="!isLoading" class="property-container">
-      <div class="q-px-md q-py-md filters-section">
+    <q-card class="property-container">
+      <div v-if="!isLoadingFilters" class="q-px-md q-py-md filters-section">
         <q-expansion-item default-opened>
           <template v-slot:header>
             <div class="flex items-center gap-xs">
@@ -178,6 +178,9 @@
           </q-card>
         </q-expansion-item>
       </div>
+      <div v-if="isLoadingFilters" class="full-width full-height flex align-center justify-center q-py-xl">
+        <q-spinner color="primary" size="3em" />
+      </div>
       <q-separator />
       <div class="q-px-md q-py-lg flex justify-end gap-md">
         <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
@@ -188,6 +191,7 @@
         row-key="name"
         :rows="propertyList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
@@ -238,12 +242,11 @@
             <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
+        </template>
       </q-table>
     </q-card>
-
-    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
-      <q-spinner color="primary" size="3em" />
-    </div>
 
     <q-dialog
       v-model="deleteDialog"
@@ -311,7 +314,8 @@ const enabledSelect = [
 
 const deleteDialog = ref(false);
 
-const isLoading = ref(false);
+const loadingTable = ref(false);
+const isLoadingFilters = ref(false);
 const isLoadingDelete = ref(false);
 
 const filters = ref<PropertyFiltersInterface>({
@@ -416,8 +420,12 @@ const filterAgentSelect = (value: string, update: any) => {
  *
  */
 const getProperties = async () => {
+  loadingTable.value = true;
+
   const { data } = await PropertiesService.getProperties();
   propertyList.value = data?.data?.items || [];
+
+  loadingTable.value = false;
 }
 
 /**
@@ -549,12 +557,12 @@ const openDialogDelete = (id: string) => {
 }
 
 onMounted(async () => {
-  isLoading.value = true;
+  isLoadingFilters.value = true;
 
-  await getFilterOptions();
   await getProperties();
+  await getFilterOptions();
 
-  isLoading.value = false;
+  isLoadingFilters.value = false;
 })
 </script>
 

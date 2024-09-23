@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="q-pb-lg flex row justify-between">
+    <div class="q-pb-lg flex row justify-between gap-sm">
       <h5 class="q-ma-none">{{ $t('setting.opportunity') }} {{ $t('setting.states') }}</h5>
       <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="openDialogSave(false)">{{ $t('setting.addState') }}</q-btn>
     </div>
@@ -11,6 +11,7 @@
         row-key="name"
         :rows="opportunityStatesList"
         :columns="columns"
+        :loading="loadingTable"
         :hide-pagination="true"
         :rows-per-page-options="[0]"
       >
@@ -22,8 +23,11 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteOpportunityState(props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
+        </template>
+        <template v-slot:loading>
+          <q-inner-loading showing color="primary" />
         </template>
       </q-table>
     </div>
@@ -52,6 +56,24 @@
         </div>
       </q-card>
     </q-dialog>
+
+    <q-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteOpportunityState" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -74,7 +96,11 @@ const columns = [
 ]
 
 const dialogSave = ref(false);
+const deleteDialog = ref(false);
+
+const loadingTable = ref(false);
 const isLoadingSave = ref(false);
+const isLoadingDelete = ref(false);
 
 const formModeEdit = ref(false);
 const opportunityStateDetails = ref<AppConfigInterface>({
@@ -85,6 +111,7 @@ const opportunityStateDetails = ref<AppConfigInterface>({
 
 const formData = ref<typeof StateFormComponent | null>(null);
 const opportunityStatesList = ref([]);
+const opportunityStateId = ref('');
 
 /**
  *
@@ -97,11 +124,12 @@ const validateForm = async () => {
  *
  */
 const getOpportunityStates = async () => {
-  const { data } = await OpportunitiesService.getOpportunityStates();
+  loadingTable.value = true;
 
-  if (data) {
-    opportunityStatesList.value = data?.data;
-  }
+  const { data } = await OpportunitiesService.getOpportunityStates();
+  opportunityStatesList.value = data?.data || [];
+
+  loadingTable.value = false;
 }
 
 /**
@@ -129,8 +157,9 @@ const saveOpportunityState = async () => {
 /**
  *
  */
-const deleteOpportunityState = async (typeId: string) => {
-  await OpportunitiesService.deleteOpportunityState(typeId);
+const deleteOpportunityState = async () => {
+  await OpportunitiesService.deleteOpportunityState(opportunityStateId.value);
+  deleteDialog.value = false;
   await getOpportunityStates();
 }
 
@@ -145,6 +174,14 @@ const openDialogSave = (modeEdit: boolean, details?: AppConfigInterface) => {
   }
 
   dialogSave.value = true;
+}
+
+/**
+ *
+ */
+const openDialogDelete = (id: string) => {
+  opportunityStateId.value = id;
+  deleteDialog.value = true;
 }
 
 onMounted(async () => {
