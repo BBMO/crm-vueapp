@@ -197,7 +197,7 @@ onMounted(async () => {
         label: data?.data.type === GLOBAL.CLIENT ? t('contact.client') : t('contact.lead'),
         value: data?.data.type,
       },
-      attachment: null,
+      attachment: data?.data.attachment_url,
     };
 
     isLoading.value = false;

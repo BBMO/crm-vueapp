@@ -282,6 +282,7 @@ const saveContact = async () => {
     contactFormDialog.value = false;
   }
 
+  await contactStore.fetchContactStats(t);
   isLoadingSave.value = false;
 };
 
@@ -290,7 +291,9 @@ const saveContact = async () => {
  */
 const deleteContact = async () => {
   await ContactsService.deleteContact(contactId.value);
+  await contactStore.fetchContactStats(t);
   deleteDialog.value = false;
+
   await getContacts();
 }
 

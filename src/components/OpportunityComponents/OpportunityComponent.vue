@@ -196,6 +196,8 @@ import type { OpportunityDetailsInterface } from 'src/interfaces/opportunity.int
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Store
+import { useOpportunityStore } from 'src/stores/opportunity.store';
 // Services
 import OpportunitiesService from 'src/services/opportunities.service';
 import AgentsService from 'src/services/agents.service';
@@ -203,6 +205,7 @@ import AgentsService from 'src/services/agents.service';
 import OpportunityFormComponent from 'components/OpportunityComponents/OpportunityFormComponent.vue';
 
 const { t } = useI18n();
+const opportunityStore = useOpportunityStore();
 
 const columns = [
   { name: 'contact', label: t('opportunity.form.contact'), field: 'contact', align: 'left' },
@@ -360,6 +363,7 @@ const saveOpportunity = async () => {
   isLoadingSave.value = false;
   opportunityFormDialog.value = false;
 
+  await opportunityStore.fetchOpportunityStats(t);
   await getOpportunities();
 }
 
@@ -368,7 +372,9 @@ const saveOpportunity = async () => {
  */
 const deleteOpportunity = async () => {
   await OpportunitiesService.deleteOpportunity(opportunityId.value);
+  await opportunityStore.fetchOpportunityStats(t);
   deleteDialog.value = false;
+
   await getOpportunities();
 }
 
@@ -394,6 +400,7 @@ const updateFinished = async () => {
   }
 
   await OpportunitiesService.updateOpportunity(opportunityId.value, payload);
+  await opportunityStore.fetchOpportunityStats(t);
   await getOpportunities();
   isLoadingFinished.value = false;
   opportunityFinishedDialog.value = false;

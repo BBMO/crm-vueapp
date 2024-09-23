@@ -5,9 +5,9 @@
         v-for="(item, index) in contactStatistics" :key="index"
         :title="item.title"
         :subtitle="item.subtitle"
-        :quantity="item.quantity"
         :icon="item.icon"
         :color="item.color"
+        :quantity="item.quantity"
       />
     </div>
     <div class="q-py-lg">
@@ -17,41 +17,22 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+// Store
+import { useContactStore } from 'src/stores/contact.store';
 // Components
 import StatsCardComponent from 'components/AppComponents/StatsCardComponent.vue';
 import ContactComponent from 'components/ContactComponents/ContactComponent.vue';
 
-const contactStatistics = [
-  {
-    title: 'Session',
-    subtitle: 'Total Users',
-    quantity: '21,459',
-    icon: 'mdi-account',
-    color: 'primary'
-  },
-  {
-    title: 'Paid Users',
-    subtitle: 'Last Week Analytics',
-    quantity: '4,567',
-    icon: 'mdi-account',
-    color: 'red'
-  },
-  {
-    title: 'Paid Users',
-    subtitle: 'Last Week Analytics',
-    quantity: '29,120',
-    icon: 'mdi-account',
-    color: 'orange'
-  },
-  {
-    title: 'Paid Users',
-    subtitle: 'Last Week Analytics',
-    quantity: '7,200',
-    icon: 'mdi-account',
-    color: 'positive'
-  }
-];
+const { t } = useI18n();
+const contactStore = useContactStore();
 
+const contactStatistics = computed(() => contactStore.getContactStats);
+
+onMounted(() => {
+  contactStore.fetchContactStats(t);
+})
 </script>
 
 <style scoped lang="scss">

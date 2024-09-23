@@ -92,6 +92,10 @@ class PropertiesService {
   getPropertyRanges(): AxiosPromise {
     return api.get('/properties/ranges');
   }
+
+  getPropertyStats(): AxiosPromise {
+    return api.get('/properties/stats')
+  }
 }
 
 export default new PropertiesService();

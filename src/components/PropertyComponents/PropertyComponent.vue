@@ -227,6 +227,20 @@
             </span>
           </q-td>
         </template>
+        <template v-slot:body-cell-status="props">
+          <q-td :props="props">
+            <span class="relative-position q-pa-xs">
+              <span
+                class="absolute full-width full-height"
+                style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
+                :style="{ background: props.row.status === GLOBAL.AVAILABLE ? 'green' : 'orange' }"
+              ></span>
+              <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.status === GLOBAL.AVAILABLE ? 'green' : 'orange' }">
+                {{ statusSelect.find(item => item.value === props.row.status)?.label }}
+              </span>
+            </span>
+          </q-td>
+        </template>
         <template v-slot:body-cell-price="props">
           <q-td :props="props">${{ props.row.price }}</q-td>
         </template>
@@ -278,18 +292,21 @@ import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 import type { PropertyFiltersInterface, PropertyRangeInterface } from 'src/interfaces/property.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Store
+import { usePropertyStore } from 'src/stores/property.store';
 // Services
 import PropertiesService from 'src/services/properties.service';
 import AgentsService from 'src/services/agents.service';
 
 const { t } = useI18n();
 const router = useRouter();
+const propertyStore = usePropertyStore();
 
 const columns = [
   { name: 'title', label: t('property.title'), field: 'title', align: 'left' },
   { name: 'type', label: t('property.form.type'), field: 'type', align: 'left' },
   { name: 'available_for', label: t('property.form.availableFor'), field: 'available_for', align: 'left' },
-  { name: 'city', label: t('property.form.city'), field: 'city', align: 'left' },
+  { name: 'status', label: t('property.form.status'), field: 'city', align: 'left' },
   { name: 'price', label: t('property.form.price'), field: 'price', align: 'left' },
   { name: 'enabled', label: t('property.form.enabled'), field: 'enabled', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
@@ -544,7 +561,9 @@ const editProperty = (id: string) => {
  */
 const deleteProperty = async () => {
   await PropertiesService.deleteProperty(propertyId.value);
+  await propertyStore.fetchPropertyStats(t);
   deleteDialog.value = false;
+
   await getProperties();
 }
 

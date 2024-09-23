@@ -41,6 +41,33 @@ export default {
   validation: {
     requiredField: 'Required field',
   },
+  stats: {
+    contacts: 'Contacts',
+    clients: 'Clients',
+    leads: 'Leads',
+    registers: 'Registers',
+    totalContact: 'Total registered contacts',
+    totalClients: 'Total registered clients',
+    totalLeads: 'Total registered leads',
+    totalRegisters: 'Total contacts registered in the last week',
+    properties: 'Properties',
+    available: 'Available',
+    sale: 'For sale',
+    rent: 'For Rent',
+    totalProperties: 'Total properties',
+    totalAvailable: 'Total properties available',
+    totalSale: 'Total available properties for sale',
+    totalRent: 'Total available properties for rent',
+    finished: 'Finished',
+    progress: 'In progress',
+    amount: 'Amount',
+    amountRent: 'Amount per rent',
+    opportunityFinished: 'Opportunities completed in the last month',
+    opportunityProgress: 'Opportunities in progress',
+    amountTotal: 'Amount earned last month',
+    amountTotalRent: 'Amount obtained last month for rent'
+
+  },
   auth: {
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password'

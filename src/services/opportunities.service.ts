@@ -45,6 +45,10 @@ class OpportunitiesService {
   deleteOpportunity(id: string): AxiosPromise {
     return api.delete(`/opportunity/${id}`);
   }
+
+  getOpportunityStats(): AxiosPromise {
+    return api.get('/opportunities/stats')
+  }
 }
 
 export default new OpportunitiesService();

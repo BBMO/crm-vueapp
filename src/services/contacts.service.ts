@@ -38,6 +38,10 @@ class ContactsService {
   deleteContact(id: string): AxiosPromise {
     return api.delete(`/contact/${id}`)
   }
+
+  getContactStats(): AxiosPromise {
+    return api.get('/contacts/stats')
+  }
 }
 
 export default new ContactsService();
