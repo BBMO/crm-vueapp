@@ -1,15 +1,23 @@
 <template>
   <div>
     <q-card>
-      <div class="q-px-md q-py-lg flex justify-end gap-md">
-        <q-input
-          outlined
-          dense
-          v-model="textSearch"
-          :placeholder="$t('global.search')"
-        ></q-input>
-        <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
-        <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('agent.addAgent') }}</q-btn>
+      <div class="q-px-md q-py-lg">
+        <div class="row">
+          <div class="col-sm-6 col-12 q-py-xs">
+            <q-input
+              outlined
+              dense
+              v-model="searchText"
+              debounce="1000"
+              :placeholder="$t('global.search')"
+              @update:modelValue="searchAgent"
+            ><template v-slot:prepend><q-icon name="mdi-magnify" /></template></q-input>
+          </div>
+          <div class="col-sm-6 col-12 flex justify-end gap-sm q-py-xs">
+            <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+            <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('agent.addAgent') }}</q-btn>
+          </div>
+        </div>
       </div>
       <q-table
         hide-bottom
@@ -21,22 +29,22 @@
       >
         <template v-slot:body-cell-display_name="props">
           <q-td :props="props">
-            <div class="flex items-center gap-sm">
-              <q-avatar size="40px" color="primary" text-color="white"><img src="https://demos.themeselection.com/sneat-vuetify-vuejs-admin-template/demo-1/assets/avatar-1-DL1ARROH.png" alt=""></q-avatar>
+            <div class="flex no-wrap items-center gap-sm">
+              <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.avatar" alt=""></q-avatar>
               {{ props.row.display_name }}
             </div>
           </q-td>
         </template>
-        <template v-slot:body-cell-user_email="props">
+        <template v-slot:body-cell-email="props">
           <q-td :props="props">
-            {{ props.row.user_email }}
+            {{ props.row.email }}
           </q-td>
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
-            <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openAgentDetails(props.row.ID)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.ID)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteAgent(props.row.ID)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openAgentDetails(props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
       </q-table>
@@ -61,15 +69,33 @@
             ref="formData"
             :is-edit="formModeEdit"
           />
-          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-lg" @click="saveAgent">{{ $t('global.save') }}</q-btn>
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-md" @click="saveAgent">{{ $t('global.save') }}</q-btn>
         </div>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteAgent" />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 // Services
@@ -89,24 +115,41 @@ const columns = [
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
-const textSearch = ref('');
+const searchText = ref('');
 
 const agentFormDialog = ref(false);
-const isLoadingSave = ref(false);
-const formModeEdit = ref(false);
+const deleteDialog = ref(false);
 
+const isLoadingSave = ref(false);
+const isLoadingDelete = ref(false);
+
+const formModeEdit = ref(false);
 const formData = ref<typeof AgentFormComponent | null>(null);
+
 const agentList = ref([]);
 
+const agentId = computed(() => agentStore.getAgentId);
 /**
  *
  */
 const getAgents = async () => {
   const { data } = await AgentsService.getAgents();
+  agentList.value = data?.data?.items || [];
+}
 
-  if (data) {
-    agentList.value = data?.data?.items;
+/**
+ *
+ */
+const searchAgent = async (value: string) => {
+  searchText.value = value;
+
+  if (searchText.value === '') {
+    await getAgents();
+    return;
   }
+
+  const { data } = await AgentsService.getAgents(searchText.value);
+  agentList.value = data?.data?.items || [];
 }
 
 /**
@@ -131,18 +174,21 @@ const saveAgent = async () => {
   isLoadingSave.value = true;
 
   if (await validateForm()) {
-    // TODO: Enviar en el formData la imagen del contacto
-
     const payload = new FormData();
-    payload.append('username', formData.value?.formData.form.username);
     payload.append('email', formData.value?.formData.form.email);
-    payload.append('password', formData.value?.formData.form.password);
     payload.append('first_name', formData.value?.formData.form.first_name);
     payload.append('last_name', formData.value?.formData.form.last_name);
 
+    if (formData.value?.formData.form.image) {
+      payload.append('image', formData.value?.formData.form.image);
+    }
+
     if (formModeEdit.value) {
-      console.log('Update agent!!')
+      await AgentsService.updateAgent(agentId.value, payload);
     } else {
+      payload.append('username', formData.value?.formData.form.username);
+      payload.append('password', formData.value?.formData.form.password);
+
       await AgentsService.createAgent(payload);
     }
 
@@ -156,8 +202,9 @@ const saveAgent = async () => {
 /**
  *
  */
-const deleteAgent = async (agentId: string) => {
-  await AgentsService.deleteAgent(agentId);
+const deleteAgent = async () => {
+  await AgentsService.deleteAgent(agentId.value);
+  deleteDialog.value = false;
   await getAgents();
 }
 
@@ -171,6 +218,16 @@ const openDialogSave = (modeEdit: boolean, agentId?: string) => {
     agentStore.setAgentId(agentId);
 
   agentFormDialog.value = true;
+}
+
+/**
+ *
+ */
+const openDialogDelete = (agentId: string) => {
+  if (agentId)
+    agentStore.setAgentId(agentId);
+
+  deleteDialog.value = true;
 }
 
 onMounted(async () => {

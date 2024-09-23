@@ -7,13 +7,24 @@
           outlined
           dense
           v-model="form.contact_id"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="1000"
           option-label="name"
           option-value="id"
           :options="contactsSelect"
           :rules="[
             (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
-        ></q-select>
+          @filter="filterContactSelect"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
       </div>
       <div class="q-py-sm">
         <label>{{ $t('opportunity.form.property') }}</label>
@@ -21,13 +32,25 @@
           outlined
           dense
           v-model="form.property_id"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="1000"
           option-label="name"
           option-value="id"
           :options="propertiesSelect"
           :rules="[
             (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
-        ></q-select>
+          @filter="filterPropertySelect"
+          @update:modelValue="updatePropertySelect"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
       </div>
       <div class="q-py-sm">
         <label>{{ $t('opportunity.form.amount') }}</label>
@@ -61,12 +84,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import {computed, onMounted, ref} from 'vue';
 // Interfaces
-import type { CommonSelectInterface } from 'src/interfaces/app.interface';
-import type { OpportunityFormInterface, OpportunityDetailsInterface } from 'src/interfaces/opportunity.interface';
+import type {CommonSelectInterface} from 'src/interfaces/app.interface';
+import type {
+  OpportunityDetailsInterface,
+  OpportunityFormInterface,
+  OpportunitySelectPropertyInterface
+} from 'src/interfaces/opportunity.interface';
 // Composable
-import useValidate  from 'src/composable/useValidate';
+import useValidate from 'src/composable/useValidate';
 // Services
 import OpportunitiesService from 'src/services/opportunities.service';
 import ContactsService from 'src/services/contacts.service';
@@ -99,7 +126,7 @@ const form = ref<OpportunityFormInterface>({
 const formRef = ref();
 
 const contactsSelect = ref<CommonSelectInterface[]>([]);
-const propertiesSelect = ref<CommonSelectInterface[]>([]);
+const propertiesSelect = ref<OpportunitySelectPropertyInterface[]>([]);
 const opportunityStatesSelect = ref<CommonSelectInterface[]>([]);
 
 const formData = computed(() => {
@@ -118,19 +145,54 @@ const getSelectsData = async () => {
   contactsSelect.value = response.data?.data?.items.map((item: any) => ({
     id: item.id,
     name: `${item.first_name} ${item.last_name}`
-  }));
+  })) || [];
 
   response = await PropertiesService.getProperties();
   propertiesSelect.value = response.data?.data?.items.map((item: any) => ({
     id: item.id,
-    name: item.title
-  }));
+    name: item.title,
+    price: item.price
+  })) || [];
 
   response = await OpportunitiesService.getOpportunityStates();
   opportunityStatesSelect.value = response.data?.data?.map((item: any) => ({
     id: item.id,
     name: item.name
-  }));
+  })) || [];
+}
+
+/**
+ *
+ */
+const filterContactSelect = (value: string, update: any) => {
+  update(async () => {
+    const { data } = await ContactsService.getContacts({ search: value });
+    contactsSelect.value = data?.data?.items.map((item: any) => ({
+      id: item.id,
+      name: `${item.first_name} ${item.last_name}`
+    })) || [];
+  })
+}
+
+/**
+ *
+ */
+const filterPropertySelect = (value: string, update: any) => {
+  update(async () => {
+    const { data } = await PropertiesService.getProperties();
+    propertiesSelect.value = data?.data?.items.map((item: any) => ({
+      id: item.id,
+      name: item.title,
+      price: item.price
+    })) || [];
+  })
+}
+
+/**
+ *
+ */
+const updatePropertySelect = (value: CommonSelectInterface) => {
+  form.value.amount = propertiesSelect.value.find((property: any) => property.id === value.id)?.price || '';
 }
 
 /**

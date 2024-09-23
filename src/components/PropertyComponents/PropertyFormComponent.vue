@@ -165,13 +165,28 @@
                 outlined
                 dense
                 v-model="form.agent_id"
+                use-input
+                hide-selected
+                fill-input
+                input-debounce="1000"
                 option-label="name"
                 option-value="id"
                 :options="propertyAgentsSelect"
                 :rules="[
                   (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
-              ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
+                @filter="filterAgentSelect"
+              >
+                <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+
+
+
             </div>
             <div class="q-py-xs">
               <label>{{ $t('property.form.type') }}</label>
@@ -454,7 +469,7 @@ const getDropdownConfiguration = async () => {
 
   response = await AgentsService.getAgents();
   propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
-    id: agent.ID,
+    id: agent.id,
     name: agent.display_name,
   }));
 
@@ -463,6 +478,19 @@ const getDropdownConfiguration = async () => {
     id: type.id,
     name: type.name,
   }));
+}
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    propertyAgentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
 }
 
 /**
@@ -479,6 +507,10 @@ const getPropertyData = async () => {
     available_for: {
       label: data?.data.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental'),
       value: data?.data.available_for,
+    },
+    status: {
+      label: statusSelect.find((status: any) => status.value === data?.data.status)?.label || '',
+      value: data?.data.status,
     },
     enabled: data?.data.enabled === '1',
   }
@@ -536,6 +568,7 @@ const saveProperty = async () => {
       payload.append('longitude', form.value.longitude);
       payload.append('agent_id', form.value.agent_id.id);
       payload.append('type_id', form.value.type_id.id);
+      payload.append('status', form.value.status.value);
       payload.append('enabled', form.value.enabled ? '1' : '0');
 
       if (features.length > 0) {

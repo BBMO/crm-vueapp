@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pt-md">
+  <div>
     <q-form v-if="!isLoading" ref="formRef">
-      <div class="q-py-md q-mb-lg">
+      <div class="q-py-sm q-mb-lg">
         <div class="flex justify-center">
           <q-img
             :src="form.attachment ? form.attachment : 'https://i.ibb.co/0Jmshvb/no-image.png'"
@@ -64,7 +64,7 @@
           ]"
         ></q-input>
       </div>
-      <div class="q-py-md">
+      <div class="q-py-xs">
         <label>{{ $t('contact.form.address') }}</label>
         <q-input
           outlined
@@ -87,11 +87,10 @@
           :rules="[
             (val: any) => validateRequiredSelect(val) || $t('validation.requiredField'),
           ]"
-          @update:modelValue="updateType"
         ></q-select>
       </div>
     </q-form>
-    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
+    <div v-if="isLoading" class="full-width full-height flex align-center justify-center q-my-lg">
       <q-spinner color="primary" size="3em" />
     </div>
   </div>
@@ -100,6 +99,8 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+// Interfaces
+import type { ContactFormInterface } from 'src/interfaces/contact.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Composable
@@ -127,13 +128,17 @@ const isLoading = ref(false);
 
 const fileInput = ref<HTMLElement | null>(null);
 
-const form = ref({
+const form = ref<ContactFormInterface>({
   first_name: '',
   last_name: '',
   email: '',
   phone: '',
   address: '',
-  type: '',
+  type: {
+    label: '',
+    value: '',
+  },
+  image: null,
   attachment: null as string | null,
 });
 const formRef = ref();
@@ -162,17 +167,11 @@ const updateImage = (event: any) => {
     reader.onload = (e) => {
       if (e.target) {
         form.value.attachment = (e.target.result as string) ?? '';
+        form.value.image = file;
       }
     };
     reader.readAsDataURL(file);
   }
-};
-
-/**
- *
- */
-const updateType = (type: {label: string, value: string}) => {
-  form.value.type = type.value;
 };
 
 /**
@@ -194,7 +193,10 @@ onMounted(async () => {
       email: data?.data.email,
       phone: data?.data.phone,
       address: data?.data.address,
-      type: data?.data.type,
+      type: {
+        label: data?.data.type === GLOBAL.CLIENT ? t('contact.client') : t('contact.lead'),
+        value: data?.data.type,
+      },
       attachment: null,
     };
 

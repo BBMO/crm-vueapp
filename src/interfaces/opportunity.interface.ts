@@ -1,5 +1,11 @@
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 
+export interface OpportunitySelectPropertyInterface {
+  id: string
+  name: string
+  price: string
+}
+
 export interface OpportunityFormInterface {
   contact_id: CommonSelectInterface
   property_id: CommonSelectInterface

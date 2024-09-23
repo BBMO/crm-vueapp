@@ -22,10 +22,12 @@ export default {
     searchFilters: 'Search filters',
     export: 'Export',
     filters: 'Filters',
-    cleanFilters: 'Clean filters',
+    cleanFilters: 'Clear filters',
     details: 'Details',
     general: 'General',
-    security: 'Security'
+    security: 'Security',
+    noResults: 'No results found',
+    deleteMessage: 'Are you sure you want to delete this item? This action is irreversible.',
   },
   menu: {
     dashboard: 'Dashboard',

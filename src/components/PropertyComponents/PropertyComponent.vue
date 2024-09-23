@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-card v-if="!isLoading" class="property-container">
-      <div class="q-px-md q-py-lg filters-section">
+      <div class="q-px-md q-py-md filters-section">
         <q-expansion-item default-opened>
           <template v-slot:header>
             <div class="flex items-center gap-xs">
@@ -15,13 +15,14 @@
                 <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.price') }}</label>
                   <q-range
+                    v-if="propertyRange"
                     label-always
                     switch-label-side
                     v-model="filters.price"
                     color="primary"
                     class="q-px-sm"
-                    :min="0"
-                    :max="50"
+                    :min="propertyRange.price_min"
+                    :max="propertyRange.price_max"
                     :left-label-value="filters.price.min + '$'"
                     :right-label-value="filters.price.max + '$'"
                   />
@@ -32,10 +33,22 @@
                     outlined
                     dense
                     v-model="filters.agent"
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="1000"
                     option-label="name"
                     option-value="id"
                     :options="propertyAgentsSelect"
-                  ><template v-slot:prepend><q-icon name="mdi-account-outline" /></template></q-select>
+                    @filter="filterAgentSelect"
+                  >
+                    <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.address') }}</label>
@@ -127,13 +140,14 @@
                 <div class="col-sm-3 col-12 q-pa-sm">
                   <label>{{ $t('property.form.size') }} m<sup>2</sup></label>
                   <q-range
+                    v-if="propertyRange"
                     label-always
                     switch-label-side
                     v-model="filters.size"
                     color="primary"
                     class="q-px-sm"
-                    :min="0"
-                    :max="50"
+                    :min="propertyRange.size_min"
+                    :max="propertyRange.size_max"
                     :left-label-value="filters.size.min"
                     :right-label-value="filters.size.max"
                   />
@@ -157,8 +171,8 @@
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-pa-sm">
-                <q-btn outline color="negative" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
-                <q-btn outline color="primary" icon="mdi-magnify" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
+                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
+                <q-btn outline color="primary" icon="mdi-magnify" class="no-box-shadow" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
             </q-card-section>
           </q-card>
@@ -179,7 +193,7 @@
       >
         <template v-slot:body-cell-title="props">
           <q-td :props="props">
-            <div class="flex items-center gap-sm">
+            <div class="flex no-wrap items-center gap-sm">
               <q-avatar rounded size="40px" color="primary" text-color="white">
                 <img :src="props.row.images.length > 0 ? props.row.images[0].url : 'https://i.ibb.co/0Jmshvb/no-image.png'" alt="">
               </q-avatar>
@@ -219,8 +233,9 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
+            <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="viewProperty(props.row.url)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="editProperty(props.row.id)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteProperty(props.row.id)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
       </q-table>
@@ -229,6 +244,24 @@
     <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
       <q-spinner color="primary" size="3em" />
     </div>
+
+    <q-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteProperty" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -239,7 +272,7 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router'
 // Interfaces
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
-import type { PropertyFiltersInterface } from 'src/interfaces/property.interface';
+import type { PropertyFiltersInterface, PropertyRangeInterface } from 'src/interfaces/property.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Services
@@ -276,7 +309,10 @@ const enabledSelect = [
   { label: t('property.all'), value: '' },
 ]
 
+const deleteDialog = ref(false);
+
 const isLoading = ref(false);
+const isLoadingDelete = ref(false);
 
 const filters = ref<PropertyFiltersInterface>({
   available_for: {
@@ -317,7 +353,9 @@ const filters = ref<PropertyFiltersInterface>({
 const propertyFeaturesSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
+const propertyRange: Ref<PropertyRangeInterface | null> = ref(null);
 
+const propertyId = ref('');
 const propertyList = ref([]);
 
 const getFilterOptions = async () => {
@@ -328,27 +366,58 @@ const getFilterOptions = async () => {
     id: feature.id,
     name: feature.name,
     selected: false,
-  }));
+  })) || [];
 
   response = await AgentsService.getAgents();
   propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
-    id: agent.ID,
+    id: agent.id,
     name: agent.display_name,
-  }));
+  })) || [];
 
   response = await PropertiesService.getPropertyTypes();
   propertyTypesSelect.value = response?.data?.data.map((type: any) => ({
     id: type.id,
     name: type.name,
-  }));
+  })) || [];
+
+
+  response = await PropertiesService.getPropertyRanges();
+  propertyRange.value = response?.data?.data;
+
+  if (propertyRange.value) {
+    filters.value = {
+      ...filters.value,
+      price: {
+        min: propertyRange.value?.price_min,
+        max: propertyRange.value?.price_max,
+      },
+      size: {
+        min: propertyRange.value?.size_min,
+        max: propertyRange.value?.size_max,
+      },
+    }
+  }
 }
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    propertyAgentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+};
 
 /**
  *
  */
 const getProperties = async () => {
   const { data } = await PropertiesService.getProperties();
-  propertyList.value = data?.data?.items;
+  propertyList.value = data?.data?.items || [];
 }
 
 /**
@@ -423,6 +492,13 @@ const createProperty = () => {
 /**
  *
  */
+const viewProperty = (url: string) => {
+  window.open(url, '_blank');
+}
+
+/**
+ *
+ */
 const editProperty = (id: string) => {
   router.push({ name: 'propertyEdit', params: { id: id } });
 }
@@ -430,9 +506,18 @@ const editProperty = (id: string) => {
 /**
  *
  */
-const deleteProperty = async (id: string) => {
-  await PropertiesService.deleteProperty(id);
+const deleteProperty = async () => {
+  await PropertiesService.deleteProperty(propertyId.value);
+  deleteDialog.value = false;
   await getProperties();
+}
+
+/**
+ *
+ */
+const openDialogDelete = (id: string) => {
+  propertyId.value = id;
+  deleteDialog.value = true;
 }
 
 onMounted(async () => {

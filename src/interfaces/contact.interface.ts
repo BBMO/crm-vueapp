@@ -1,12 +1,16 @@
 export interface ContactFormInterface {
-  id: string
+  id?: string
   first_name: string
   last_name: string
   email: string
   phone: string
   address: string
-  interest: string
-  type: string
+  type: {
+    label: string
+    value: string
+  }
+  image: any
+  attachment: any
 }
 
 export interface ContactDetailsInterface extends ContactFormInterface {

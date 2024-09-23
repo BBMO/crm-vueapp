@@ -1,7 +1,7 @@
 <template>
-  <div class="q-pt-md">
+  <div>
     <q-form v-if="!isLoading" ref="formRef">
-      <div class="q-py-md q-mb-lg">
+      <div class="q-py-sm q-mb-lg">
         <div class="flex justify-center">
           <q-img
             :src="form.attachment ? form.attachment : 'https://i.ibb.co/0Jmshvb/no-image.png'"
@@ -20,7 +20,7 @@
           @change="updateImage"
         />
       </div>
-      <div class="q-py-xs">
+      <div v-if="!props.isEdit" class="q-py-xs">
         <label>{{ $t('agent.form.username') }}</label>
         <q-input
           outlined
@@ -42,7 +42,7 @@
           ]"
         ></q-input>
       </div>
-      <div class="q-py-xs">
+      <div v-if="!props.isEdit" class="q-py-xs">
         <label>{{ $t('agent.form.password') }}</label>
         <q-input
           outlined
@@ -81,7 +81,7 @@
         ></q-input>
       </div>
     </q-form>
-    <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
+    <div v-if="isLoading" class="full-width full-height flex align-center justify-center q-my-lg">
       <q-spinner color="primary" size="3em" />
     </div>
   </div>
@@ -117,6 +117,7 @@ const form = ref<AgentFormInterface>({
   password: '',
   first_name: '',
   last_name: '',
+  image: null,
   attachment: null as string | null,
 });
 const formRef = ref();
@@ -145,6 +146,7 @@ const updateImage = (event: any) => {
     reader.onload = (e) => {
       if (e.target) {
         form.value.attachment = (e.target.result as string) ?? '';
+        form.value.image = file;
       }
     };
     reader.readAsDataURL(file);
@@ -163,7 +165,12 @@ onMounted(async () => {
     isLoading.value = true;
 
     const { data } = await AgentsService.getAgent(agentId.value);
-    console.log(data?.data);
+    form.value = {
+      ...form.value,
+      ...data?.data,
+      image: null,
+      attachment: data?.data.avatar
+    }
 
     isLoading.value = false;
   }

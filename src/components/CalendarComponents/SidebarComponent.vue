@@ -11,13 +11,23 @@
           outlined
           dense
           v-model="agent"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="1000"
           option-label="name"
           option-value="id"
-          :options="agentsList"
+          :options="agentsSelect"
+          @filter="filterAgentSelect"
           @update:modelValue="agentSelect"
         >
           <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
           <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" @click="cleanAgentSelect" /></template>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+            </q-item>
+        </template>
         </q-select>
       </div>
 
@@ -60,31 +70,28 @@ const calendarStore = useCalendarStore();
 const agent = ref(null);
 
 const quoteCategoriesList: Ref<CalendarDropdownInterface[]> = ref([]);
-const agentsList: Ref<CalendarDropdownInterface[]> = ref([]);
+const agentsSelect: Ref<CalendarDropdownInterface[]> = ref([]);
 
 /**
  *
  */
-const getQuoteCategories = async () => {
-  const { data } = await CalendarService.getQuoteCategories();
-  quoteCategoriesList.value = data?.data.map((item: CalendarDropdownInterface) => ({
+const getSelectsData = async () => {
+  let response;
+
+  response = await CalendarService.getQuoteCategories();
+  quoteCategoriesList.value = response?.data?.data.map((item: CalendarDropdownInterface) => ({
     id: item.id,
     name: item.name,
     color: item.color,
     selected: false,
-  }));
-};
+  })) || [];
 
-/**
- *
- */
-const getAgents = async () => {
-  const { data } = await AgentsService.getAgents();
-  agentsList.value = data?.data?.items.map((agent: any) => ({
-    id: agent.ID,
+  response = await AgentsService.getAgents();
+  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+    id: agent.id,
     name: agent.display_name,
-  }));
-}
+  })) || [];
+};
 
 /**
  *
@@ -98,7 +105,20 @@ const categoriesSelect = () => {
  *
  */
 const agentSelect = (agent: { name: string, id: string }) => {
-  calendarStore.setAgentFilter(agent.id);
+  calendarStore.setAgentFilter(`${agent.id}`);
+}
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
 }
 
 /**
@@ -117,8 +137,7 @@ const addEvent = () => {
 };
 
 onMounted(() => {
-  getQuoteCategories();
-  getAgents();
+  getSelectsData();
 });
 </script>
 

@@ -120,13 +120,24 @@
       <div class="q-pt-xs q-pb-md">
         <label>{{ $t('calendar.form.agent') }}</label>
         <q-select
-          outlined
-          dense
-          v-model="form.agent"
-          option-label="name"
-          option-value="id"
-          :options="agentsSelect"
-        ></q-select>
+            outlined
+            dense
+            v-model="form.agent"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="1000"
+            option-label="name"
+            option-value="id"
+            :options="agentsSelect"
+            @filter="filterAgentSelect"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
       </div>
       <div class="q-py-md">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
@@ -202,14 +213,27 @@ const getSelectsData = async () => {
   let response;
 
   response = await CalendarService.getQuoteCategories();
-  quoteCategoriesSelect.value = response.data?.data;
+  quoteCategoriesSelect.value = response.data?.data || [];
 
   response = await AgentsService.getAgents();
   agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
-    id: agent.ID,
+    id: agent.id,
     name: agent.display_name,
-  }));
+  })) || [];
 };
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+}
 
 /**
  *

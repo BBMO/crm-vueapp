@@ -82,6 +82,10 @@ class PropertiesService {
   deletePropertyImage(id: string, image_id: string): AxiosPromise {
     return api.delete(`/property/${id}/upload/${image_id}`);
   }
+
+  getPropertyRanges(): AxiosPromise {
+    return api.get('/properties/ranges');
+  }
 }
 
 export default new PropertiesService();

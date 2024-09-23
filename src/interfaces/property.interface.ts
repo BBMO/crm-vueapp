@@ -5,6 +5,13 @@ export interface PropertyDropdownInterface {
   value: string
 }
 
+export interface PropertyRangeInterface {
+  price_max: number
+  price_min: number
+  size_max: number
+  size_min: number
+}
+
 export interface PropertyImageInterface {
   src: string
   id?: string

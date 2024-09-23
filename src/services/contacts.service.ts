@@ -5,7 +5,12 @@ class ContactsService {
   /**
    * Contacts general
    */
-  getContacts(): AxiosPromise {
+  getContacts(filters?: any): AxiosPromise {
+    if (filters) {
+      const params = new URLSearchParams(filters).toString()
+      return api.get(`/contacts?${params}`)
+    }
+
     return api.get('/contacts')
   }
 

@@ -1,6 +1,67 @@
 <template>
   <div>
-    <q-card v-if="!isLoading" class="property-container">
+    <q-card v-if="!isLoading" class="opportunity-container">
+      <div class="q-px-md q-py-md filters-section">
+        <q-expansion-item default-opened>
+          <template v-slot:header>
+            <div class="flex items-center gap-xs">
+              <q-icon size="sm" name="mdi-filter-multiple" />
+              <h6 class="q-ma-none text-weight-medium">{{ $t('global.filters') }}</h6>
+            </div>
+          </template>
+          <q-card>
+            <q-card-section class="q-px-none q-py-sm">
+              <div class="row">
+                <div class="col-sm-5 col-12 q-pa-sm">
+                  <label>{{ $t('opportunity.form.state') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.state"
+                    option-label="name"
+                    option-value="id"
+                    :options="opportunityStatesSelect"
+                  ></q-select>
+                </div>
+                <div class="col-sm-5 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.agent') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.agent"
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="1000"
+                    option-label="name"
+                    option-value="id"
+                    :options="agentsSelect"
+                    @filter="filterAgentSelect"
+                  >
+                    <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+                <div class="col-sm-2 col-12 q-pa-sm">
+                  <div class="flex column items-stretch">
+                    <label>{{ $t('global.finished') }}</label>
+                    <q-toggle v-model="filters.finished" color="primary" class="flex items-center" />
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end gap-sm q-px-sm q-mt-md">
+                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
+                <q-btn outline color="primary" icon="mdi-magnify" class="no-box-shadow" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
+      </div>
+      <q-separator />
       <div class="q-px-md q-py-lg flex justify-end gap-md">
         <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('opportunity.addOpportunity') }}</q-btn>
@@ -26,15 +87,15 @@
                   <span
                     class="absolute full-width full-height border-radius"
                     style="top: 0; left: 0; opacity: 0.2;"
-                    :style="{ background: props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
+                    :style="{ background: props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
                   ></span>
                   <q-icon
                     size="xs"
-                    :name="props.row.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
-                    :color="props.row.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
+                    :name="props.row.property.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
+                    :color="props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
                   />
                 </span>
-                {{ props.row.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
+                {{ props.row.property.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
               </span>
             </q-td>
             <q-td>${{ props.row.amount }}</q-td>
@@ -53,7 +114,7 @@
             </q-td>
             <q-td class="text-right actions">
               <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row)"></q-btn>
-              <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="deleteOpportunity(props.row.id)"></q-btn>
+              <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
             </q-td>
           </q-tr>
         </template>
@@ -95,7 +156,7 @@
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap gap-sm">
-            <q-icon size="md" name="mdi-lock-alert" color="negative"  />
+            <q-icon size="md" name="mdi-lock-alert" color="negative" />
             <span class="q-ml-sm">{{ $t('opportunity.messageConfirmationFinished') }}</span>
           </div>
         </q-card-section>
@@ -105,18 +166,38 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog
+      v-model="deleteDialog"
+      persistent
+    >
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteOpportunity" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import {onMounted, Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 // Interfaces
 import type { OpportunityDetailsInterface } from 'src/interfaces/opportunity.interface';
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Services
 import OpportunitiesService from 'src/services/opportunities.service';
+import AgentsService from 'src/services/agents.service';
 // Components
 import OpportunityFormComponent from 'components/OpportunityComponents/OpportunityFormComponent.vue';
 
@@ -132,20 +213,56 @@ const columns = [
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
+const filters = ref({
+  state: {
+    id: '',
+    name: ''
+  },
+  agent: {
+    id: '',
+    name: ''
+  },
+  finished: false,
+});
+
 const isLoading = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingFinished = ref(false);
+const isLoadingDelete = ref(false);
 
 const opportunityFormDialog = ref(false);
 const opportunityFinishedDialog = ref(false);
-const formModeEdit = ref(false);
+const deleteDialog = ref(false);
 
+const formModeEdit = ref(false);
 const opportunityDetails = ref<OpportunityDetailsInterface | null>(null);
 const formData = ref<typeof OpportunityFormComponent | null>(null);
 const opportunityList = ref<OpportunityDetailsInterface[]>([]);
 
 const opportunityId = ref('');
 const opportunityFinished = ref(false);
+
+const opportunityStatesSelect = ref<CommonSelectInterface[]>([]);
+const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
+
+/**
+ *
+ */
+const getSelectsData = async () => {
+  let response;
+
+  response = await OpportunitiesService.getOpportunityStates();
+  opportunityStatesSelect.value = response.data?.data?.map((item: any) => ({
+    id: item.id,
+    name: item.name
+  })) || [];
+
+  response = await AgentsService.getAgents();
+  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+    id: agent.id,
+    name: agent.display_name,
+  })) || [];
+};
 
 /**
  *
@@ -155,18 +272,55 @@ const getOpportunities = async () => {
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,
     finished: item.finished_at !== null
-  }));
+  })) || [];
 }
 
 /**
  *
  */
-const openDialogSave = (modeEdit: boolean, details?: OpportunityDetailsInterface) => {
-  formModeEdit.value = modeEdit;
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+}
 
-  if (details) { opportunityDetails.value = details; }
+/**
+ *
+ */
+const cleanFilters = () => {
+  filters.value = {
+    state: {
+      id: '',
+      name: ''
+    },
+    agent: {
+      id: '',
+      name: ''
+    },
+    finished: false,
+  };
 
-  opportunityFormDialog.value = true;
+  getOpportunities();
+}
+
+/**
+ *
+ */
+const applyFilters = async () => {
+  const { data } = await OpportunitiesService.getOpportunities({
+    state_id: filters.value.state.id,
+    agent_id: filters.value.agent.id,
+    finished: filters.value.finished
+  })
+
+  opportunityList.value = data?.data?.items?.map((item: any) => ({
+    ...item,
+    finished: item.finished_at !== null
+  })) || [];
 }
 
 /**
@@ -207,9 +361,21 @@ const saveOpportunity = async () => {
 /**
  *
  */
-const deleteOpportunity = async (opportunityId: string) => {
-  await OpportunitiesService.deleteOpportunity(opportunityId);
+const deleteOpportunity = async () => {
+  await OpportunitiesService.deleteOpportunity(opportunityId.value);
+  deleteDialog.value = false;
   await getOpportunities();
+}
+
+/**
+ *
+ */
+const openDialogSave = (modeEdit: boolean, details?: OpportunityDetailsInterface) => {
+  formModeEdit.value = modeEdit;
+
+  if (details) { opportunityDetails.value = details; }
+
+  opportunityFormDialog.value = true;
 }
 
 /**
@@ -227,7 +393,6 @@ const updateFinished = async () => {
   isLoadingFinished.value = false;
   opportunityFinishedDialog.value = false;
 }
-
 
 /**
  *
@@ -253,20 +418,49 @@ const cancelDialogFinished = () => {
   });
 }
 
+/**
+ *
+ */
+const openDialogDelete = (id: string) => {
+  opportunityId.value = id;
+  deleteDialog.value = true;
+}
+
 onMounted(async () => {
   isLoading.value = true;
+
+  await getSelectsData();
   await getOpportunities();
+
   isLoading.value = false;
 })
 </script>
 
 <style scoped lang="scss">
-.q-table {
-  .disabled {
-    cursor: not-allowed;
+.opportunity-container {
+  .filters-section {
+    :deep(.q-item) {
+      display: flex;
+      justify-content: space-between;
+      padding: 0;
+    }
 
-    :deep(.q-toggle), :deep(.q-btn) {
-      pointer-events: none;
+    :deep(.q-item .q-focus-helper) {
+      display: none;
+    }
+
+    :deep(.q-item .q-item__section) {
+      padding: 0;
+    }
+  }
+
+  .q-table {
+    .disabled {
+      cursor: not-allowed;
+
+      :deep(.q-toggle), :deep(.q-btn) {
+        pointer-events: none;
+      }
     }
   }
 }
