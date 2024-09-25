@@ -9,7 +9,10 @@
         <contact-details-component />
       </div>
       <div class="col-12 col-md-8 q-pl-sm contact-information-section">
-        <contact-details-agent-component />
+        <div class="flex column gap-md">
+          <contact-details-properties-component />
+          <contact-details-opportunities-component />
+        </div>
       </div>
     </div>
   </q-page>
@@ -19,7 +22,8 @@
 import { useRouter } from 'vue-router';
 // Components
 import ContactDetailsComponent from 'components/ContactComponents/ContactDetailsComponent.vue';
-import ContactDetailsAgentComponent from 'components/ContactComponents/ContactDetailsAgentComponent.vue';
+import ContactDetailsPropertiesComponent from 'components/ContactComponents/ContactDetailsPropertiesComponent.vue';
+import ContactDetailsOpportunitiesComponent from 'components/ContactComponents/ContactDetailsOpportunitiesComponent.vue';
 
 const router = useRouter();
 

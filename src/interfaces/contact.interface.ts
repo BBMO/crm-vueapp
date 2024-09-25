@@ -13,8 +13,17 @@ export interface ContactFormInterface {
   attachment: any
 }
 
-export interface ContactDetailsInterface extends ContactFormInterface {
+export interface ContactDetailsInterface {
+  id: string
+  first_name: string
+  last_name: string
+  email: string
+  phone: string
+  address: string
+  type: string
   attachment_id: string
+  attachment_url: string
   created_at: string
   updated_at: string
+  features?: any
 }

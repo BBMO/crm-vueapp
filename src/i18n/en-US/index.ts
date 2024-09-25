@@ -10,6 +10,8 @@ export default {
     state: 'State',
     role: 'Role',
     finished: 'Finished',
+    notFinished: 'Not Finished',
+    all: 'All',
     actions: 'Actions',
     edit: 'Edit',
     save: 'Save',
@@ -19,6 +21,7 @@ export default {
     cancel: 'Cancel',
     accept: 'Accept',
     search: 'Search',
+    delete: 'Delete',
     searchFilters: 'Search filters',
     export: 'Export',
     filters: 'Filters',
@@ -27,7 +30,8 @@ export default {
     general: 'General',
     security: 'Security',
     noResults: 'No results found',
-    deleteMessage: 'Are you sure you want to delete this item? This action is irreversible.',
+    deleteMessage: 'Are you sure you want to delete this item? This action is irreversible and will delete all related data.',
+    noDataAvailable: 'No data available'
   },
   menu: {
     dashboard: 'Dashboard',
@@ -65,8 +69,7 @@ export default {
     opportunityFinished: 'Opportunities completed in the last month',
     opportunityProgress: 'Opportunities in progress',
     amountTotal: 'Amount earned last month',
-    amountTotalRent: 'Amount obtained last month for rent'
-
+    amountTotalRent: 'Amount obtained last month for rent',
   },
   auth: {
     newPassword: 'New Password',
@@ -96,6 +99,8 @@ export default {
     client: 'Client',
     lead: 'Lead',
     name: 'Name',
+    propertiesRecommended: 'Recommended Properties',
+    opportunities: 'Opportunities',
     form: {
       firstName: 'First Name',
       lastName: 'Last Name',
@@ -103,7 +108,8 @@ export default {
       phone: 'Phone',
       address: 'Address',
       interests: 'Interests',
-      type: 'Type'
+      type: 'Type',
+      features: 'Features',
     }
   },
   calendar: {
@@ -120,7 +126,7 @@ export default {
       allDay: 'All Day',
       location: 'Location',
       description: 'Description',
-      agent: 'Agent'
+      agent: 'Agent',
     },
     placeholder: {
       title: 'Meeting with Jane',

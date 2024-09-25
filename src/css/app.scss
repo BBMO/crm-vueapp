@@ -30,6 +30,10 @@ body {
 }
 
 /* ------------------------------ Quasar overrides ------------------------------ */
+// q-avatar overrides
+.q-avatar img {
+  object-fit: cover;
+}
 
 // q-field overrides
 .q-field {
@@ -130,6 +134,21 @@ body {
     .q-btn:hover {
       transform: translateY(-1px);
     }
+  }
+}
+
+.q-table__middle {
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    top: 10px;
+    border-radius: 10px;
+    border: none;
+    background: $grey;
   }
 }
 

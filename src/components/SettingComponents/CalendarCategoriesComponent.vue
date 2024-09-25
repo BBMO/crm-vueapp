@@ -4,10 +4,8 @@
       <h5 class="q-ma-none">{{ $t('setting.calendar') }} {{ $t('setting.categories') }}</h5>
       <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="openDialogSave(false)">{{ $t('setting.addCategory') }}</q-btn>
     </div>
-
     <div>
       <q-table
-        hide-bottom
         row-key="name"
         :rows="quoteCategoriesList"
         :columns="columns"
@@ -28,6 +26,12 @@
         </template>
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:no-data>
+          <div class="full-width flex column items-center q-my-md">
+            <q-icon size="md" name="mdi-alert" color="grey" />
+            <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>
+          </div>
         </template>
       </q-table>
     </div>

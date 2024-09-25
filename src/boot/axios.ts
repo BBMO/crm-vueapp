@@ -16,10 +16,10 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL ? `${import.meta.env.VITE_APP_API_URL}/crm/v1` : '/crm/v1',
-  headers: {
+  /*headers: {
     //@ts-expect-error: crm_object is defined in the global scope
     'X-WP-Nonce': crm_object.nonce,
-  }
+  }*/
 });
 
 export default boot(({ app }) => {

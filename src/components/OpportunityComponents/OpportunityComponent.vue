@@ -12,7 +12,7 @@
           <q-card>
             <q-card-section class="q-px-none q-py-sm">
               <div class="row">
-                <div class="col-sm-5 col-12 q-pa-sm">
+                <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('opportunity.form.state') }}</label>
                   <q-select
                     outlined
@@ -23,7 +23,7 @@
                     :options="opportunityStatesSelect"
                   ></q-select>
                 </div>
-                <div class="col-sm-5 col-12 q-pa-sm">
+                <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.agent') }}</label>
                   <q-select
                     outlined
@@ -46,11 +46,16 @@
                     </template>
                   </q-select>
                 </div>
-                <div class="col-sm-2 col-12 q-pa-sm">
-                  <div class="flex column items-stretch">
-                    <label>{{ $t('global.finished') }}</label>
-                    <q-toggle v-model="filters.finished" color="primary" class="flex items-center" />
-                  </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('global.finished') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.finished"
+                    option-label="label"
+                    option-value="value"
+                    :options="finishedSelect"
+                  ></q-select>
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-px-sm q-mt-md">
@@ -67,7 +72,6 @@
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('opportunity.addOpportunity') }}</q-btn>
       </div>
       <q-table
-        hide-bottom
         row-key="name"
         :rows="opportunityList"
         :columns="columns"
@@ -121,6 +125,12 @@
         </template>
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:no-data>
+          <div class="full-width flex column items-center q-my-md">
+            <q-icon size="md" name="mdi-alert" color="grey" />
+            <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>
+          </div>
         </template>
       </q-table>
     </q-card>
@@ -217,6 +227,12 @@ const columns = [
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
+const finishedSelect = [
+  { label: t('global.finished'), value: '1' },
+  { label: t('global.notFinished'), value: '0' },
+  { label: t('global.all'), value: '' },
+]
+
 const filters = ref({
   state: {
     id: '',
@@ -226,7 +242,10 @@ const filters = ref({
     id: '',
     name: ''
   },
-  finished: false,
+  finished: {
+    label: '',
+    value: ''
+  },
 });
 
 const loadingTable = ref(false);
@@ -309,7 +328,10 @@ const cleanFilters = () => {
       id: '',
       name: ''
     },
-    finished: false,
+    finished: {
+      label: '',
+      value: ''
+    },
   };
 
   getOpportunities();
@@ -319,12 +341,16 @@ const cleanFilters = () => {
  *
  */
 const applyFilters = async () => {
-  const { data } = await OpportunitiesService.getOpportunities({
+  const payloadFilters: any = {
     state_id: filters.value.state.id,
     agent_id: filters.value.agent.id,
-    finished: filters.value.finished
-  });
+  };
 
+  if (filters.value.finished.value) {
+    payloadFilters.finished = filters.value.finished.value === '1';
+  }
+
+  const { data } = await OpportunitiesService.getOpportunities(payloadFilters);
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,
     finished: item.finished_at !== null
@@ -464,8 +490,6 @@ onMounted(async () => {
 
   .q-table {
     .disabled {
-      cursor: not-allowed;
-
       :deep(.q-toggle), :deep(.q-btn) {
         pointer-events: none;
       }

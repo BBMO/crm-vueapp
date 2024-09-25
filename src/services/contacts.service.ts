@@ -42,6 +42,14 @@ class ContactsService {
   getContactStats(): AxiosPromise {
     return api.get('/contacts/stats')
   }
+
+  getContactProperties(id: string): AxiosPromise {
+    return api.get(`/contact/${id}/recommended-properties`)
+  }
+
+  getContactOpportunities(id: string): AxiosPromise {
+    return api.get(`/opportunities?contact_id=${id}`)
+  }
 }
 
 export default new ContactsService();

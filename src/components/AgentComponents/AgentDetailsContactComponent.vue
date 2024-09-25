@@ -12,7 +12,7 @@
     >
       <template v-slot:body-cell-name="props">
         <q-td :props="props">
-          <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.image" alt=""></q-avatar>
+          <q-avatar size="40px" color="white" text-color="white"><img :src="props.row.image" alt=""></q-avatar>
           {{ props.row.name }}
         </q-td>
       </template>

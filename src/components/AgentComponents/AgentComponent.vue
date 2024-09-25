@@ -20,7 +20,6 @@
         </div>
       </div>
       <q-table
-        hide-bottom
         row-key="name"
         :rows="agentList"
         :columns="columns"
@@ -31,7 +30,7 @@
         <template v-slot:body-cell-display_name="props">
           <q-td :props="props">
             <div class="flex no-wrap items-center gap-sm">
-              <q-avatar size="40px" color="primary" text-color="white"><img :src="props.row.avatar" alt=""></q-avatar>
+              <q-avatar size="40px" color="white" text-color="white"><img :src="props.row.avatar" alt=""></q-avatar>
               {{ props.row.display_name }}
             </div>
           </q-td>
@@ -50,6 +49,12 @@
         </template>
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:no-data>
+          <div class="full-width flex column items-center q-my-md">
+            <q-icon size="md" name="mdi-alert" color="grey" />
+            <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>
+          </div>
         </template>
       </q-table>
     </q-card>

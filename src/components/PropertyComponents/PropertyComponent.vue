@@ -187,7 +187,6 @@
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="createProperty">{{ $t('property.addProperty') }}</q-btn>
       </div>
       <q-table
-        hide-bottom
         row-key="name"
         :rows="propertyList"
         :columns="columns"
@@ -198,7 +197,7 @@
         <template v-slot:body-cell-title="props">
           <q-td :props="props">
             <div class="flex no-wrap items-center gap-sm">
-              <q-avatar rounded size="40px" color="primary" text-color="white">
+              <q-avatar rounded size="40px" color="white" text-color="white">
                 <img :src="props.row.images.length > 0 ? props.row.images[0].url : 'https://i.ibb.co/0Jmshvb/no-image.png'" alt="">
               </q-avatar>
               {{ props.row.title }}
@@ -251,13 +250,19 @@
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
-            <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="viewProperty(props.row.url)"></q-btn>
+            <q-btn dense round flat color="grey" icon="mdi-open-in-new" @click="viewProperty(props.row.url)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="editProperty(props.row.id)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
+        </template>
+        <template v-slot:no-data>
+          <div class="full-width flex column items-center q-my-md">
+            <q-icon size="md" name="mdi-alert" color="grey" />
+            <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>
+          </div>
         </template>
       </q-table>
     </q-card>

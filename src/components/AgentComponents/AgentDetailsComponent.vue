@@ -1,7 +1,7 @@
 <template>
   <q-card class="flex column gap-lg q-pa-lg">
     <div class="flex column items-center">
-      <q-avatar rounded size="100px" color="primary" text-color="white">
+      <q-avatar rounded size="100px" color="white" text-color="white">
         <img :src="userDetails.image" alt="">
       </q-avatar>
       <p class="text-subtitle1 text-weight-medium q-my-sm">{{ userDetails.first_name }} {{ userDetails.last_name }}</p>
