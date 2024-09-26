@@ -193,6 +193,7 @@ export default {
     addOpportunity: 'Add Opportunity',
     editOpportunity: 'Edit Opportunity',
     messageConfirmationFinished: 'Are you sure you want to finalize the opportunity? If you accept, it will not be possible to go back, edit or delete the opportunity.',
+    complete: 'Complete',
     form: {
       contact: 'Contact',
       agent: 'Agent',

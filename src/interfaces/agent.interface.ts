@@ -16,4 +16,7 @@ export interface AgentDetailsInterface {
   last_name: string
   display_name: string
   avatar: any
+  total_properties: number
+  total_rent_amount: number
+  total_sales_amount: number
 }

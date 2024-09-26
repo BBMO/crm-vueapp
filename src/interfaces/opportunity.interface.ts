@@ -26,13 +26,13 @@ export interface OpportunityDetailsInterface {
   property: {
     id: string
     title: string
-    available_for: string
   }
   state: {
     id: string
     name: string
     color: string
   }
+  purpose: string
   finished_at: string | null
   finished?: boolean
 }

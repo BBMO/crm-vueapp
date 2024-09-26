@@ -47,7 +47,7 @@
                   </q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('global.finished') }}</label>
+                  <label>{{ $t('opportunity.complete') }}</label>
                   <q-select
                     outlined
                     dense
@@ -92,15 +92,15 @@
                   <span
                     class="absolute full-width full-height border-radius"
                     style="top: 0; left: 0; opacity: 0.2;"
-                    :style="{ background: props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
+                    :style="{ background: props.row.purpose === GLOBAL.SALE ? 'cyan' : 'indigo' }"
                   ></span>
                   <q-icon
                     size="xs"
-                    :name="props.row.property.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
-                    :color="props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
+                    :name="props.row.purpose === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
+                    :color="props.row.purpose === GLOBAL.SALE ? 'cyan' : 'indigo'"
                   />
                 </span>
-                {{ props.row.property.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
+                {{ props.row.purpose === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
               </span>
             </q-td>
             <q-td>${{ props.row.amount }}</q-td>
@@ -223,7 +223,7 @@ const columns = [
   { name: 'available_for', label: t('opportunity.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'amount', label: t('opportunity.form.amount'), field: 'amount', align: 'left' },
   { name: 'state', label: t('opportunity.form.state'), field: 'state', align: 'left' },
-  { name: 'finished', label: t('global.finished'), field: '', align: 'center' },
+  { name: 'finished', label: t('opportunity.complete'), field: '', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 

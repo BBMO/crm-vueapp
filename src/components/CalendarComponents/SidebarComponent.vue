@@ -22,7 +22,7 @@
           @update:modelValue="agentSelect"
         >
           <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
-          <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" @click="cleanAgentSelect" /></template>
+          <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" class="cursor-pointer" @click="cleanAgentSelect" /></template>
           <template v-slot:no-option>
             <q-item>
               <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>

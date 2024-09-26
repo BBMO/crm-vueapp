@@ -11,22 +11,22 @@
           <div class="flex items-center gap-sm">
             <q-icon size="sm" color="primary" name="mdi-home-group" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
-              <span class="text-capitalize text-weight-medium">falta</span>
-              <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('agent.quantityProperties') }}</span>
+              <span class="text-weight-medium">{{ agentDetails.total_properties }}</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.quantityProperties') }}</span>
             </div>
           </div>
           <div class="flex items-center gap-sm">
             <q-icon size="sm" color="primary" name="mdi-account-cash-outline" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
-              <span class="text-capitalize text-weight-medium">falta</span>
-              <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('agent.proceedsSales') }}</span>
+              <span class="text-weight-medium">{{ agentDetails.total_sales_amount }} $</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.proceedsSales') }}</span>
             </div>
           </div>
           <div class="flex items-center gap-sm">
             <q-icon size="sm" color="primary" name="mdi-account-key-outline" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
-              <span class="text-capitalize text-weight-medium">falta</span>
-              <span class="text-capitalize text-weight-regular text-grey-5">{{ $t('agent.rentalIncome') }}</span>
+              <span class="text-weight-medium">{{ agentDetails.total_rent_amount }} $</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.rentalIncome') }}</span>
             </div>
           </div>
         </div>
