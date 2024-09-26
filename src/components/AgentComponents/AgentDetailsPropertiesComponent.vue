@@ -1,8 +1,7 @@
 <template>
   <q-card class="full-width">
     <div class="q-pa-md flex items-center gap-sm">
-      <q-icon size="sm" name="mdi-home-silo-outline" color="primary" />
-      <h6 class="text-subtitle1 q-ma-none text-weight-medium">{{ $t('contact.propertiesRecommended') }}</h6>
+      <h6 class="text-subtitle1 q-ma-none text-weight-medium">{{ $t('agent.managedProperties') }}</h6>
     </div>
     <q-table
       row-key="name"
@@ -85,12 +84,12 @@ import { useI18n } from 'vue-i18n';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Store
-import { useContactStore } from 'src/stores/contact.store';
+import { useAgentStore } from 'stores/agent.store';
 // Services
-import ContactsService from 'src/services/contacts.service';
+import AgentService from 'src/services/agents.service';
 
 const { t } = useI18n();
-const contactStore = useContactStore();
+const agentStore = useAgentStore();
 
 const columns = [
   { name: 'title', label: t('property.title'), field: 'title', align: 'left' },
@@ -111,14 +110,14 @@ const loadingTable = ref(false);
 
 const propertyList = ref([]);
 
-const contactId = computed(() => contactStore.getContactId);
+const agentId = computed(() => agentStore.getAgentId);
 /**
  *
  */
 const getProperties = async () => {
   loadingTable.value = true;
 
-  const { data } = await ContactsService.getContactProperties(contactId.value);
+  const { data } = await AgentService.getAgentProperties(agentId.value);
   propertyList.value = data?.data?.items || [];
 
   loadingTable.value = false;

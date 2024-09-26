@@ -76,14 +76,19 @@ export default {
     confirmPassword: 'Confirm Password'
   },
   agent: {
+    title: 'Agent',
     addAgent: 'Add Agent',
     editAgent: 'Edit Agent',
     userList: 'User List',
-    amountNegotiations: 'Amount Negotiations',
-    numberProperties: 'Number Properties',
+    quantityProperties: 'Quantity of properties',
+    proceedsSales: 'Proceeds from sales',
+    rentalIncome: 'Rental income',
     numberAgent: 'Number Agent',
     identification: 'Identification',
     name: 'Name',
+    properties: 'Properties',
+    opportunities: 'Opportunities',
+    managedProperties: 'Managed Properties',
     form: {
       username: 'Username',
       firstName: 'First Name',

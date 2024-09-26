@@ -169,9 +169,9 @@ const searchAgent = async (value: string) => {
 /**
  *
  */
-const openAgentDetails = (agentId: string) => {
-  agentStore.setAgentId(agentId);
-  router.push({ name: 'agentDetails', params: { id: agentId } });
+const openAgentDetails = (id: string) => {
+  agentStore.setAgentId(id);
+  router.push({ name: 'agentDetails', params: { id: agentId.value } });
 }
 
 /**

@@ -17,6 +17,8 @@
           <p class="text-subtitle1 text-weight-medium q-ma-none">{{ $t('global.details') }}</p>
           <q-separator />
           <div class="q-pt-xs">
+            <p class="text-weight-medium q-ma-none q-py-xs">{{ $t('contact.form.firstName') }}: <span class="text-weight-regular text-grey-6">{{ contactDetails.first_name }}</span></p>
+            <p class="text-weight-medium q-ma-none q-py-xs">{{ $t('contact.form.lastName') }}: <span class="text-weight-regular text-grey-6">{{ contactDetails.last_name }}</span></p>
             <p class="text-weight-medium q-ma-none q-py-xs">{{ $t('contact.form.email') }}: <span class="text-weight-regular text-grey-6">{{ contactDetails.email }}</span></p>
             <p class="text-weight-medium q-ma-none q-py-xs">{{ $t('contact.form.phone') }}: <span class="text-weight-regular text-grey-6">{{ contactDetails.phone }}</span></p>
             <p class="text-weight-medium q-ma-none q-py-xs">{{ $t('contact.form.address') }}: <span class="text-weight-regular text-grey-6">{{ contactDetails.address }}</span></p>
@@ -66,7 +68,6 @@
           <contact-form-component
             ref="formData"
             :is-edit="true"
-            :form-details="contactDetails"
           />
           <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveContact">{{ $t('global.save') }}</q-btn>
         </div>
@@ -131,7 +132,7 @@ const contactId = computed(() => contactStore.getContactId);
  */
 const getContactDetails = async () => {
   const { data } = await ContactsService.getContact(contactId.value);
-  contactDetails.value = data?.data;
+  contactDetails.value = data?.data || undefined;
 }
 
 /**

@@ -16,12 +16,12 @@
           class="q-mb-lg"
         >
           <q-tab name="general" class="flex items-center gap-sm" :ripple="false">
-            <q-icon size="sm" name="mdi-folder-information-outline" />
-            <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('global.general') }}</p>
+            <q-icon size="sm" name="mdi-home-silo-outline" />
+            <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('agent.properties') }}</p>
           </q-tab>
           <q-tab name="security" class="flex items-center gap-sm" :ripple="false">
-            <q-icon size="sm" name="mdi-lock-outline" />
-            <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('global.security') }}</p>
+            <q-icon size="sm" name="mdi-file-sign" />
+            <p class="text-capitalize text-weight-medium q-ma-none q-py-xs">{{ $t('agent.opportunities') }}</p>
           </q-tab>
         </q-tabs>
 
@@ -34,12 +34,11 @@
             class="bg-transparent"
           >
             <q-tab-panel name="general" class="q-pa-none flex gap-lg">
-              <agent-details-contact-component />
-              <agent-details-property-component />
+              <agent-details-properties-component />
             </q-tab-panel>
 
             <q-tab-panel name="security" class="q-pa-none flex gap-lg">
-              <agent-details-security-component />
+              <agent-details-opportunities-component />
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -53,9 +52,8 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 // Components
 import AgentDetailsComponent from 'components/AgentComponents/AgentDetailsComponent.vue';
-import AgentDetailsContactComponent from 'components/AgentComponents/AgentDetailsContactComponent.vue';
-import AgentDetailsPropertyComponent from 'components/AgentComponents/AgentDetailsPropertyComponent.vue';
-import AgentDetailsSecurityComponent from 'components/AgentComponents/AgentDetailsSecurityComponent.vue';
+import AgentDetailsOpportunitiesComponent from 'components/AgentComponents/AgentDetailsOpportunitiesComponent.vue';
+import AgentDetailsPropertiesComponent from 'components/AgentComponents/AgentDetailsPropertiesComponent.vue';
 
 const router = useRouter();
 

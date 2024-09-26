@@ -34,6 +34,14 @@ class AgentsService {
   deleteAgent(id: string): AxiosPromise {
     return api.delete(`/agent/${id}`)
   }
+
+  getAgentProperties(id: string): AxiosPromise {
+    return api.get(`/properties?agent_id=${id}`)
+  }
+
+  getAgentOpportunities(id: string): AxiosPromise {
+    return api.get(`/opportunities?agent_id=${id}`)
+  }
 }
 
 export default new AgentsService();
