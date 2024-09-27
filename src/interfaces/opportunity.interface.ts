@@ -7,8 +7,9 @@ export interface OpportunitySelectPropertyInterface {
 }
 
 export interface OpportunityFormInterface {
-  contact_id: CommonSelectInterface
+  agent_id: CommonSelectInterface
   property_id: CommonSelectInterface
+  contact_id: CommonSelectInterface
   amount: string
   state_id: CommonSelectInterface
   finished: boolean

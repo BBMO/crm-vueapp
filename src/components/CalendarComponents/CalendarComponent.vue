@@ -20,13 +20,13 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ eventModeEdit ? $t('calendar.editEvent') : $t('calendar.addEvent') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="eventDialog = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <EventFormComponent
             :is-edit="eventModeEdit"
             :quote-id="currentQuoteId"

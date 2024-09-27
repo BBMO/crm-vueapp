@@ -42,7 +42,7 @@
         </div>
         <div class="flex justify-center gap-sm">
           <q-btn color="primary" class="q-px-lg" :ripple="false" @click="contactFormDialog = true">{{ $t('global.edit') }}</q-btn>
-          <q-btn color="red-2" class="q-px-lg shadow-0 text-red" :ripple="false" @click="deleteDialog = true">{{ $t('global.delete') }}</q-btn>
+          <q-btn v-if="getIsAdmin()" color="red-2" class="q-px-lg shadow-0 text-red" :ripple="false" @click="deleteDialog = true">{{ $t('global.delete') }}</q-btn>
         </div>
       </div>
       <div v-if="isLoading" class="full-width full-height flex align-center justify-center q-py-xl">
@@ -58,7 +58,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ $t('contact.editContact') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="contactFormDialog = false" />
@@ -99,10 +99,13 @@ import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { ContactDetailsInterface } from 'src/interfaces/contact.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Composable
+import useRole from 'src/composable/useRole';
 // Store
 import { useContactStore } from 'src/stores/contact.store';
 // Services
@@ -113,6 +116,8 @@ import ContactFormComponent from 'components/ContactComponents/ContactFormCompon
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const $q = useQuasar();
+const { getIsAdmin } = useRole();
 const contactStore = useContactStore();
 
 const isLoading = ref(false);
@@ -161,7 +166,13 @@ const saveContact = async () => {
       payload.append('image', formData.value?.formData.form.image);
     }
 
-    await ContactsService.updateContact(contactId.value, payload);
+    try {
+      await ContactsService.updateContact(contactId.value, payload);
+      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+    } catch (error) {
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    }
+
     await getContactDetails();
     contactFormDialog.value = false;
   }
@@ -170,9 +181,14 @@ const saveContact = async () => {
 };
 
 const deleteContact = async () => {
-  await ContactsService.deleteContact(contactId.value);
-  await contactStore.fetchContactStats(t);
-  router.push({ name: 'contacts' });
+  try {
+    await ContactsService.deleteContact(contactId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    await contactStore.fetchContactStats(t);
+    await router.push({name: 'contacts'});
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
 }
 
 onMounted(async () => {

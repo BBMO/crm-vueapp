@@ -18,6 +18,7 @@
           option-label="name"
           option-value="id"
           :options="agentsSelect"
+          :disable="!getIsAdmin()"
           @filter="filterAgentSelect"
           @update:modelValue="agentSelect"
         >
@@ -57,6 +58,8 @@ import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 // Interfaces
 import type { CalendarDropdownInterface } from 'src/interfaces/calendar.interface';
+// Composable
+import useRole from 'src/composable/useRole';
 // Services
 import CalendarService from 'src/services/calendar.service';
 import AgentsService from 'src/services/agents.service';
@@ -65,6 +68,7 @@ import { useCalendarStore } from 'src/stores/calendar.store';
 
 const emit = defineEmits(['openEventDialog']);
 
+const { getIsAdmin } = useRole();
 const calendarStore = useCalendarStore();
 
 const agent = ref(null);

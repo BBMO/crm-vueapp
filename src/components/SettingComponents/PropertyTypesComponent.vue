@@ -39,7 +39,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('setting.editType') : $t('setting.addType')}}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="dialogSave = false" />
@@ -79,6 +79,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { AppConfigInterface } from 'src/interfaces/app.interface';
 // Services
@@ -87,6 +88,7 @@ import PropertiesService from 'src/services/properties.service';
 import BasicFormComponent from 'components/SettingComponents/Forms/BasicFormComponent.vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 const columns = [
   { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
@@ -141,9 +143,19 @@ const savePropertyType = async () => {
     const payload = formData.value?.formData.form;
 
     if (formModeEdit.value) {
-      await PropertiesService.updatePropertyType(propertyTypeDetails.value.id, payload);
+      try {
+        await PropertiesService.updatePropertyType(propertyTypeDetails.value.id, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
-      await PropertiesService.createPropertyType(payload);
+      try {
+        await PropertiesService.createPropertyType(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
 
     await getPropertyTypes();
@@ -157,7 +169,13 @@ const savePropertyType = async () => {
  *
  */
 const deletePropertyType = async () => {
-  await PropertiesService.deletePropertyType(propertyTypeId.value);
+  try {
+    await PropertiesService.deletePropertyType(propertyTypeId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   deleteDialog.value = false;
   await getPropertyTypes();
 }

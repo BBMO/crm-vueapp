@@ -172,6 +172,7 @@
                 option-label="name"
                 option-value="id"
                 :options="propertyAgentsSelect"
+                :disable="!getIsAdmin()"
                 :rules="[
                   (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
                 ]"
@@ -337,7 +338,8 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { PropertyImageInterface, PropertyFormInterface } from 'src/interfaces/property.interface';
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
@@ -346,12 +348,15 @@ import PropertiesService from 'src/services/properties.service';
 import AgentsService from 'src/services/agents.service';
 // Composable
 import useValidate  from 'src/composable/useValidate';
+import useRole from 'src/composable/useRole';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 
 const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
+const $q = useQuasar();
+const { getIsAdmin, getWpUserId } = useRole();
 const { validateRequired, validateRequiredSelect } = useValidate();
 
 const availableForSelect = [
@@ -370,7 +375,6 @@ const isLoadingSave = ref(false);
 
 const isEditProperty = ref(false);
 const featureRequired = ref(false);
-const propertyId = ref('');
 
 const form = ref<PropertyFormInterface>({
   title: '',
@@ -406,6 +410,7 @@ const form = ref<PropertyFormInterface>({
 });
 const formRef = ref();
 
+const propertyId = ref('');
 const propertyFeaturesList: Ref<CommonSelectInterface[]> = ref([]);
 const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
@@ -450,7 +455,12 @@ const removeFile = async (index: number, image: PropertyImageInterface) => {
   selectedFiles.value.splice(index, 1);
 
   if (isEditProperty.value && image.id) {
-    await PropertiesService.deletePropertyImage(propertyId.value, image.id);
+    try {
+      await PropertiesService.deletePropertyImage(propertyId.value, image.id);
+      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    } catch (error) {
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    }
   }
 };
 
@@ -549,50 +559,56 @@ const saveProperty = async () => {
   if (await validateForm() && features.length > 0) {
     featureRequired.value = false;
 
-    try {
-      const payload = new FormData();
+    const payload = new FormData();
 
-      payload.append('title', form.value.title);
-      payload.append('description', form.value.description);
-      payload.append('price', form.value.price);
-      payload.append('available_for', form.value.available_for.value);
-      payload.append('bedrooms', form.value.bedrooms);
-      payload.append('bathrooms', form.value.bathrooms);
-      payload.append('garages', form.value.garages);
-      payload.append('size', form.value.size);
-      payload.append('address', form.value.address);
-      payload.append('city', form.value.city);
-      payload.append('state', form.value.state);
-      payload.append('zip', form.value.zip);
-      payload.append('latitude', form.value.latitude);
-      payload.append('longitude', form.value.longitude);
-      payload.append('agent_id', form.value.agent_id.id);
-      payload.append('type_id', form.value.type_id.id);
-      payload.append('status', form.value.status.value);
-      payload.append('enabled', form.value.enabled ? '1' : '0');
+    payload.append('title', form.value.title);
+    payload.append('description', form.value.description);
+    payload.append('price', form.value.price);
+    payload.append('available_for', form.value.available_for.value);
+    payload.append('bedrooms', form.value.bedrooms);
+    payload.append('bathrooms', form.value.bathrooms);
+    payload.append('garages', form.value.garages);
+    payload.append('size', form.value.size);
+    payload.append('address', form.value.address);
+    payload.append('city', form.value.city);
+    payload.append('state', form.value.state);
+    payload.append('zip', form.value.zip);
+    payload.append('latitude', form.value.latitude);
+    payload.append('longitude', form.value.longitude);
+    payload.append('agent_id', form.value.agent_id.id);
+    payload.append('type_id', form.value.type_id.id);
+    payload.append('status', form.value.status.value);
+    payload.append('enabled', form.value.enabled ? '1' : '0');
 
-      if (features.length > 0) {
-        features.forEach((feature) => {
-          payload.append('features[]', feature);
+    if (features.length > 0) {
+      features.forEach((feature) => {
+        payload.append('features[]', feature);
+      })
+    }
+
+    if (isEditProperty.value) {
+      try {
+        await PropertiesService.updateProperty(propertyId.value, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
+    } else {
+      if (selectedFiles.value.length > 0) {
+        selectedFiles.value.forEach((image) => {
+          payload.append('images[]', image.file);
         })
       }
 
-      if (isEditProperty.value) {
-        await PropertiesService.updateProperty(propertyId.value, payload);
-      } else {
-        if (selectedFiles.value.length > 0) {
-          selectedFiles.value.forEach((image) => {
-            payload.append('images[]', image.file);
-          })
-        }
-
+      try {
         await PropertiesService.createProperty(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
       }
-
-      await router.push({name: 'properties'});
-    } catch (error) {
-      console.log(error);
     }
+
+    await router.push({name: 'properties'});
   } else {
     featureRequired.value = true;
   }
@@ -613,6 +629,13 @@ onMounted(async () => {
     propertyId.value = `${route.params.id}`;
 
     await getPropertyData();
+  } else {
+    if (!getIsAdmin()) {
+      form.value.agent_id = {
+        id: getWpUserId(),
+        name: propertyAgentsSelect.value.find((agent: CommonSelectInterface) => agent.id == getWpUserId())?.name || '',
+      }
+    }
   }
 
   isLoading.value = false;

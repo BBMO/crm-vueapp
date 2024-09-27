@@ -251,8 +251,8 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-open-in-new" @click="viewProperty(props.row.url)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="editProperty(props.row.id)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
+            <q-btn v-if="getIsAdmin() || (getWpUserId() === props.row.agent.id)" dense round flat color="grey" icon="mdi-square-edit-outline" @click="editProperty(props.row.id)"></q-btn>
+            <q-btn v-if="getIsAdmin() || (getWpUserId() === props.row.agent.id)" dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
         <template v-slot:loading>
@@ -291,10 +291,13 @@
 import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 import type { PropertyFiltersInterface, PropertyRangeInterface } from 'src/interfaces/property.interface';
+// Composable
+import useRole from 'src/composable/useRole';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Store
@@ -305,6 +308,8 @@ import AgentsService from 'src/services/agents.service';
 
 const { t } = useI18n();
 const router = useRouter();
+const $q = useQuasar();
+const { getIsAdmin, getWpUserId } = useRole();
 const propertyStore = usePropertyStore();
 
 const columns = [
@@ -565,7 +570,13 @@ const editProperty = (id: string) => {
  *
  */
 const deleteProperty = async () => {
-  await PropertiesService.deleteProperty(propertyId.value);
+  try {
+    await PropertiesService.deleteProperty(propertyId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   await propertyStore.fetchPropertyStats(t);
   deleteDialog.value = false;
 

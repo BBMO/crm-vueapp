@@ -39,7 +39,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('setting.editFeature') : $t('setting.addFeature')}}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="dialogSave = false" />
@@ -79,6 +79,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { AppConfigInterface } from 'src/interfaces/app.interface';
 // Services
@@ -87,6 +88,7 @@ import PropertiesService from 'src/services/properties.service';
 import BasicFormComponent from 'components/SettingComponents/Forms/BasicFormComponent.vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 const columns = [
   { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
@@ -110,7 +112,7 @@ const propertyFeatureDetails = ref<AppConfigInterface>({
 
 const formData = ref<typeof BasicFormComponent | null>(null);
 const propertyFeaturesList = ref([]);
-const properyFeatureId = ref('');
+const propertyFeatureId = ref('');
 
 /**
  *
@@ -138,9 +140,19 @@ const savePropertyFeature = async () => {
     const payload = formData.value?.formData.form;
 
     if (formModeEdit.value) {
-      await PropertiesService.updatePropertyFeature(propertyFeatureDetails.value.id, payload);
+      try {
+        await PropertiesService.updatePropertyFeature(propertyFeatureDetails.value.id, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
-      await PropertiesService.createPropertyFeature(payload);
+      try {
+        await PropertiesService.createPropertyFeature(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
 
     await getPropertyFeatures();
@@ -154,7 +166,13 @@ const savePropertyFeature = async () => {
  *
  */
 const deletePropertyFeature = async () => {
-  await PropertiesService.deletePropertyFeature(properyFeatureId.value);
+  try {
+    await PropertiesService.deletePropertyFeature(propertyFeatureId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   deleteDialog.value = false;
   await getPropertyFeatures();
 }
@@ -176,7 +194,7 @@ const openDialogSave = (modeEdit: boolean, details?: AppConfigInterface) => {
  *
  */
 const openDialogDelete = (id: string) => {
-  properyFeatureId.value = id;
+  propertyFeatureId.value = id;
   deleteDialog.value = true;
 }
 

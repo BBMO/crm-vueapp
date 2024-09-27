@@ -3,14 +3,13 @@ import { RouteRecordRaw } from 'vue-router';
 /**
  * Layouts
  */
-import LoginLayout from 'layouts/LoginLayout/LoginLayout.vue';
 import MainLayout from 'layouts/MainLayout/MainLayout.vue';
 import MainLayoutWeb from 'layouts/MainLayout/MainLayoutWeb.vue';
 
 /**
  * Pages
  */
-import LoginPage from 'pages/AuthenticationPage/LoginPage.vue';
+import DashboardPage from 'pages/DashboardPage.vue';
 import AgentPage from 'pages/AgentPage/AgentPage.vue';
 import AgentDetailsPage from 'pages/AgentPage/AgentDetailsPage.vue';
 import ContactPage from 'pages/ContactPage/ContactPage.vue';
@@ -28,25 +27,14 @@ const isAppMode = import.meta.env.VITE_APP_MODE === 'APP';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
-    component: LoginLayout,
-    children: [
-      {
-        name: 'login',
-        path: '',
-        component: LoginPage,
-      }
-    ],
-  },
-  {
     path: '',
     component: isAppMode ? MainLayout : MainLayoutWeb,
     children: [
       {
         name: 'home',
-        path: '/home',
+        path: '',
         meta: { module: 'home' },
-        component: () => import('pages/IndexPage.vue')
+        component: DashboardPage
       },
       {
         path: '/agents',
@@ -119,7 +107,7 @@ const routes: RouteRecordRaw[] = [
         path: '/settings',
         meta: { module: 'settings' },
         component: SettingPage,
-      }
+      },
     ],
   },
 

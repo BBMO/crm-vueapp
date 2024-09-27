@@ -11,7 +11,6 @@
       <div class="col-12 col-md-8 q-pl-sm user-information-section">
         <q-tabs
           v-model="tab"
-          align="start"
           narrow-indicator
           class="q-mb-lg"
         >
@@ -65,6 +64,12 @@ const backToList = () => {
 </script>
 
 <style scoped lang="scss">
+.q-tabs {
+  :deep(.q-tabs__content) {
+    justify-content: start;
+  }
+}
+
 .q-tab {
   border-radius: 5px;
   margin-right: 10px;

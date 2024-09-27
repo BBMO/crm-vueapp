@@ -68,16 +68,30 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+// Composable
+import useRole from 'src/composable/useRole';
 // Components
 import OpportunityStatesComponent from 'components/SettingComponents/OpportunityStatesComponent.vue';
 import PropertyTypesComponent from 'components/SettingComponents/PropertyTypesComponent.vue';
 import PropertyFeaturesComponent from 'components/SettingComponents/PropertyFeaturesComponent.vue';
 import CalendarCategoriesComponent from 'components/SettingComponents/CalendarCategoriesComponent.vue';
 
+const router = useRouter();
+const { getIsAdmin } = useRole();
+
 const tab = ref('opportunityStates');
 const splitterModel = ref(20);
 
+onMounted(() => {
+  /**
+   * Redirect to home if user is not admin
+   */
+  if (!getIsAdmin()) {
+    router.push({ name: 'home' });
+  }
+});
 </script>
 
 <style scoped lang="scss">

@@ -31,7 +31,11 @@ export default {
     security: 'Security',
     noResults: 'No results found',
     deleteMessage: 'Are you sure you want to delete this item? This action is irreversible and will delete all related data.',
-    noDataAvailable: 'No data available'
+    noDataAvailable: 'No data available',
+    successCreateMessage: 'Successfully created',
+    successUpdateMessage: 'Successfully updated',
+    successDeleteMessage: 'Successfully deleted',
+    errorMessage: 'An error has occurred',
   },
   menu: {
     dashboard: 'Dashboard',
@@ -41,6 +45,7 @@ export default {
     properties: 'Properties',
     opportunities: 'Opportunities',
     settings: 'Settings',
+    profile: 'Profile',
   },
   validation: {
     requiredField: 'Required field',
@@ -81,7 +86,7 @@ export default {
     editAgent: 'Edit Agent',
     userList: 'User List',
     quantityProperties: 'Quantity of properties',
-    proceedsSales: 'Proceeds from sales',
+    fromSales: 'From sales',
     rentalIncome: 'Rental income',
     numberAgent: 'Number Agent',
     identification: 'Identification',

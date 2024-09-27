@@ -35,8 +35,8 @@ export interface CalendarEventDetailsInterface {
   end_date: string
   location: string
   observations: string
-  category_id: string
-  agent_id: string
+  category: CalendarDropdownInterface
+  agent: CommonSelectInterface
   created_at: string
   updated_at: string
 }

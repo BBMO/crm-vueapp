@@ -24,6 +24,17 @@
                   ></q-select>
                 </div>
                 <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('opportunity.complete') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.finished"
+                    option-label="label"
+                    option-value="value"
+                    :options="finishedSelect"
+                  ></q-select>
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('property.form.agent') }}</label>
                   <q-select
                     outlined
@@ -36,6 +47,7 @@
                     option-label="name"
                     option-value="id"
                     :options="agentsSelect"
+                    :disable="!getIsAdmin()"
                     @filter="filterAgentSelect"
                   >
                     <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
@@ -45,17 +57,6 @@
                       </q-item>
                     </template>
                   </q-select>
-                </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('opportunity.complete') }}</label>
-                  <q-select
-                    outlined
-                    dense
-                    v-model="filters.finished"
-                    option-label="label"
-                    option-value="value"
-                    :options="finishedSelect"
-                  ></q-select>
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-px-sm q-mt-md">
@@ -143,7 +144,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('opportunity.editOpportunity') : $t('opportunity.addOpportunity') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="opportunityFormDialog = false" />
@@ -155,7 +156,7 @@
             :is-edit="formModeEdit"
             :form-details="opportunityDetails"
           />
-          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveOpportunity">{{ $t('global.save') }}</q-btn>
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-md" @click="saveOpportunity">{{ $t('global.save') }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
@@ -201,9 +202,12 @@
 <script setup lang="ts">
 import {onMounted, Ref, ref} from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { OpportunityDetailsInterface } from 'src/interfaces/opportunity.interface';
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
+// Composable
+import useRole from 'src/composable/useRole';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Store
@@ -215,6 +219,8 @@ import AgentsService from 'src/services/agents.service';
 import OpportunityFormComponent from 'components/OpportunityComponents/OpportunityFormComponent.vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
+const { getIsAdmin } = useRole();
 const opportunityStore = useOpportunityStore();
 
 const columns = [
@@ -380,9 +386,20 @@ const saveOpportunity = async () => {
 
     if (formModeEdit.value && opportunityDetails.value) {
       const opportunityId = opportunityDetails.value.id;
-      await OpportunitiesService.updateOpportunity(opportunityId, payload);
+
+      try {
+        await OpportunitiesService.updateOpportunity(opportunityId, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
-      await OpportunitiesService.createOpportunity(payload);
+      try {
+        await OpportunitiesService.createOpportunity(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
   }
 
@@ -397,10 +414,15 @@ const saveOpportunity = async () => {
  *
  */
 const deleteOpportunity = async () => {
-  await OpportunitiesService.deleteOpportunity(opportunityId.value);
+  try {
+    await OpportunitiesService.deleteOpportunity(opportunityId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   await opportunityStore.fetchOpportunityStats(t);
   deleteDialog.value = false;
-
   await getOpportunities();
 }
 
@@ -425,7 +447,13 @@ const updateFinished = async () => {
     finished: opportunityFinished.value
   }
 
-  await OpportunitiesService.updateOpportunity(opportunityId.value, payload);
+  try {
+    await OpportunitiesService.updateOpportunity(opportunityId.value, payload);
+    $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   await opportunityStore.fetchOpportunityStats(t);
   await getOpportunities();
   isLoadingFinished.value = false;

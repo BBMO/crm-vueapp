@@ -19,7 +19,7 @@
             <q-icon size="sm" color="primary" name="mdi-account-cash-outline" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
               <span class="text-weight-medium">{{ agentDetails.total_sales_amount }} $</span>
-              <span class="text-weight-regular text-grey-5">{{ $t('agent.proceedsSales') }}</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.fromSales') }}</span>
             </div>
           </div>
           <div class="flex items-center gap-sm">
@@ -57,7 +57,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ $t('agent.editAgent') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="agentFormDialog = false" />
@@ -96,9 +96,13 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { AgentDetailsInterface } from 'src/interfaces/agent.interface';
+// Composable
+import useRole from 'src/composable/useRole';
 // Store
 import { useAgentStore } from 'src/stores/agent.store';
 // Services
@@ -106,8 +110,11 @@ import AgentsService from 'src/services/agents.service';
 // Components
 import AgentFormComponent from 'components/AgentComponents/AgentFormComponent.vue';
 
+const { t } = useI18n();
+const $q = useQuasar();
 const route = useRoute();
 const router = useRouter();
+const { getIsAdmin, getWpUserId } = useRole();
 const agentStore = useAgentStore();
 
 const isLoading = ref(false);
@@ -153,7 +160,13 @@ const saveAgent = async () => {
       payload.append('image', formData.value?.formData.form.image);
     }
 
-    await AgentsService.updateAgent(agentId.value, payload);
+    try {
+      await AgentsService.updateAgent(agentId.value, payload);
+      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+    } catch (error) {
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    }
+
     await getAgentDetails();
     agentFormDialog.value = false;
   }
@@ -165,12 +178,23 @@ const saveAgent = async () => {
  *
  */
 const deleteAgent = async () => {
-  await AgentsService.deleteAgent(agentId.value);
-  router.push({ name: 'agents' });
+  try {
+    await AgentsService.deleteAgent(agentId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    await router.push({name: 'agents'});
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
 }
 
 onMounted(async () => {
   isLoading.value = true;
+
+  if (!getIsAdmin() && (getWpUserId() !== route.params.id)) {
+    await router.push({name: 'home'});
+    return;
+  }
+
   if (!agentId.value) {
     agentStore.setAgentId(`${route.params.id}`);
   }

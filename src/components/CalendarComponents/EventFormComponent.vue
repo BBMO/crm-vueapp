@@ -117,20 +117,20 @@
           ]"
         ></q-input>
       </div>
-      <div class="q-pt-xs q-pb-md">
+      <div v-if="getIsAdmin()" class="q-pt-xs q-pb-md">
         <label>{{ $t('calendar.form.agent') }}</label>
         <q-select
-            outlined
-            dense
-            v-model="form.agent"
-            use-input
-            hide-selected
-            fill-input
-            input-debounce="1000"
-            option-label="name"
-            option-value="id"
-            :options="agentsSelect"
-            @filter="filterAgentSelect"
+          outlined
+          dense
+          v-model="form.agent"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="1000"
+          option-label="name"
+          option-value="id"
+          :options="agentsSelect"
+          @filter="filterAgentSelect"
         >
           <template v-slot:no-option>
             <q-item>
@@ -142,7 +142,7 @@
       <div class="q-py-md">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
       </div>
-      <div v-if="props.isEdit" class="q-py-sm">
+      <div v-if="props.isEdit">
         <q-btn
           outline
           dense
@@ -163,11 +163,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 import type { CalendarDropdownInterface, CalendarEventFormInterface, CalendarEventDetailsInterface } from 'src/interfaces/calendar.interface';
 // Composable
 import useValidate  from 'src/composable/useValidate';
+import useRole from 'src/composable/useRole';
 // Services
 import CalendarService from 'src/services/calendar.service';
 import AgentsService from 'src/services/agents.service';
@@ -179,7 +182,10 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits(['closeEventDialog']);
 
+const { t } = useI18n();
+const $q = useQuasar();
 const { validateRequired, validateRequiredSelect } = useValidate();
+const { getIsAdmin } = useRole();
 
 const isLoading = ref(false);
 const isLoadingSave = ref(false);
@@ -249,29 +255,37 @@ const saveQuote = async () => {
   isLoadingSave.value = true;
 
   if (await validateForm()) {
-    try {
-      const payload = {
-        title: form.value.title,
-        start_date: form.value.startDate,
-        end_date: form.value.endDate,
-        location: form.value.location,
-        observations: form.value.description,
-        category_id: form.value.category.id,
-        agent_id: form.value.agent?.id,
-      };
+    const payload = {
+      title: form.value.title,
+      start_date: form.value.startDate,
+      end_date: form.value.endDate,
+      location: form.value.location,
+      observations: form.value.description,
+      category_id: form.value.category.id,
+      agent_id: form.value.agent?.id,
+    };
 
-      if (!payload.agent_id) delete payload.agent_id;
+    if (!payload.agent_id) delete payload.agent_id;
 
-      if (props.isEdit) {
-        if (props.quoteId) await CalendarService.updateQuote(props.quoteId, payload);
-      } else {
-        await CalendarService.createQuote(payload);
+    if (props.isEdit) {
+      if (props.quoteId) {
+        try {
+          await CalendarService.updateQuote(props.quoteId, payload);
+          $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        } catch (error) {
+          $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        }
       }
-
-      emit('closeEventDialog');
-    } catch (error) {
-      console.error(error);
+    } else {
+      try {
+        await CalendarService.createQuote(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
+
+    emit('closeEventDialog');
   }
 
   isLoadingSave.value = false;
@@ -282,7 +296,13 @@ const saveQuote = async () => {
  */
 const deleteQuote = async () => {
   if (props.quoteId) {
-    await CalendarService.deleteQuote(props.quoteId);
+    try {
+      await CalendarService.deleteQuote(props.quoteId);
+      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    } catch (error) {
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    }
+
     emit('closeEventDialog');
   }
 }
@@ -301,16 +321,16 @@ onMounted( async () => {
         ...form.value,
         title: quoteDetails.value.title,
         category: {
-          id: quoteDetails.value.category_id,
-          name: quoteCategoriesSelect.value.find((category: CalendarDropdownInterface) => category.id === quoteDetails.value?.category_id)?.name || '',
+          id: quoteDetails.value.category.id,
+          name: quoteDetails.value.category.name,
         },
         startDate: quoteDetails.value.start_date,
         endDate: quoteDetails.value.end_date,
         location: quoteDetails.value.location,
         description: quoteDetails.value.observations,
         agent: {
-          id: quoteDetails.value.agent_id,
-          name: agentsSelect.value.find((agent: CommonSelectInterface) => agent.id === quoteDetails.value?.agent_id)?.name || '',
+          id: quoteDetails.value.agent.id,
+          name: quoteDetails.value.agent.name,
         }
       }
     }

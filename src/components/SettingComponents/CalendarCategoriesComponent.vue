@@ -44,7 +44,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('setting.editCategory') : $t('setting.addCategory') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="dialogSave = false" />
@@ -84,6 +84,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 // Interfaces
 import type { AppConfigInterface } from 'src/interfaces/app.interface';
 // Services
@@ -92,6 +93,7 @@ import CalendarService from 'src/services/calendar.service';
 import StateFormComponent from 'components/SettingComponents/Forms/StateFormComponent.vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 const columns = [
   { name: 'name', label: t('setting.form.name'), field: 'name', align: 'left' },
@@ -146,9 +148,19 @@ const saveQuoteCategory = async () => {
     const payload = formData.value?.formData.form;
 
     if (formModeEdit.value) {
-      await CalendarService.updateQuoteCategory(quoteCategoryDetails.value.id, payload);
+      try {
+        await CalendarService.updateQuoteCategory(quoteCategoryDetails.value.id, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
-      await CalendarService.createQuoteCategory(payload);
+      try {
+        await CalendarService.createQuoteCategory(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
 
     await getQuoteCategories();
@@ -162,7 +174,12 @@ const saveQuoteCategory = async () => {
  *
  */
 const deleteQuoteCategory = async () => {
-  await CalendarService.deleteQuoteCategory(quoteCategoryId.value);
+  try {
+    await CalendarService.deleteQuoteCategory(quoteCategoryId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
   deleteDialog.value = false;
   await getQuoteCategories();
 }

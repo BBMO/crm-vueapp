@@ -92,7 +92,7 @@
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openContactDetails(props.row.id)"></q-btn>
             <q-btn dense round flat color="grey" icon="mdi-square-edit-outline" @click="openDialogSave(true, props.row.id)"></q-btn>
-            <q-btn dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
+            <q-btn v-if="getIsAdmin()" dense round flat color="grey" icon="mdi-trash-can-outline" @click="openDialogDelete(props.row.id)"></q-btn>
           </q-td>
         </template>
         <template v-slot:loading>
@@ -115,7 +115,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('contact.editContact') : $t('contact.addContact') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="contactFormDialog = false" />
@@ -155,8 +155,11 @@
 import { computed, ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
+// Composable
+import useRole from 'src/composable/useRole';
 // Services
 import ContactsService from 'src/services/contacts.service';
 // Store
@@ -166,6 +169,8 @@ import ContactFormComponent from 'components/ContactComponents/ContactFormCompon
 
 const { t } = useI18n();
 const router = useRouter();
+const $q = useQuasar();
+const { getIsAdmin } = useRole();
 const contactStore = useContactStore();
 
 const columns = [
@@ -278,9 +283,19 @@ const saveContact = async () => {
     }
 
     if (formModeEdit.value) {
-      await ContactsService.updateContact(contactId.value, payload);
+      try {
+        await ContactsService.updateContact(contactId.value, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
-      await ContactsService.createContact(payload);
+      try {
+        await ContactsService.createContact(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
 
     await getContacts();
@@ -295,10 +310,15 @@ const saveContact = async () => {
  *
  */
 const deleteContact = async () => {
-  await ContactsService.deleteContact(contactId.value);
+  try {
+    await ContactsService.deleteContact(contactId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   await contactStore.fetchContactStats(t);
   deleteDialog.value = false;
-
   await getContacts();
 }
 

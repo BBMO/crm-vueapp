@@ -67,7 +67,7 @@
       maximized
     >
       <q-card class="dialog-card">
-        <div class="q-pa-lg flex items-center dialog-title">
+        <div class="q-px-lg q-py-md flex items-center dialog-title">
           <h6 class="text-h6 q-ma-none">{{ formModeEdit ? $t('agent.editAgent') : $t('agent.addAgent') }}</h6>
           <q-space />
           <q-icon name="close" size="sm" class="cursor-pointer" @click="agentFormDialog = false" />
@@ -107,6 +107,7 @@
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
 // Services
 import AgentsService from 'src/services/agents.service';
 // Store
@@ -115,6 +116,7 @@ import { useAgentStore } from 'src/stores/agent.store';
 import AgentFormComponent from 'components/AgentComponents/AgentFormComponent.vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
 const router = useRouter();
 const agentStore = useAgentStore();
 
@@ -198,12 +200,22 @@ const saveAgent = async () => {
     }
 
     if (formModeEdit.value) {
-      await AgentsService.updateAgent(agentId.value, payload);
+      try {
+        await AgentsService.updateAgent(agentId.value, payload);
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     } else {
       payload.append('username', formData.value?.formData.form.username);
       payload.append('password', formData.value?.formData.form.password);
 
-      await AgentsService.createAgent(payload);
+      try {
+        await AgentsService.createAgent(payload);
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+      } catch (error) {
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      }
     }
 
     await getAgents();
@@ -217,7 +229,13 @@ const saveAgent = async () => {
  *
  */
 const deleteAgent = async () => {
-  await AgentsService.deleteAgent(agentId.value);
+  try {
+    await AgentsService.deleteAgent(agentId.value);
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+  } catch (error) {
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+  }
+
   deleteDialog.value = false;
   await getAgents();
 }
