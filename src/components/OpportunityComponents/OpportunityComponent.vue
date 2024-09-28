@@ -69,7 +69,7 @@
       </div>
       <q-separator />
       <div class="q-px-md q-py-lg flex justify-end gap-md">
-        <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+        <q-btn :loading="isLoadingExport" color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false" @click="exportOpportunities">{{ $t('global.export') }}</q-btn>
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('opportunity.addOpportunity') }}</q-btn>
       </div>
       <q-table
@@ -201,6 +201,7 @@
 
 <script setup lang="ts">
 import {onMounted, Ref, ref} from 'vue';
+import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 // Interfaces
@@ -253,11 +254,13 @@ const filters = ref({
     value: ''
   },
 });
+const payloadFilters = ref<any>({});
 
 const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingFinished = ref(false);
 const isLoadingDelete = ref(false);
+const isLoadingExport = ref(false);
 
 const opportunityFormDialog = ref(false);
 const opportunityFinishedDialog = ref(false);
@@ -340,6 +343,7 @@ const cleanFilters = () => {
     },
   };
 
+  payloadFilters.value = {};
   getOpportunities();
 }
 
@@ -347,16 +351,16 @@ const cleanFilters = () => {
  *
  */
 const applyFilters = async () => {
-  const payloadFilters: any = {
+  payloadFilters.value = {
     state_id: filters.value.state.id,
     agent_id: filters.value.agent.id,
   };
 
   if (filters.value.finished.value) {
-    payloadFilters.finished = filters.value.finished.value === '1';
+    payloadFilters.value.finished = filters.value.finished.value === '1';
   }
 
-  const { data } = await OpportunitiesService.getOpportunities(payloadFilters);
+  const { data } = await OpportunitiesService.getOpportunities(payloadFilters.value);
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,
     finished: item.finished_at !== null
@@ -424,6 +428,35 @@ const deleteOpportunity = async () => {
   await opportunityStore.fetchOpportunityStats(t);
   deleteDialog.value = false;
   await getOpportunities();
+}
+
+/**
+ *
+ */
+const exportOpportunities = async () => {
+  isLoadingExport.value = true;
+
+  const payloadFilters: any = {
+    state_id: filters.value.state.id,
+    agent_id: filters.value.agent.id,
+  };
+
+  if (filters.value.finished.value) {
+    payloadFilters.finished = filters.value.finished.value === '1';
+  }
+
+  const response: AxiosResponse<Blob> = await OpportunitiesService.getOpportunitiesExport(payloadFilters.value);
+
+  const fileBlob = response.data;
+  const fileUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = fileUrl;
+  downloadLink.download = 'opportunities';
+  downloadLink.click();
+
+  URL.revokeObjectURL(fileUrl);
+
+  isLoadingExport.value = false;
 }
 
 /**

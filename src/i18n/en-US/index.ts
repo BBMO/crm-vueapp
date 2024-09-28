@@ -36,6 +36,7 @@ export default {
     successUpdateMessage: 'Successfully updated',
     successDeleteMessage: 'Successfully deleted',
     errorMessage: 'An error has occurred',
+    pageNotFound: 'Page not found',
   },
   menu: {
     dashboard: 'Dashboard',

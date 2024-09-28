@@ -96,6 +96,13 @@ class PropertiesService {
   getPropertyStats(): AxiosPromise {
     return api.get('/properties/stats')
   }
+
+  getPropertiesExport(filters?: any): AxiosPromise {
+    return api.get('/properties/export',{
+      responseType: 'blob',
+      params: filters
+    })
+  }
 }
 
 export default new PropertiesService();

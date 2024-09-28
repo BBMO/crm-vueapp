@@ -183,7 +183,7 @@
       </div>
       <q-separator />
       <div class="q-px-md q-py-lg flex justify-end gap-md">
-        <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+        <q-btn :loading="isLoadingExport" color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false" @click="exportProperties">{{ $t('global.export') }}</q-btn>
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="createProperty">{{ $t('property.addProperty') }}</q-btn>
       </div>
       <q-table
@@ -290,6 +290,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
+import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -344,6 +345,7 @@ const deleteDialog = ref(false);
 const loadingTable = ref(false);
 const isLoadingFilters = ref(false);
 const isLoadingDelete = ref(false);
+const isLoadingExport = ref(false);
 
 const filters = ref<PropertyFiltersInterface>({
   available_for: {
@@ -380,6 +382,8 @@ const filters = ref<PropertyFiltersInterface>({
   },
   features: []
 });
+const payloadFilters = ref<any>({});
+
 
 const propertyFeaturesSelect: Ref<CommonSelectInterface[]> = ref([]);
 const propertyAgentsSelect: Ref<CommonSelectInterface[]> = ref([]);
@@ -471,7 +475,7 @@ const applyFilters = async () => {
     })
   };
 
-  const payloadFilters: any = {
+  payloadFilters.value = {
     price_min: filters.value.price.min,
     price_max: filters.value.price.max,
     agent_id: filters.value.agent.id,
@@ -488,10 +492,10 @@ const applyFilters = async () => {
   };
 
   if (filters.value.enabled.value) {
-    payloadFilters.enabled = filters.value.enabled.value
+    payloadFilters.value.enabled = filters.value.enabled.value
   }
 
-  const { data } = await PropertiesService.getProperties(payloadFilters);
+  const { data } = await PropertiesService.getProperties(payloadFilters.value);
   propertyList.value = data?.data?.items || [];
 }
 
@@ -542,6 +546,7 @@ const cleanFilters = () => {
     return item;
   });
 
+  payloadFilters.value = {};
   getProperties();
 }
 
@@ -581,6 +586,26 @@ const deleteProperty = async () => {
   deleteDialog.value = false;
 
   await getProperties();
+}
+
+/**
+ *
+ */
+const exportProperties = async () => {
+  isLoadingExport.value = true;
+
+  const response: AxiosResponse<Blob> = await PropertiesService.getPropertiesExport(payloadFilters.value);
+
+  const fileBlob = response.data;
+  const fileUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = fileUrl;
+  downloadLink.download = 'properties';
+  downloadLink.click();
+
+  URL.revokeObjectURL(fileUrl);
+
+  isLoadingExport.value = false;
 }
 
 /**

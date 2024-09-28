@@ -108,6 +108,7 @@ const routes: RouteRecordRaw[] = [
         meta: { module: 'settings' },
         component: SettingPage,
       },
+
     ],
   },
 
@@ -115,7 +116,13 @@ const routes: RouteRecordRaw[] = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue'),
+    component: isAppMode ? MainLayout : MainLayoutWeb,
+    children: [
+      {
+        path: '',
+        component: () => import('pages/ErrorNotFound.vue'),
+      },
+    ]
   },
 ];
 

@@ -42,6 +42,13 @@ class AgentsService {
   getAgentOpportunities(id: string): AxiosPromise {
     return api.get(`/opportunities?agent_id=${id}`)
   }
+
+  getAgentsExport(filters?: any): AxiosPromise {
+    return api.get('/agents/export',{
+      responseType: 'blob',
+      params: filters
+    })
+  }
 }
 
 export default new AgentsService();

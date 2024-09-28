@@ -50,7 +50,7 @@
       </div>
       <q-separator />
       <div class="q-px-md q-py-lg flex justify-end gap-md">
-        <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+        <q-btn :loading="isLoadingExport" color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false" @click="exportContacts">{{ $t('global.export') }}</q-btn>
         <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('contact.addContact') }}</q-btn>
       </div>
       <q-table
@@ -153,6 +153,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
+import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -200,6 +201,7 @@ const deleteDialog = ref(false);
 const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingDelete = ref(false);
+const isLoadingExport = ref(false);
 
 const formModeEdit = ref(false);
 const formData = ref<typeof ContactFormComponent | null>(null);
@@ -320,6 +322,30 @@ const deleteContact = async () => {
   await contactStore.fetchContactStats(t);
   deleteDialog.value = false;
   await getContacts();
+}
+
+/**
+ *
+ */
+const exportContacts = async () => {
+  isLoadingExport.value = true;
+
+  const response: AxiosResponse<Blob> = await ContactsService.getContactsExport({
+    type: filters.value.type.value,
+    address: filters.value.address,
+    search: filters.value.search,
+  });
+
+  const fileBlob = response.data;
+  const fileUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = fileUrl;
+  downloadLink.download = 'contacts';
+  downloadLink.click();
+
+  URL.revokeObjectURL(fileUrl);
+
+  isLoadingExport.value = false;
 }
 
 /**

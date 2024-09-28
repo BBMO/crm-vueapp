@@ -14,7 +14,7 @@
             ><template v-slot:prepend><q-icon name="mdi-magnify" /></template></q-input>
           </div>
           <div class="col-sm-6 col-12 flex justify-end gap-sm q-py-xs">
-            <q-btn color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false">{{ $t('global.export') }}</q-btn>
+            <q-btn :loading="isLoadingExport" color="grey-12" icon="mdi-database-export-outline" class="q-px-lg shadow-0 text-grey" :ripple="false" @click="exportAgents">{{ $t('global.export') }}</q-btn>
             <q-btn color="primary" icon="mdi-plus" class="q-px-lg" :ripple="false" @click="openDialogSave(false)">{{ $t('agent.addAgent') }}</q-btn>
           </div>
         </div>
@@ -105,6 +105,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
+import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
@@ -134,6 +135,7 @@ const deleteDialog = ref(false);
 const loadingTable = ref(false);
 const isLoadingSave = ref(false);
 const isLoadingDelete = ref(false);
+const isLoadingExport = ref(false);
 
 const formModeEdit = ref(false);
 const formData = ref<typeof AgentFormComponent | null>(null);
@@ -238,6 +240,28 @@ const deleteAgent = async () => {
 
   deleteDialog.value = false;
   await getAgents();
+}
+
+/**
+ *
+ */
+const exportAgents = async () => {
+  isLoadingExport.value = true;
+
+  const response: AxiosResponse<Blob> = await AgentsService.getAgentsExport({
+    search: searchText.value,
+  });
+
+  const fileBlob = response.data;
+  const fileUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement('a');
+  downloadLink.href = fileUrl;
+  downloadLink.download = 'agents';
+  downloadLink.click();
+
+  URL.revokeObjectURL(fileUrl);
+
+  isLoadingExport.value = false;
 }
 
 /**

@@ -50,6 +50,13 @@ class ContactsService {
   getContactOpportunities(id: string): AxiosPromise {
     return api.get(`/opportunities?contact_id=${id}`)
   }
+
+  getContactsExport(filters?: any): AxiosPromise {
+    return api.get('/contacts/export',{
+      responseType: 'blob',
+      params: filters
+    })
+  }
 }
 
 export default new ContactsService();

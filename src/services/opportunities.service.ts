@@ -49,6 +49,13 @@ class OpportunitiesService {
   getOpportunityStats(): AxiosPromise {
     return api.get('/opportunities/stats')
   }
+
+  getOpportunitiesExport(filters?: any): AxiosPromise {
+    return api.get('/opportunities/export',{
+      responseType: 'blob',
+      params: filters
+    })
+  }
 }
 
 export default new OpportunitiesService();

@@ -4,14 +4,12 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <footer-component />
   </q-layout>
 </template>
 
 <script setup lang="ts">
 // Components
 import HeaderComponent from 'components/AppComponents/HeaderComponent.vue';
-import FooterComponent from 'components/AppComponents/FooterComponent.vue';
 
 </script>
 
