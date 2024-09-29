@@ -52,6 +52,9 @@ export default {
     requiredField: 'Required field',
   },
   stats: {
+    propertyStats: 'Property stats',
+    contactStats: 'Contact stats',
+    opportunitiesStats: 'Opportunities stats',
     contacts: 'Contacts',
     clients: 'Clients',
     leads: 'Leads',

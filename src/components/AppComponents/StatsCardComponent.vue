@@ -1,29 +1,27 @@
 <template>
   <q-card class="q-pa-lg stats-card-container">
     <div class="row">
-      <div class="col-sm-8 col-12 flex column">
-        <p class="text-subtitle1 text-grey-14 q-ma-none">{{ props.title }}</p>
-        <h5 class="q-my-xs text-weight-medium">{{ props.quantity }} <span v-if="props.isAmount">$</span></h5>
+      <div class="col-8 flex column">
+        <p class="text-subtitle1 text-grey-14 q-ma-none">{{ props.stats.title }}</p>
+        <h5 class="q-my-xs text-weight-medium">{{ props.stats.quantity }} <span v-if="props.stats.isAmount">$</span></h5>
       </div>
-      <div class="col-sm-4 col-12 flex items-start justify-end stats-icon">
-        <span class="relative-position q-pa-xs">
-          <span class="absolute full-width full-height background-icon" :class="`bg-${props.color}`"></span>
-          <q-icon :name="props.icon" :color="props.color" size="sm" />
+      <div class="col-4 flex items-start justify-end stats-icon">
+        <span class="relative-position q-pa-sm">
+          <span class="absolute full-width full-height background-icon" :class="`bg-${props.stats.color}`"></span>
+          <q-icon :name="props.stats.icon" :color="props.stats.color" size="sm" />
         </span>
       </div>
     </div>
-    <p class="text-caption text-grey q-ma-none">{{ props.subtitle }}</p>
+    <p class="text-caption text-grey q-ma-none">{{ props.stats.subtitle }}</p>
   </q-card>
 </template>
 
 <script setup lang="ts">
+// Interfaces
+import type { AppStatsInterface } from 'src/interfaces/app.interface';
+
 interface Props {
-  title: string
-  subtitle: string
-  icon: string
-  color: string
-  quantity: number
-  isAmount?: boolean
+  stats: AppStatsInterface
 }
 
 const props = defineProps<Props>()
@@ -43,7 +41,7 @@ const props = defineProps<Props>()
 
 @media screen and (max-width: 599px) {
   .stats-card-container .stats-icon {
-    display: none;
+    // display: none;
   }
 }
 </style>

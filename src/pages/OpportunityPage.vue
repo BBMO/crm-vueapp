@@ -3,12 +3,7 @@
     <div class="stats-section">
       <stats-card-component
         v-for="(item, index) in opportunityStatistics" :key="index"
-        :title="item.title"
-        :subtitle="item.subtitle"
-        :icon="item.icon"
-        :color="item.color"
-        :quantity="item.quantity"
-        :is-amount="item.isAmount"
+        :stats="item"
       />
     </div>
     <div class="q-py-lg">
@@ -46,6 +41,12 @@ onMounted(() => {
 @media screen and (max-width: 768px) {
   .stats-section {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .stats-section {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 </style>

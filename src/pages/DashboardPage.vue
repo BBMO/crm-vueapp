@@ -1,10 +1,12 @@
 <template>
   <q-page class="q-page-general">
-    <h6 class="q-ma-none">Dashboard... In progress!</h6>
+    <dashboard-component />
   </q-page>
 </template>
 
 <script setup lang="ts">
+// Components
+import DashboardComponent from 'components/DashboardComponents/DashboardComponent.vue';
 
 </script>
 
