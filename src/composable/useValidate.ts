@@ -9,9 +9,9 @@ const useValidate = () => {
 
   const validateRequiredSelect = (val: any): boolean => val && val !== '';
 
-  /*const validateNumber = (val: any): boolean => val !== null;
+  const validateNumber = (val: any): boolean => val !== null && val != 0;
 
-  const validateFile = (val: any): boolean => val && val.length > 0;
+  /*const validateFile = (val: any): boolean => val && val.length > 0;
 
   const validateMatch = (val: any, type: string): boolean => {
     const matchType: validationMatchInterface = {
@@ -37,6 +37,7 @@ const useValidate = () => {
   return {
     validateRequired,
     validateRequiredSelect,
+    validateNumber,
   }
 }
 

@@ -104,7 +104,7 @@
           <q-card class="q-mb-md q-pa-lg">
             <p class="text-subtitle1 text-weight-medium text-grey-14 q-ma-none q-mb-md">{{ $t('property.coordinates') }}</p>
             <div class="q-py-xs row">
-              <div class="col-4">
+              <div class="col-12 col-md-4">
                 <div class="q-py-xs">
                   <label>{{ $t('property.form.latitude') }}</label>
                   <q-input
@@ -114,7 +114,7 @@
                     type="number"
                     :min="0"
                     :rules="[
-                      (val: any) => validateRequired(val) || $t('validation.requiredField'),
+                      (val: any) => validateNumber(val) || $t('validation.requiredField'),
                     ]"
                   ><template v-slot:prepend><q-icon name="mdi-latitude" /></template></q-input>
                 </div>
@@ -127,13 +127,13 @@
                     type="number"
                     :min="0"
                     :rules="[
-                    (val: any) => validateRequired(val) || $t('validation.requiredField'),
+                    (val: any) => validateNumber(val) || $t('validation.requiredField'),
                   ]"
                   ><template v-slot:prepend><q-icon name="mdi-longitude" /></template></q-input>
                 </div>
               </div>
-              <div class="col-8">
-
+              <div class="col-12 col-md-8 q-px-md">
+                <div id="map"></div>
               </div>
             </div>
           </q-card>
@@ -340,6 +340,8 @@ import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+import { map, latLng, tileLayer, marker, MapOptions, Marker } from 'leaflet';
+
 // Interfaces
 import type { PropertyImageInterface, PropertyFormInterface } from 'src/interfaces/property.interface';
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
@@ -357,7 +359,7 @@ const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const { getIsAdmin, getWpUserId } = useRole();
-const { validateRequired, validateRequiredSelect } = useValidate();
+const { validateRequired, validateRequiredSelect, validateNumber } = useValidate();
 
 const availableForSelect = [
   { label: t('property.sale'), value: GLOBAL.SALE },
@@ -369,6 +371,11 @@ const statusSelect = [
   { label: t('property.rented'), value: GLOBAL.RENTED },
   { label: t('property.sold'), value: GLOBAL.SOLD },
 ]
+
+const options: MapOptions = {
+  center: latLng(8.0049, -72.0250),
+  zoom: 9
+}
 
 const isLoading = ref(false);
 const isLoadingSave = ref(false);
@@ -392,8 +399,8 @@ const form = ref<PropertyFormInterface>({
   city: '',
   state: '',
   zip: '',
-  latitude: '',
-  longitude: '',
+  latitude: 0,
+  longitude: 0,
   status: {
     label: '',
     value: ''
@@ -417,8 +424,6 @@ const propertyTypesSelect: Ref<CommonSelectInterface[]> = ref([]);
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const selectedFiles = ref<PropertyImageInterface[]>([]);
-
-// TODO: Implement map to get coordinates
 
 /**
  *
@@ -573,8 +578,8 @@ const saveProperty = async () => {
     payload.append('city', form.value.city);
     payload.append('state', form.value.state);
     payload.append('zip', form.value.zip);
-    payload.append('latitude', form.value.latitude);
-    payload.append('longitude', form.value.longitude);
+    payload.append('latitude', form.value.latitude.toString());
+    payload.append('longitude', form.value.longitude.toString());
     payload.append('agent_id', form.value.agent_id.id);
     payload.append('type_id', form.value.type_id.id);
     payload.append('status', form.value.status.value);
@@ -639,7 +644,45 @@ onMounted(async () => {
   }
 
   isLoading.value = false;
-});
+
+  // Await to render the map
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  const locationMap = map('map', options);
+
+  tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{ //style URL
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(locationMap);
+
+  // If there are coordinates, add a marker
+  if (form.value.latitude && form.value.longitude) {
+    marker([form.value.latitude, form.value.longitude]).addTo(locationMap);
+
+    // Set the view to the coordinates
+    locationMap.setView([form.value.latitude, form.value.longitude], 10);
+  }
+
+  locationMap.on('click', (e) => {
+    const { lat, lng } = e.latlng;
+    form.value.latitude = lat;
+    form.value.longitude = lng;
+
+    if (locationMap) {
+      // Remove the previous marker
+      locationMap.eachLayer((layer) => {
+        if (layer instanceof Marker) {
+          locationMap.removeLayer(layer);
+        }
+      });
+
+      // Add a new marker
+      marker([lat, lng]).addTo(locationMap);
+
+      locationMap.setView([lat, lng]);
+    }
+  });
+})
 
 onUnmounted(() => {
   isEditProperty.value = false;
@@ -706,6 +749,10 @@ onUnmounted(() => {
     color: var(--q-negative);
     margin-top: 5px;
     line-height: 1;
+  }
+
+  #map {
+    height: 350px;
   }
 }
 

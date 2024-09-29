@@ -54,8 +54,8 @@ export interface PropertyFormInterface {
   city: string
   state: string
   zip: string
-  latitude: string
-  longitude: string
+  latitude: number
+  longitude: number
   status: PropertyDropdownInterface
   agent_id: CommonSelectInterface
   type_id: CommonSelectInterface
