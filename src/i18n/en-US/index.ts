@@ -79,6 +79,10 @@ export default {
     opportunityProgress: 'Opportunities in progress',
     amountTotal: 'Amount earned last month',
     amountTotalRent: 'Amount obtained last month for rent',
+    currentPreviousMonthSales: 'Current vs Previous Month Sales',
+    currentPreviousMonthRents: 'Current vs Previous Month Rents',
+    currentMonth: 'Current Month',
+    previousMonth: 'Previous Month',
   },
   auth: {
     newPassword: 'New Password',

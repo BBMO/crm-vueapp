@@ -1,12 +1,19 @@
 <template>
   <div>
-    <div v-if="!isLoading" class="flex column gap-sm">
+    <div v-if="!isLoading" class="flex column gap-md">
       <q-card class="q-py-md">
         <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.propertyStats') }}</h6>
         <dashboard-global-stats-component :stats="propertyStatistics" />
       </q-card>
-      <div>
-        Gráficos
+      <div class="graphs-section">
+        <q-card class="q-py-md">
+          <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.currentPreviousMonthSales') }}</h6>
+          <dashboard-graph-component :seriesData="graphSalesData" />
+        </q-card>
+        <q-card class="q-py-md">
+          <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.currentPreviousMonthRents') }}</h6>
+          <dashboard-graph-component :seriesData="graphRentalsData" />
+        </q-card>
       </div>
       <q-card class="q-py-md">
         <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.opportunitiesStats') }}</h6>
@@ -33,8 +40,11 @@ import { useI18n } from 'vue-i18n';
 import { usePropertyStore } from 'src/stores/property.store';
 import { useOpportunityStore } from 'src/stores/opportunity.store';
 import { useContactStore } from 'src/stores/contact.store';
+// Services
+import DashboardService from 'src/services/dashboard.service';
 // Components
 import DashboardGlobalStatsComponent from 'components/DashboardComponents/DashboardGlobalStatsComponent.vue';
+import DashboardGraphComponent from 'components/DashboardComponents/DashboardGraphComponent.vue';
 
 const { t } = useI18n();
 const propertyStore = usePropertyStore();
@@ -42,6 +52,8 @@ const opportunityStore = useOpportunityStore();
 const contactStore = useContactStore();
 
 const isLoading = ref(false);
+const graphRentalsData = ref([]);
+const graphSalesData = ref([]);
 
 const propertyStatistics = computed(() => propertyStore.getPropertyStats);
 const opportunityStatistics = computed(() => opportunityStore.getOpportunityStats);
@@ -54,10 +66,25 @@ onMounted(async () => {
   await opportunityStore.fetchOpportunityStats(t);
   await contactStore.fetchContactStats(t);
 
+  const { data: dataRentals } = await DashboardService.getDashboardGraphRentals();
+  graphRentalsData.value = dataRentals.data;
+
+  const { data: dataSales } = await DashboardService.getDashboardGraphSales();
+  graphSalesData.value = dataSales.data;
+
   isLoading.value = false;
 })
 </script>
 
 <style scoped lang="scss">
+.graphs-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
 
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
 </style>
