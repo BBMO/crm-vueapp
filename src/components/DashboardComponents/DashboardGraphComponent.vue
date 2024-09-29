@@ -30,7 +30,7 @@ const chartOptions = {
       left: 0,
       enabled: !0,
       opacity: .04,
-      enabledOnSeries: [1],
+      enabledOnSeries: [0],
       color: '#000'
     }
   },
