@@ -41,7 +41,7 @@
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-px-sm q-mt-md">
-                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
+                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="clearFilters">{{ $t('global.cleanFilters') }}</q-btn>
                 <q-btn outline color="primary" icon="mdi-magnify" class="no-box-shadow" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
             </q-card-section>
@@ -58,8 +58,9 @@
         :rows="contactList"
         :columns="columns"
         :loading="loadingTable"
-        :hide-pagination="true"
         :rows-per-page-options="[0]"
+        v-model:pagination="paginationRef"
+        @request="onRequestPagination"
       >
         <template v-slot:body-cell-first_name="props">
           <q-td :props="props">
@@ -158,7 +159,7 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 // Constants
-import { GLOBAL } from 'src/constants/global.constant';
+import { GLOBAL, ROWS_PER_PAGE } from 'src/constants/global.constant';
 // Composable
 import useRole from 'src/composable/useRole';
 // Services
@@ -193,6 +194,13 @@ const filters = ref({
   },
   address: '',
   search: '',
+  page: 1,
+});
+
+const paginationRef = ref({
+  page: 1,
+  rowsPerPage: ROWS_PER_PAGE,
+  rowsNumber: 0,
 });
 
 const contactFormDialog = ref(false);
@@ -212,11 +220,23 @@ const contactId = computed(() => contactStore.getContactId);
 /**
  *
  */
-const getContacts = async () => {
+const getContacts = async (isPagination = false) => {
   loadingTable.value = true;
 
-  const { data } = await ContactsService.getContacts();
+  if (!isPagination) {
+    filters.value.page = 1;
+    paginationRef.value.page = 1;
+  }
+
+  const { data } = await ContactsService.getContacts({
+    type: filters.value.type.value,
+    address: filters.value.address,
+    search: filters.value.search,
+    page: filters.value.page,
+  });
+
   contactList.value = data?.data?.items || [];
+  paginationRef.value.rowsNumber = data?.data?.total || 0;
 
   loadingTable.value = false;
 }
@@ -224,7 +244,14 @@ const getContacts = async () => {
 /**
  *
  */
-const cleanFilters = () => {
+const applyFilters = async () => {
+  await getContacts();
+}
+
+/**
+ *
+ */
+const clearFilters = () => {
   filters.value = {
     type: {
       label: '',
@@ -232,22 +259,21 @@ const cleanFilters = () => {
     },
     address: '',
     search: '',
+    page: 1,
   };
 
+  paginationRef.value.page = 1;
   getContacts();
 }
 
 /**
  *
  */
-const applyFilters = async () => {
-  const { data } = await ContactsService.getContacts({
-    type: filters.value.type.value,
-    address: filters.value.address,
-    search: filters.value.search,
-  });
+const onRequestPagination = async ({ pagination }: any) => {
+  paginationRef.value.page = pagination.page  || 1;
+  filters.value.page = pagination.page;
 
-  contactList.value = data?.data?.items || [];
+  await getContacts(true);
 }
 
 /**

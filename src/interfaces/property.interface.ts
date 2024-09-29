@@ -38,6 +38,7 @@ export interface PropertyFiltersInterface {
   }
   enabled: PropertyDropdownInterface
   features: Array<string>
+  page?: number
 }
 
 export interface PropertyFormInterface {

@@ -24,8 +24,9 @@
         :rows="agentList"
         :columns="columns"
         :loading="loadingTable"
-        :hide-pagination="true"
         :rows-per-page-options="[0]"
+        v-model:pagination="paginationRef"
+        @request="onRequestPagination"
       >
         <template v-slot:body-cell-display_name="props">
           <q-td :props="props">
@@ -115,6 +116,8 @@ import AgentsService from 'src/services/agents.service';
 import { useAgentStore } from 'src/stores/agent.store';
 // Components
 import AgentFormComponent from 'components/AgentComponents/AgentFormComponent.vue';
+// Constants
+import { ROWS_PER_PAGE } from 'src/constants/global.constant';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -126,6 +129,12 @@ const columns = [
   { name: 'user_email', label: t('global.email'), field: 'email', align: 'left' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
+
+const paginationRef = ref({
+  page: 1,
+  rowsPerPage: ROWS_PER_PAGE,
+  rowsNumber: 0,
+});
 
 const searchText = ref('');
 
@@ -146,11 +155,16 @@ const agentId = computed(() => agentStore.getAgentId);
 /**
  *
  */
-const getAgents = async () => {
+const getAgents = async (isPagination = false) => {
   loadingTable.value = true;
 
-  const { data } = await AgentsService.getAgents();
+  if (!isPagination) {
+    paginationRef.value.page = 1;
+  }
+
+  const { data } = await AgentsService.getAgents(searchText.value, paginationRef.value.page);
   agentList.value = data?.data?.items || [];
+  paginationRef.value.rowsNumber = data?.data?.total || 0;
 
   loadingTable.value = false;
 }
@@ -160,14 +174,16 @@ const getAgents = async () => {
  */
 const searchAgent = async (value: string) => {
   searchText.value = value;
+  await getAgents();
+}
 
-  if (searchText.value === '') {
-    await getAgents();
-    return;
-  }
+/**
+ *
+ */
+const onRequestPagination = async ({ pagination }: any) => {
+  paginationRef.value.page = pagination.page  || 1;
 
-  const { data } = await AgentsService.getAgents(searchText.value);
-  agentList.value = data?.data?.items || [];
+  await getAgents(true);
 }
 
 /**

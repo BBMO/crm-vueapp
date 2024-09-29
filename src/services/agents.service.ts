@@ -5,10 +5,8 @@ class AgentsService {
   /**
    * Agents general
    */
-  getAgents(search: string = ''): AxiosPromise {
-    if (search) return api.get(`/agents?search=${search}`)
-
-    return api.get('/agents')
+  getAgents(search: string = '', page = 1): AxiosPromise {
+    return api.get(`/agents?search=${search}&page=${page}`)
   }
 
   getAgent(id: string): AxiosPromise {

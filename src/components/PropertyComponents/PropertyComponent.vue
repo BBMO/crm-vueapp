@@ -171,7 +171,7 @@
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-pa-sm">
-                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
+                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="clearFilters">{{ $t('global.cleanFilters') }}</q-btn>
                 <q-btn outline color="primary" icon="mdi-magnify" class="no-box-shadow" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
             </q-card-section>
@@ -191,8 +191,9 @@
         :rows="propertyList"
         :columns="columns"
         :loading="loadingTable"
-        :hide-pagination="true"
         :rows-per-page-options="[0]"
+        v-model:pagination="paginationRef"
+        @request="onRequestPagination"
       >
         <template v-slot:body-cell-title="props">
           <q-td :props="props">
@@ -300,7 +301,7 @@ import type { PropertyFiltersInterface, PropertyRangeInterface } from 'src/inter
 // Composable
 import useRole from 'src/composable/useRole';
 // Constants
-import { GLOBAL } from 'src/constants/global.constant';
+import { GLOBAL, ROWS_PER_PAGE } from 'src/constants/global.constant';
 // Store
 import { usePropertyStore } from 'src/stores/property.store';
 // Services
@@ -339,6 +340,12 @@ const enabledSelect = [
   { label: t('property.notVisible'), value: '0' },
   { label: t('property.all'), value: '' },
 ]
+
+const paginationRef = ref({
+  page: 1,
+  rowsPerPage: ROWS_PER_PAGE,
+  rowsNumber: 0,
+});
 
 const deleteDialog = ref(false);
 
@@ -380,7 +387,8 @@ const filters = ref<PropertyFiltersInterface>({
     label: '',
     value: ''
   },
-  features: []
+  features: [],
+  page: 1
 });
 const payloadFilters = ref<any>({});
 
@@ -450,19 +458,14 @@ const filterAgentSelect = (value: string, update: any) => {
 /**
  *
  */
-const getProperties = async () => {
+const getProperties = async (isPagination = false) => {
   loadingTable.value = true;
 
-  const { data } = await PropertiesService.getProperties();
-  propertyList.value = data?.data?.items || [];
+  if (!isPagination) {
+    filters.value.page = 1;
+    paginationRef.value.page = 1;
+  }
 
-  loadingTable.value = false;
-}
-
-/**
- *
- */
-const applyFilters = async () => {
   filters.value.features = [];
 
   const filterFeatures: Array<string> = []
@@ -473,7 +476,7 @@ const applyFilters = async () => {
       filters.value.features.push(feature);
       filterFeatures.push(feature)
     })
-  };
+  }
 
   payloadFilters.value = {
     price_min: filters.value.price.min,
@@ -488,7 +491,8 @@ const applyFilters = async () => {
     garages: filters.value.garages,
     size_min: filters.value.size.min,
     size_max: filters.value.size.max,
-    features: filterFeatures
+    features: filterFeatures,
+    page: filters.value.page,
   };
 
   if (filters.value.enabled.value) {
@@ -497,12 +501,32 @@ const applyFilters = async () => {
 
   const { data } = await PropertiesService.getProperties(payloadFilters.value);
   propertyList.value = data?.data?.items || [];
+  paginationRef.value.rowsNumber = data?.data?.total || 0;
+
+  loadingTable.value = false;
 }
 
 /**
  *
  */
-const cleanFilters = () => {
+const applyFilters = async () => {
+  await getProperties();
+}
+
+/**
+ *
+ */
+const onRequestPagination = async ({ pagination }: any) => {
+  paginationRef.value.page = pagination.page  || 1;
+  filters.value.page = pagination.page;
+
+  await getProperties(true);
+}
+
+/**
+ *
+ */
+const clearFilters = () => {
   if (propertyRange.value) {
     filters.value = {
       available_for: {
@@ -537,7 +561,8 @@ const cleanFilters = () => {
         label: '',
         value: ''
       },
-      features: []
+      features: [],
+      page: 1
     }
   }
 
@@ -547,6 +572,7 @@ const cleanFilters = () => {
   });
 
   payloadFilters.value = {};
+  paginationRef.value.page = 1;
   getProperties();
 }
 
@@ -619,8 +645,8 @@ const openDialogDelete = (id: string) => {
 onMounted(async () => {
   isLoadingFilters.value = true;
 
-  await getProperties();
   await getFilterOptions();
+  await getProperties();
 
   isLoadingFilters.value = false;
 })

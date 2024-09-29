@@ -8,3 +8,5 @@ export const GLOBAL = {
   RENTED: 'rented',
   SOLD: 'sold'
 };
+
+export const ROWS_PER_PAGE = 12;

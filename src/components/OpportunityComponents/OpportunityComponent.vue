@@ -60,7 +60,7 @@
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-px-sm q-mt-md">
-                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="cleanFilters">{{ $t('global.cleanFilters') }}</q-btn>
+                <q-btn outline color="negative" class="no-box-shadow" :ripple="false" @click="clearFilters">{{ $t('global.cleanFilters') }}</q-btn>
                 <q-btn outline color="primary" icon="mdi-magnify" class="no-box-shadow" :ripple="false" @click="applyFilters">{{ $t('global.searchFilters') }}</q-btn>
               </div>
             </q-card-section>
@@ -77,8 +77,9 @@
         :rows="opportunityList"
         :columns="columns"
         :loading="loadingTable"
-        :hide-pagination="true"
         :rows-per-page-options="[0]"
+        v-model:pagination="paginationRef"
+        @request="onRequestPagination"
       >
         <template v-slot:body="props">
           <q-tr :props="props" :class="{ disabled: props.row.finished_at !== null }">
@@ -210,7 +211,7 @@ import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Composable
 import useRole from 'src/composable/useRole';
 // Constants
-import { GLOBAL } from 'src/constants/global.constant';
+import { GLOBAL, ROWS_PER_PAGE } from 'src/constants/global.constant';
 // Store
 import { useOpportunityStore } from 'src/stores/opportunity.store';
 // Services
@@ -253,7 +254,15 @@ const filters = ref({
     label: '',
     value: ''
   },
+  page: 1
 });
+
+const paginationRef = ref({
+  page: 1,
+  rowsPerPage: ROWS_PER_PAGE,
+  rowsNumber: 0,
+});
+
 const payloadFilters = ref<any>({});
 
 const loadingTable = ref(false);
@@ -299,16 +308,39 @@ const getSelectsData = async () => {
 /**
  *
  */
-const getOpportunities = async () => {
+const getOpportunities = async (isPagination = false) => {
   loadingTable.value = true;
 
-  const { data } = await OpportunitiesService.getOpportunities();
+  if (!isPagination) {
+    filters.value.page = 1;
+    paginationRef.value.page = 1;
+  }
+
+  payloadFilters.value = {
+    state_id: filters.value.state.id,
+    agent_id: filters.value.agent.id,
+    page: filters.value.page
+  };
+
+  if (filters.value.finished.value) {
+    payloadFilters.value.finished = filters.value.finished.value === '1';
+  }
+
+  const { data } = await OpportunitiesService.getOpportunities(payloadFilters.value);
   opportunityList.value = data?.data?.items?.map((item: any) => ({
     ...item,
     finished: item.finished_at !== null
   })) || [];
+  paginationRef.value.rowsNumber = data?.data?.total || 0;
 
   loadingTable.value = false;
+}
+
+/**
+ *
+ */
+const applyFilters = async () => {
+  await getOpportunities();
 }
 
 /**
@@ -327,7 +359,7 @@ const filterAgentSelect = (value: string, update: any) => {
 /**
  *
  */
-const cleanFilters = () => {
+const clearFilters = () => {
   filters.value = {
     state: {
       id: '',
@@ -339,32 +371,24 @@ const cleanFilters = () => {
     },
     finished: {
       label: '',
-      value: ''
+      value: '',
     },
+    page: 1
   };
 
   payloadFilters.value = {};
+  paginationRef.value.page = 1;
   getOpportunities();
 }
 
 /**
  *
  */
-const applyFilters = async () => {
-  payloadFilters.value = {
-    state_id: filters.value.state.id,
-    agent_id: filters.value.agent.id,
-  };
+const onRequestPagination = async ({ pagination }: any) => {
+  paginationRef.value.page = pagination.page  || 1;
+  filters.value.page = pagination.page;
 
-  if (filters.value.finished.value) {
-    payloadFilters.value.finished = filters.value.finished.value === '1';
-  }
-
-  const { data } = await OpportunitiesService.getOpportunities(payloadFilters.value);
-  opportunityList.value = data?.data?.items?.map((item: any) => ({
-    ...item,
-    finished: item.finished_at !== null
-  })) || [];
+  await getOpportunities(true);
 }
 
 /**
