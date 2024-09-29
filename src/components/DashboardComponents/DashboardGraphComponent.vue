@@ -1,6 +1,18 @@
 <template>
   <div class="q-px-md">
-    <VueApexCharts type="line" height="250" :options="chartOptions" :series="series"></VueApexCharts>
+    <VueApexCharts
+      v-if="series.length"
+      type="line"
+      height="250"
+      :options="chartOptions"
+      :series="series"
+    />
+    <div v-else class="full-width full-height flex align-center justify-center q-py-xl">
+      <div class="full-width flex column items-center q-my-md">
+        <q-icon size="md" name="mdi-alert" color="grey" />
+        <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -84,20 +96,26 @@ onMounted(() => {
   const dataCurrentMonth = props.seriesData?.current_month?.map((item: any) => {
     return { x: item.date, y: item.amount };
   });
-  series.value.push({
-    name: t('stats.currentMonth'),
-    data: dataCurrentMonth,
-  });
+
+  if (dataCurrentMonth && dataCurrentMonth.length) {
+    series.value.push({
+      name: t('stats.currentMonth'),
+      data: dataCurrentMonth,
+    });
+  }
 
   // Format last_month from prop series
   const dataPreviousMonth = props.seriesData?.last_month?.map((item: any) => {
     return { x: item.date, y: item.amount };
   });
-  series.value.push({
-    name: t('stats.previousMonth'),
-    data: dataPreviousMonth,
-    opacity: 0.3  // Lower opacity for previous month
-  });
+
+  if (dataPreviousMonth && dataPreviousMonth.length) {
+    series.value.push({
+      name: t('stats.previousMonth'),
+      data: dataPreviousMonth,
+      opacity: 0.3  // Lower opacity for previous month
+    });
+  }
 })
 
 </script>
