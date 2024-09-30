@@ -242,7 +242,7 @@
           </q-td>
         </template>
         <template v-slot:body-cell-price="props">
-          <q-td :props="props">${{ props.row.price }}</q-td>
+          <q-td :props="props">{{ props.row.price }}$</q-td>
         </template>
         <template v-slot:body-cell-enabled="props">
           <q-td :props="props">
@@ -402,30 +402,28 @@ const propertyId = ref('');
 const propertyList = ref([]);
 
 const getFilterOptions = async () => {
-  let response;
-
-  response = await PropertiesService.getPropertyFeatures();
-  propertyFeaturesSelect.value = response?.data?.data.map((feature: any) => ({
+  const { data: propertyFeaturesData } = await PropertiesService.getPropertyFeatures();
+  propertyFeaturesSelect.value = propertyFeaturesData?.data.map((feature: any) => ({
     id: feature.id,
     name: feature.name,
     selected: false,
   })) || [];
 
-  response = await AgentsService.getAgents();
-  propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  propertyAgentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   })) || [];
 
-  response = await PropertiesService.getPropertyTypes();
-  propertyTypesSelect.value = response?.data?.data.map((type: any) => ({
+  const { data: propertyTypesData } = await PropertiesService.getPropertyTypes();
+  propertyTypesSelect.value = propertyTypesData?.data.map((type: any) => ({
     id: type.id,
     name: type.name,
   })) || [];
 
 
-  response = await PropertiesService.getPropertyRanges();
-  propertyRange.value = response?.data?.data;
+  const { data: propertyRangesData } = await PropertiesService.getPropertyRanges();
+  propertyRange.value = propertyRangesData?.data;
 
   if (propertyRange.value) {
     filters.value = {
@@ -603,9 +601,9 @@ const editProperty = (id: string) => {
 const deleteProperty = async () => {
   try {
     await PropertiesService.deleteProperty(propertyId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 
   await propertyStore.fetchPropertyStats(t);

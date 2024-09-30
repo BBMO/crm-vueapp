@@ -150,16 +150,16 @@ const saveOpportunityState = async () => {
     if (formModeEdit.value) {
       try {
         await OpportunitiesService.updateOpportunityState(opportunityStateDetails.value.id, payload);
-        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     } else {
       try {
         await OpportunitiesService.createOpportunityState(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
 
@@ -176,9 +176,9 @@ const saveOpportunityState = async () => {
 const deleteOpportunityState = async () => {
   try {
     await OpportunitiesService.deleteOpportunityState(opportunityStateId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 
   deleteDialog.value = false;

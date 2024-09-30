@@ -20,6 +20,7 @@
 <script setup lang="ts">
 // Interfaces
 import type { AppStatsInterface } from 'src/interfaces/app.interface';
+
 interface Props {
   stats: AppStatsInterface[]
 }
@@ -49,16 +50,12 @@ const props = defineProps<Props>()
     opacity: 0.2;
     border-radius: 5px;
   }
-}
 
-@media screen and (max-width: 959px) {
-  .global-stats-container {
+  @media screen and (max-width: 959px) {
     .stats-section {
       width: 50% !important;
 
-      &.border-1 {
-        border-right: 0;
-      }
+      &.border-1 { border-right: 0; }
 
       &.border-0, &.border-1 {
         .q-separator {
@@ -67,16 +64,12 @@ const props = defineProps<Props>()
       }
     }
   }
-}
 
-@media screen and (max-width: 599px) {
-  .global-stats-container {
+  @media screen and (max-width: 599px) {
     .stats-section {
       width: 100% !important;
 
-      &.border-0, &.border-2 {
-        border-right: 0;
-      }
+      &.border-0, &.border-2 { border-right: 0; }
 
       .q-separator {
         display: block;

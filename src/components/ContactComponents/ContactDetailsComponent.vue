@@ -168,9 +168,9 @@ const saveContact = async () => {
 
     try {
       await ContactsService.updateContact(contactId.value, payload);
-      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
     } catch (error) {
-      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
     }
 
     await getContactDetails();
@@ -183,11 +183,11 @@ const saveContact = async () => {
 const deleteContact = async () => {
   try {
     await ContactsService.deleteContact(contactId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
     await contactStore.fetchContactStats(t);
     await router.push({name: 'contacts'});
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 }
 

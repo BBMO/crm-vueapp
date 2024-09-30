@@ -462,9 +462,9 @@ const removeFile = async (index: number, image: PropertyImageInterface) => {
   if (isEditProperty.value && image.id) {
     try {
       await PropertiesService.deletePropertyImage(propertyId.value, image.id);
-      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
     } catch (error) {
-      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
     }
   }
 };
@@ -473,23 +473,21 @@ const removeFile = async (index: number, image: PropertyImageInterface) => {
  *
  */
 const getDropdownConfiguration = async () => {
-  let response;
-
-  response = await PropertiesService.getPropertyFeatures();
-  propertyFeaturesList.value = response?.data?.data.map((feature: any) => ({
+  const { data: propertyFeaturesData } = await PropertiesService.getPropertyFeatures();
+  propertyFeaturesList.value = propertyFeaturesData?.data.map((feature: any) => ({
     id: feature.id,
     name: feature.name,
     selected: false,
   }));
 
-  response = await AgentsService.getAgents();
-  propertyAgentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  propertyAgentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   }));
 
-  response = await PropertiesService.getPropertyTypes();
-  propertyTypesSelect.value = response?.data?.data.map((type: any) => ({
+  const { data: propertyTypesData } = await PropertiesService.getPropertyTypes();
+  propertyTypesSelect.value = propertyTypesData?.data.map((type: any) => ({
     id: type.id,
     name: type.name,
   }));
@@ -594,9 +592,9 @@ const saveProperty = async () => {
     if (isEditProperty.value) {
       try {
         await PropertiesService.updateProperty(propertyId.value, payload);
-        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     } else {
       if (selectedFiles.value.length > 0) {
@@ -607,9 +605,9 @@ const saveProperty = async () => {
 
       try {
         await PropertiesService.createProperty(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
 

@@ -80,18 +80,16 @@ const agentsSelect: Ref<CalendarDropdownInterface[]> = ref([]);
  *
  */
 const getSelectsData = async () => {
-  let response;
-
-  response = await CalendarService.getQuoteCategories();
-  quoteCategoriesList.value = response?.data?.data.map((item: CalendarDropdownInterface) => ({
+  const { data: quoteCategoriesData } = await CalendarService.getQuoteCategories();
+  quoteCategoriesList.value = quoteCategoriesData?.data.map((item: CalendarDropdownInterface) => ({
     id: item.id,
     name: item.name,
     color: item.color,
     selected: false,
   })) || [];
 
-  response = await AgentsService.getAgents();
-  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  agentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   })) || [];

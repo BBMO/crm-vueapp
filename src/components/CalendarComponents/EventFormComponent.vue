@@ -216,13 +216,11 @@ const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
  *
  */
 const getSelectsData = async () => {
-  let response;
+  const { data: quoteCategoriesData } = await CalendarService.getQuoteCategories();
+  quoteCategoriesSelect.value = quoteCategoriesData?.data || [];
 
-  response = await CalendarService.getQuoteCategories();
-  quoteCategoriesSelect.value = response.data?.data || [];
-
-  response = await AgentsService.getAgents();
-  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  agentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   })) || [];
@@ -271,17 +269,17 @@ const saveQuote = async () => {
       if (props.quoteId) {
         try {
           await CalendarService.updateQuote(props.quoteId, payload);
-          $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+          $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
         } catch (error) {
-          $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+          $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
         }
       }
     } else {
       try {
         await CalendarService.createQuote(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
 
@@ -298,9 +296,9 @@ const deleteQuote = async () => {
   if (props.quoteId) {
     try {
       await CalendarService.deleteQuote(props.quoteId);
-      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+      $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
     } catch (error) {
-      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
     }
 
     emit('closeEventDialog');

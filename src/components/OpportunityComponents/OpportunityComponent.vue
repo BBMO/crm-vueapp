@@ -105,7 +105,7 @@
                 {{ props.row.purpose === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
               </span>
             </q-td>
-            <q-td>${{ props.row.amount }}</q-td>
+            <q-td>{{ props.row.amount }}$</q-td>
             <q-td>
               <span class="relative-position q-pa-xs">
                 <span
@@ -290,16 +290,14 @@ const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
  *
  */
 const getSelectsData = async () => {
-  let response;
-
-  response = await OpportunitiesService.getOpportunityStates();
-  opportunityStatesSelect.value = response.data?.data?.map((item: any) => ({
+  const { data: opportunityStatesData } = await OpportunitiesService.getOpportunityStates();
+  opportunityStatesSelect.value = opportunityStatesData?.data?.map((item: any) => ({
     id: item.id,
     name: item.name
   })) || [];
 
-  response = await AgentsService.getAgents();
-  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  agentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   })) || [];
@@ -409,7 +407,8 @@ const saveOpportunity = async () => {
       contact_id: formData.value?.formData.form.contact_id.id,
       property_id: formData.value?.formData.form.property_id.id,
       amount: formData.value?.formData.form.amount,
-      state_id: formData.value?.formData.form.state_id.id
+      state_id: formData.value?.formData.form.state_id.id,
+      agent_id: formData.value?.formData.form.agent_id.id,
     }
 
     if (formModeEdit.value && opportunityDetails.value) {
@@ -417,16 +416,16 @@ const saveOpportunity = async () => {
 
       try {
         await OpportunitiesService.updateOpportunity(opportunityId, payload);
-        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     } else {
       try {
         await OpportunitiesService.createOpportunity(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
   }
@@ -444,9 +443,9 @@ const saveOpportunity = async () => {
 const deleteOpportunity = async () => {
   try {
     await OpportunitiesService.deleteOpportunity(opportunityId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 
   await opportunityStore.fetchOpportunityStats(t);
@@ -506,9 +505,9 @@ const updateFinished = async () => {
 
   try {
     await OpportunitiesService.updateOpportunity(opportunityId.value, payload);
-    $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 
   await opportunityStore.fetchOpportunityStats(t);

@@ -200,22 +200,20 @@ const getSelectPropertiesData = async (keyword?: string) => {
  *
  */
 const getSelectsData = async () => {
-  let response;
-
-  response = await ContactsService.getContacts();
-  contactsSelect.value = response.data?.data?.items.map((item: any) => ({
+  const { data: contactsData } = await ContactsService.getContacts();
+  contactsSelect.value = contactsData?.data?.items.map((item: any) => ({
     id: item.id,
     name: `${item.first_name} ${item.last_name}`
   })) || [];
 
-  response = await OpportunitiesService.getOpportunityStates();
-  opportunityStatesSelect.value = response.data?.data?.map((item: any) => ({
+  const { data: opportunityStatesData } = await OpportunitiesService.getOpportunityStates();
+  opportunityStatesSelect.value = opportunityStatesData?.data?.map((item: any) => ({
     id: item.id,
     name: item.name
   })) || [];
 
-  response = await AgentsService.getAgents();
-  agentsSelect.value = response?.data?.data?.items.map((agent: any) => ({
+  const { data: agentsData } = await AgentsService.getAgents();
+  agentsSelect.value = agentsData?.data?.items.map((agent: any) => ({
     id: agent.id,
     name: agent.display_name,
   })) || [];

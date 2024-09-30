@@ -41,7 +41,7 @@
         </div>
         <div class="flex justify-center gap-sm">
           <q-btn color="primary" class="q-px-lg" :ripple="false" @click="agentFormDialog = true">{{ $t('global.edit') }}</q-btn>
-          <q-btn color="red-2" class="q-px-lg shadow-0 text-red" :ripple="false" @click="deleteDialog = true">{{ $t('global.delete') }}</q-btn>
+          <q-btn v-if="getIsAdmin()" color="red-2" class="q-px-lg shadow-0 text-red" :ripple="false" @click="deleteDialog = true">{{ $t('global.delete') }}</q-btn>
         </div>
       </div>
       <div v-if="isLoading" class="full-width full-height flex align-center justify-center q-py-xl">
@@ -162,9 +162,9 @@ const saveAgent = async () => {
 
     try {
       await AgentsService.updateAgent(agentId.value, payload);
-      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+      $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
     } catch (error) {
-      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+      $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
     }
 
     await getAgentDetails();
@@ -180,10 +180,10 @@ const saveAgent = async () => {
 const deleteAgent = async () => {
   try {
     await AgentsService.deleteAgent(agentId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
     await router.push({name: 'agents'});
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 }
 

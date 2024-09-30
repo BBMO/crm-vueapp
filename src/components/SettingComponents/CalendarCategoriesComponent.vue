@@ -150,16 +150,16 @@ const saveQuoteCategory = async () => {
     if (formModeEdit.value) {
       try {
         await CalendarService.updateQuoteCategory(quoteCategoryDetails.value.id, payload);
-        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     } else {
       try {
         await CalendarService.createQuoteCategory(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
 
@@ -176,9 +176,9 @@ const saveQuoteCategory = async () => {
 const deleteQuoteCategory = async () => {
   try {
     await CalendarService.deleteQuoteCategory(quoteCategoryId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
   deleteDialog.value = false;
   await getQuoteCategories();

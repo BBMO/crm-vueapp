@@ -220,9 +220,9 @@ const saveAgent = async () => {
     if (formModeEdit.value) {
       try {
         await AgentsService.updateAgent(agentId.value, payload);
-        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successUpdateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     } else {
       payload.append('username', formData.value?.formData.form.username);
@@ -230,9 +230,9 @@ const saveAgent = async () => {
 
       try {
         await AgentsService.createAgent(payload);
-        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'top-right' });
+        $q.notify({ message: t('global.successCreateMessage'), color: 'green', position: 'bottom' });
       } catch (error) {
-        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+        $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
 
@@ -249,9 +249,9 @@ const saveAgent = async () => {
 const deleteAgent = async () => {
   try {
     await AgentsService.deleteAgent(agentId.value);
-    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'top-right' });
+    $q.notify({ message: t('global.successDeleteMessage'), color: 'green', position: 'bottom' });
   } catch (error) {
-    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'top-right' });
+    $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
   }
 
   deleteDialog.value = false;

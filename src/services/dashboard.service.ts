@@ -12,6 +12,14 @@ class DashboardService {
   getDashboardGraphSales(): AxiosPromise {
     return api.get('/dashboard/graph/sales');
   }
+
+  getTopAgentsSales(): AxiosPromise {
+    return api.get('/dashboard/agents/sales');
+  }
+
+  getTopAgentsRentals(): AxiosPromise {
+    return api.get('/dashboard/agents/rentals');
+  }
 }
 
 export default new DashboardService();

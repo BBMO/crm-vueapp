@@ -102,6 +102,10 @@ export default {
     properties: 'Properties',
     opportunities: 'Opportunities',
     managedProperties: 'Managed Properties',
+    totalOpportunities: 'Total Opportunities',
+    totalAmount: 'Total Amount',
+    topAgentsSales: 'Top agents (sales)',
+    topAgentsRentals: 'Top agents (rentals)',
     form: {
       username: 'Username',
       firstName: 'First Name',
@@ -179,6 +183,7 @@ export default {
     visible: 'Visible',
     notVisible: 'Not Visible',
     all: 'All',
+    latestProperties: 'Latest Properties',
     form: {
       name: 'Name',
       description: 'Description',

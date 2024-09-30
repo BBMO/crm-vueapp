@@ -132,7 +132,7 @@ const getQuote = async () => {
       backgroundColor: bgColor,
       textColor: quote.category.color,
       categoryId: quote.category.id,
-      agentId: quote.agent_id,
+      agentId: quote.agent.id,
     };
   });
 
