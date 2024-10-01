@@ -98,7 +98,7 @@ onMounted(async () => {
     enabled: 1,
     status: GLOBAL.AVAILABLE,
   })
-  topPropertiesData.value = dataTopProperties.data?.items;
+  topPropertiesData.value = dataTopProperties.data?.items.slice(0, 5);
 
   isLoading.value = false;
 })
