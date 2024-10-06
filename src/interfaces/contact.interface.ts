@@ -1,3 +1,5 @@
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
+
 export interface ContactFormInterface {
   id?: string
   first_name: string
@@ -11,6 +13,7 @@ export interface ContactFormInterface {
   }
   image: any
   attachment: any
+  agent?: CommonSelectInterface
 }
 
 export interface ContactDetailsInterface {
@@ -26,4 +29,9 @@ export interface ContactDetailsInterface {
   created_at: string
   updated_at: string
   features?: any
+  agent?: {
+    id: string
+    name: string
+    attachment_url: string
+  }
 }

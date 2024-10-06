@@ -14,7 +14,7 @@
           option-label="name"
           option-value="id"
           :options="agentsSelect"
-          :disable="!getIsAdmin()"
+          :disable="!getIsAdmin() || props.isEdit"
           :rules="[
             (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
@@ -42,7 +42,7 @@
           option-label="name"
           option-value="id"
           :options="propertiesSelect"
-          :disable="hasProperties"
+          :disable="hasProperties || props.isEdit"
           :rules="[
             (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
@@ -124,6 +124,8 @@ import type {
   OpportunityFormInterface,
   OpportunitySelectPropertyInterface
 } from 'src/interfaces/opportunity.interface';
+// Constants
+import { GLOBAL } from 'src/constants/global.constant';
 // Composable
 import useValidate from 'src/composable/useValidate';
 import useRole from 'src/composable/useRole';
@@ -186,6 +188,8 @@ const formData = computed(() => {
 const getSelectPropertiesData = async (keyword?: string) => {
   const { data } = await PropertiesService.getProperties({
     agent_id: agentId.value,
+    enabled: 1,
+    status: GLOBAL.AVAILABLE,
     keyword: keyword || ''
   });
 

@@ -5,7 +5,7 @@
     </div>
 
     <div class="sidebar-body">
-      <div class="sidebar-select q-py-md">
+      <div v-if="getIsAdmin()" class="sidebar-select q-py-md">
         <div class="text-subtitle1 text-weight-medium q-mb-sm">{{ $t('calendar.agents') }}</div>
         <q-select
           outlined

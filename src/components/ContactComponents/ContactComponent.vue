@@ -13,14 +13,6 @@
             <q-card-section class="q-px-none q-py-sm">
               <div class="row">
                 <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('global.search') }}</label>
-                  <q-input
-                    outlined
-                    dense
-                    v-model="filters.search"
-                  ><template v-slot:prepend><q-icon name="mdi-magnify" /></template></q-input>
-                </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
                   <label>{{ $t('contact.form.address') }}</label>
                   <q-input
                     outlined
@@ -38,6 +30,40 @@
                     option-value="value"
                     :options="typeContact"
                   ></q-select>
+                </div>
+                <div class="col-sm-4 col-12 q-pa-sm">
+                  <label>{{ $t('property.form.agent') }}</label>
+                  <q-select
+                    outlined
+                    dense
+                    v-model="filters.agent"
+                    use-input
+                    hide-selected
+                    fill-input
+                    input-debounce="1000"
+                    option-label="name"
+                    option-value="id"
+                    :options="agentsSelect"
+                    :disable="!getIsAdmin()"
+                    @filter="filterAgentSelect"
+                  >
+                    <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+                      </q-item>
+                    </template>
+                  </q-select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-6 col-12 q-pa-sm">
+                  <label>{{ $t('global.search') }}</label>
+                  <q-input
+                    outlined
+                    dense
+                    v-model="filters.search"
+                  ><template v-slot:prepend><q-icon name="mdi-magnify" /></template></q-input>
                 </div>
               </div>
               <div class="flex justify-end gap-sm q-px-sm q-mt-md">
@@ -89,6 +115,9 @@
             </span>
           </q-td>
         </template>
+        <template v-slot:body-cell-agent="props">
+          <q-td :props="props">{{ props.row.agent ? props.row.agent.name : '-' }}</q-td>
+        </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
             <q-btn dense round flat color="grey" icon="mdi-eye-outline" @click="openContactDetails(props.row.id)"></q-btn>
@@ -132,10 +161,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog
-      v-model="deleteDialog"
-      persistent
-    >
+    <q-dialog v-model="deleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap items-center gap-sm">
@@ -154,16 +180,20 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
+import type { Ref } from 'vue';
 import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
+// Interfaces
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Constants
 import { GLOBAL, ROWS_PER_PAGE } from 'src/constants/global.constant';
 // Composable
 import useRole from 'src/composable/useRole';
 // Services
 import ContactsService from 'src/services/contacts.service';
+import AgentsService from 'src/services/agents.service';
 // Store
 import { useContactStore } from 'src/stores/contact.store';
 // Components
@@ -179,6 +209,7 @@ const columns = [
   { name: 'first_name', label: t('contact.name'), field: 'first_name', align: 'left' },
   { name: 'email', label: t('global.email'), field: 'email', align: 'left' },
   { name: 'type', label: t('global.role'), field: 'type', align: 'left' },
+  { name: 'agent', label: t('contact.form.agent'), field: 'agent', align: 'left' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 
@@ -194,6 +225,10 @@ const filters = ref({
   },
   address: '',
   search: '',
+  agent: {
+    id: '',
+    name: ''
+  },
   page: 1,
 });
 
@@ -215,7 +250,33 @@ const formModeEdit = ref(false);
 const formData = ref<typeof ContactFormComponent | null>(null);
 const contactList = ref([]);
 
+const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
+
 const contactId = computed(() => contactStore.getContactId);
+
+/**
+ *
+ */
+const getSelectsData = async () => {
+  const { data } = await AgentsService.getAgents();
+  agentsSelect.value = data?.data?.items.map((agent: any) => ({
+    id: agent.id,
+    name: agent.display_name,
+  })) || [];
+};
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+}
 
 /**
  *
@@ -232,6 +293,7 @@ const getContacts = async (isPagination = false) => {
     type: filters.value.type.value,
     address: filters.value.address,
     search: filters.value.search,
+    agent_id: filters.value.agent.id,
     page: filters.value.page,
   });
 
@@ -259,6 +321,10 @@ const clearFilters = () => {
     },
     address: '',
     search: '',
+    agent: {
+      id: '',
+      name: ''
+    },
     page: 1,
   };
 
@@ -305,6 +371,10 @@ const saveContact = async () => {
     payload.append('phone', formData.value?.formData.form.phone);
     payload.append('address', formData.value?.formData.form.address);
     payload.append('type', formData.value?.formData.form.type.value);
+
+    if (formData.value?.formData.form.agent.id) {
+      payload.append('agent_id', formData.value?.formData.form.agent.id);
+    }
 
     if (formData.value?.formData.form.image) {
       payload.append('image', formData.value?.formData.form.image);
@@ -398,6 +468,7 @@ const openDialogDelete = (contactId: string) => {
 
 onMounted(async () => {
   await getContacts();
+  await getSelectsData();
 })
 </script>
 

@@ -40,6 +40,14 @@
             </q-chip>
           </div>
         </div>
+        <div v-if="contactDetails.agent" class="flex column gap-sm">
+          <p class="text-subtitle1 text-weight-medium q-ma-none">{{ $t('contact.form.agent') }}</p>
+          <q-separator />
+          <div class="q-pt-xs flex no-wrap items-center gap-sm">
+            <q-avatar size="40px" color="white" text-color="white"><img :src="contactDetails.agent.attachment_url" alt=""></q-avatar>
+            {{ contactDetails.agent.name }}
+          </div>
+        </div>
         <div class="flex justify-center gap-sm">
           <q-btn color="primary" class="q-px-lg" :ripple="false" @click="contactFormDialog = true">{{ $t('global.edit') }}</q-btn>
           <q-btn v-if="getIsAdmin()" color="red-2" class="q-px-lg shadow-0 text-red" :ripple="false" @click="deleteDialog = true">{{ $t('global.delete') }}</q-btn>
@@ -74,10 +82,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog
-      v-model="deleteDialog"
-      persistent
-    >
+    <q-dialog v-model="deleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap items-center gap-sm">
@@ -161,6 +166,10 @@ const saveContact = async () => {
     payload.append('phone', formData.value?.formData.form.phone);
     payload.append('address', formData.value?.formData.form.address);
     payload.append('type', formData.value?.formData.form.type);
+
+    if (formData.value?.formData.form.agent.id) {
+      payload.append('agent_id', formData.value?.formData.form.agent.id);
+    }
 
     if (formData.value?.formData.form.image) {
       payload.append('image', formData.value?.formData.form.image);

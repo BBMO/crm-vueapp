@@ -139,24 +139,38 @@
           </template>
         </q-select>
       </div>
-      <div class="q-py-md">
+      <div class="q-py-md flex column gap-lg">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
-      </div>
-      <div v-if="props.isEdit">
         <q-btn
+          v-if="props.isEdit"
           outline
           dense
           color="negative"
           icon="delete"
           :ripple="false"
           class="full-width no-box-shadow text-capitalize q-px-sm"
-          @click="deleteQuote()"
+          @click="deleteDialog = true"
         >{{ $t('calendar.deleteEvent') }}</q-btn>
       </div>
     </q-form>
     <div v-if="isLoading" class="full-width full-height flex align-center justify-center">
       <q-spinner color="primary" size="3em" />
     </div>
+
+    <q-dialog v-model="deleteDialog" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="flex no-wrap items-center gap-sm">
+            <q-icon size="md" name="mdi-delete-outline" color="negative" />
+            <span>{{ $t('global.deleteMessage') }}</span>
+          </div>
+        </q-card-section>
+        <q-card-actions align="right" class="q-pa-md">
+          <q-btn outline :label="$t('global.cancel')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteDialog = false" />
+          <q-btn :loading="isLoadingDelete" :label="$t('global.accept')" color="primary" class="no-box-shadow" :ripple="false" @click="deleteQuote" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -185,10 +199,12 @@ const emit = defineEmits(['closeEventDialog']);
 const { t } = useI18n();
 const $q = useQuasar();
 const { validateRequired, validateRequiredSelect } = useValidate();
-const { getIsAdmin } = useRole();
+const { getIsAdmin, getWpUserId } = useRole();
 
 const isLoading = ref(false);
 const isLoadingSave = ref(false);
+const isLoadingDelete = ref(false);
+const deleteDialog = ref(false);
 
 const form = ref<CalendarEventFormInterface>({
   title: '',
@@ -293,6 +309,8 @@ const saveQuote = async () => {
  *
  */
 const deleteQuote = async () => {
+  isLoadingDelete.value = true;
+
   if (props.quoteId) {
     try {
       await CalendarService.deleteQuote(props.quoteId);
@@ -303,6 +321,8 @@ const deleteQuote = async () => {
 
     emit('closeEventDialog');
   }
+
+  isLoadingDelete.value = false;
 }
 
 onMounted( async () => {
@@ -331,6 +351,13 @@ onMounted( async () => {
           name: quoteDetails.value.agent.name,
         }
       }
+    }
+  }
+
+  if (!getIsAdmin()) {
+    form.value.agent = {
+      id: getWpUserId(),
+      name: agentsSelect.value.find((agent: CommonSelectInterface) => agent.id == getWpUserId())?.name || '',
     }
   }
 

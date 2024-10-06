@@ -35,6 +35,7 @@ export default {
     successCreateMessage: 'Successfully created',
     successUpdateMessage: 'Successfully updated',
     successDeleteMessage: 'Successfully deleted',
+    successSaveMessage: 'Successfully save',
     errorMessage: 'An error has occurred',
     pageNotFound: 'Page not found',
   },
@@ -50,6 +51,7 @@ export default {
   },
   validation: {
     requiredField: 'Required field',
+    requiredFieldPercentage: 'Must be between 0 and 100',
   },
   stats: {
     propertyStats: 'Property stats',
@@ -132,6 +134,7 @@ export default {
       interests: 'Interests',
       type: 'Type',
       features: 'Features',
+      agent: 'Agent',
     }
   },
   calendar: {
@@ -219,6 +222,7 @@ export default {
       property: 'Property',
       availableFor: 'Available For',
       state: 'State',
+      commission: 'Commission',
     }
   },
   setting: {
@@ -229,6 +233,8 @@ export default {
     categories: 'Categories',
     features: 'Features',
     calendar: 'Calendar',
+    commissions: 'Commissions',
+    salesRental: 'Sales/Rental',
     addState: 'Add state',
     editState: 'Edit state',
     addType: 'Add type',
@@ -241,6 +247,8 @@ export default {
     form: {
       name: 'Name',
       color: 'Color',
+      salesCommission: 'Sales commission',
+      rentalCommission: 'Rental commission',
     }
   },
 };

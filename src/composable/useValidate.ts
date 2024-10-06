@@ -11,6 +11,10 @@ const useValidate = () => {
 
   const validateNumber = (val: any): boolean => val !== null && val != 0;
 
+  const validatePercentage = (val: any): boolean => val !== null && val !== '';
+
+  const validatePercentageCommission = (val: any): boolean => val >= 0 && val <= 100;
+
   /*const validateFile = (val: any): boolean => val && val.length > 0;
 
   const validateMatch = (val: any, type: string): boolean => {
@@ -22,22 +26,14 @@ const useValidate = () => {
     }
 
     return val && !!val.match(matchType[type])
-  }
-
-  const validatePasswordLength = (val: any): boolean => {
-    if (!val) return true
-
-    return val.length >= 6;
-  }
-
-  const validatePasswordsMatch = (val: any, password: any): boolean => {
-    return val === password;
   }*/
 
   return {
     validateRequired,
     validateRequiredSelect,
     validateNumber,
+    validatePercentage,
+    validatePercentageCommission
   }
 }
 

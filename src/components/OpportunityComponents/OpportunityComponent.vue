@@ -116,6 +116,7 @@
                 <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.state.color }"> {{ props.row.state.name }} </span>
               </span>
             </q-td>
+            <q-td>{{ props.row.commission }}$</q-td>
             <q-td class="text-center">
               <q-toggle v-model="props.row.finished" color="primary" @update:modelValue="openDialogFinished(props.row)" />
             </q-td>
@@ -162,10 +163,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog
-      v-model="opportunityFinishedDialog"
-      persistent
-    >
+    <q-dialog v-model="opportunityFinishedDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap gap-sm">
@@ -180,10 +178,7 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog
-      v-model="deleteDialog"
-      persistent
-    >
+    <q-dialog v-model="deleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap items-center gap-sm">
@@ -201,7 +196,8 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, Ref, ref} from 'vue';
+import { onMounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import type { AxiosResponse } from 'axios';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
@@ -231,6 +227,7 @@ const columns = [
   { name: 'available_for', label: t('opportunity.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'amount', label: t('opportunity.form.amount'), field: 'amount', align: 'left' },
   { name: 'state', label: t('opportunity.form.state'), field: 'state', align: 'left' },
+  { name: 'commission', label: t('opportunity.form.commission'), field: 'commission', align: 'left' },
   { name: 'finished', label: t('opportunity.complete'), field: '', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]

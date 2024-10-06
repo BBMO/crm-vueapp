@@ -89,6 +89,28 @@
           ]"
         ></q-select>
       </div>
+      <div v-if="getIsAdmin()" class="q-py-xs">
+        <label>{{ $t('contact.form.agent') }}</label>
+        <q-select
+          outlined
+          dense
+          v-model="form.agent"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="1000"
+          option-label="name"
+          option-value="id"
+          :options="agentsSelect"
+          @filter="filterAgentSelect"
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+      </div>
     </q-form>
     <div v-if="isLoading" class="full-width full-height flex align-center justify-center q-my-lg">
       <q-spinner color="primary" size="3em" />
@@ -98,17 +120,21 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
+import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 // Interfaces
 import type { ContactFormInterface } from 'src/interfaces/contact.interface';
+import type { CommonSelectInterface } from 'src/interfaces/app.interface';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Composable
 import useValidate  from 'src/composable/useValidate';
+import useRole from 'src/composable/useRole';
 // Store
 import { useContactStore } from 'src/stores/contact.store';
 // Services
 import ContactsService from 'src/services/contacts.service';
+import AgentsService from 'src/services/agents.service';
 
 interface Props {
   isEdit: boolean;
@@ -117,6 +143,7 @@ const props = defineProps<Props>()
 
 const { t } = useI18n();
 const { validateRequired, validateRequiredSelect } = useValidate();
+const { getIsAdmin, getWpUserId } = useRole();
 const contactStore = useContactStore();
 
 const typeContact = [
@@ -140,8 +167,14 @@ const form = ref<ContactFormInterface>({
   },
   image: null,
   attachment: null as string | null,
+  agent: {
+    id: '',
+    name: '',
+  }
 });
 const formRef = ref();
+
+const agentsSelect: Ref<CommonSelectInterface[]> = ref([]);
 
 const contactId = computed(() => contactStore.getContactId);
 const formData = computed(() => {
@@ -149,6 +182,30 @@ const formData = computed(() => {
     form: form.value,
   }
 });
+
+/**
+ *
+ */
+const getSelectsData = async () => {
+  const { data } = await AgentsService.getAgents();
+  agentsSelect.value = data?.data?.items.map((agent: any) => ({
+    id: agent.id,
+    name: agent.display_name,
+  })) || [];
+};
+
+/**
+ *
+ */
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentsSelect.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+}
 
 /**
  *
@@ -182,6 +239,8 @@ const validateForm = async () => {
 }
 
 onMounted(async () => {
+  await getSelectsData();
+
   if (props.isEdit) {
     isLoading.value = true;
 
@@ -198,9 +257,20 @@ onMounted(async () => {
         value: data?.data.type,
       },
       attachment: data?.data.attachment_url,
+      agent: {
+        id: data?.data.agent ? data?.data.agent.id : '',
+        name: data?.data.agent ? data?.data.agent.name : '',
+      }
     };
 
     isLoading.value = false;
+  }
+
+  if (!getIsAdmin()) {
+    form.value.agent = {
+      id: getWpUserId(),
+      name: agentsSelect.value.find((agent: CommonSelectInterface) => agent.id == getWpUserId())?.name || '',
+    }
   }
 })
 

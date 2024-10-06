@@ -268,10 +268,7 @@
       </q-table>
     </q-card>
 
-    <q-dialog
-      v-model="deleteDialog"
-      persistent
-    >
+    <q-dialog v-model="deleteDialog" persistent>
       <q-card>
         <q-card-section class="row items-center">
           <div class="flex no-wrap items-center gap-sm">

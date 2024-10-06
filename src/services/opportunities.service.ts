@@ -22,6 +22,17 @@ class OpportunitiesService {
   }
 
   /**
+   * Opportunity Commissions
+   */
+  getOpportunitiesCommissions(): AxiosPromise {
+    return api.get('/opportunities/commissions');
+  }
+
+  createOpportunitiesCommissions(payload: object): AxiosPromise {
+    return api.post('/opportunities/commissions', payload);
+  }
+
+  /**
    *
    */
   getOpportunities(filters?: any): AxiosPromise {

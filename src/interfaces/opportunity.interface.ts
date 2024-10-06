@@ -6,6 +6,11 @@ export interface OpportunitySelectPropertyInterface {
   price: string
 }
 
+export interface OpportunityCommissionsInterface {
+  sale_commission: number
+  rent_commission: number
+}
+
 export interface OpportunityFormInterface {
   agent_id: CommonSelectInterface
   property_id: CommonSelectInterface

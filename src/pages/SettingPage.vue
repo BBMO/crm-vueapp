@@ -32,6 +32,13 @@
                 <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.categories') }}</span>
               </div>
             </q-tab>
+            <q-tab name="opportunityCommissions" class="flex items-center gap-sm q-py-md" :ripple="false">
+              <q-icon size="sm" name="mdi-percent-outline" />
+              <div class="flex column items-start">
+                <span class="text-capitalize text-weight-medium tab-title">{{ $t('setting.commissions') }}</span>
+                <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.salesRental') }}</span>
+              </div>
+            </q-tab>
           </q-tabs>
         </template>
 
@@ -47,17 +54,17 @@
             <q-tab-panel name="opportunityStates">
               <opportunity-states-component />
             </q-tab-panel>
-
             <q-tab-panel name="propertyTypes">
               <property-types-component />
             </q-tab-panel>
-
             <q-tab-panel name="propertyFeatures">
               <property-features-component />
             </q-tab-panel>
-
             <q-tab-panel name="calendarCategories">
               <calendar-categories-component />
+            </q-tab-panel>
+            <q-tab-panel name="opportunityCommissions">
+              <opportunity-commissions-component />
             </q-tab-panel>
           </q-tab-panels>
         </template>
@@ -77,6 +84,7 @@ import OpportunityStatesComponent from 'components/SettingComponents/Opportunity
 import PropertyTypesComponent from 'components/SettingComponents/PropertyTypesComponent.vue';
 import PropertyFeaturesComponent from 'components/SettingComponents/PropertyFeaturesComponent.vue';
 import CalendarCategoriesComponent from 'components/SettingComponents/CalendarCategoriesComponent.vue';
+import OpportunityCommissionsComponent from 'components/SettingComponents/OpportunityCommissionsComponent.vue';
 
 const router = useRouter();
 const { getIsAdmin } = useRole();
