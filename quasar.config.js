@@ -7,7 +7,7 @@
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-
+require('dotenv').config()
 
 const { configure } = require('quasar/wrappers');
 const path = require('path');
@@ -59,7 +59,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      publicPath: '/wp-content/plugins/crm-plugin/',
+      publicPath: process.env.VITE_APP_BASE_PATH || '/',
       // analyze: true,
       // env: {},
       // rawDefine: {}

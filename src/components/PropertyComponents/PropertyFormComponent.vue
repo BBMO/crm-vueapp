@@ -342,18 +342,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { map, latLng, tileLayer, marker, MapOptions, Marker, Icon } from 'leaflet';
 
-const isAppMode = import.meta.env.VITE_APP_MODE === 'APP';
-
-if (!isAppMode) {
-  const publicPath = process.env.VUE_ROUTER_BASE;
-
-  Icon.Default.mergeOptions({
-    iconRetinaUrl: publicPath + 'public/css/lib/leaflet/images/marker-icon-2x.png',
-    iconUrl: publicPath + 'public/css/lib/leaflet/images/marker-icon.png',
-    shadowUrl: publicPath + 'public/css/lib/leaflet/images/marker-shadow.png',
-  });
-}
-
 // Interfaces
 import type { PropertyImageInterface, PropertyFormInterface } from 'src/interfaces/property.interface';
 import type { CommonSelectInterface } from 'src/interfaces/app.interface';
@@ -370,7 +358,7 @@ const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
-const { getIsAdmin, getWpUserId } = useRole();
+const { getIsAdmin, getWpUserId, getPluginUrl } = useRole();
 const { validateRequired, validateRequiredSelect, validateNumber } = useValidate();
 
 const availableForSelect = [
@@ -651,6 +639,15 @@ onMounted(async () => {
         name: propertyAgentsSelect.value.find((agent: CommonSelectInterface) => agent.id == getWpUserId())?.name || '',
       }
     }
+  }
+
+  const pluginUrl = getPluginUrl()
+  if (pluginUrl) {
+    Icon.Default.mergeOptions({
+      iconRetinaUrl: pluginUrl + '/public/css/lib/leaflet/images/marker-icon-2x.png',
+      iconUrl: pluginUrl + '/public/css/lib/leaflet/images/marker-icon.png',
+      shadowUrl: pluginUrl + '/public/css/lib/leaflet/images/marker-shadow.png',
+    });
   }
 
   isLoading.value = false;

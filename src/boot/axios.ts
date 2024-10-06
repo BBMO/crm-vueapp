@@ -8,6 +8,19 @@ declare module '@vue/runtime-core' {
   }
 }
 
+// API URL
+let apiURL = import.meta.env.VITE_APP_API_URL;
+let headers = {}
+//@ts-expect-error: crm_object is defined in the global scope
+if (typeof crm_object !== 'undefined') {
+  //@ts-expect-error: crm_object is defined in the global scope
+  apiURL = crm_object && crm_object.site_url + '/wp-json';
+  //@ts-expect-error: crm_object is defined in the global scope
+  headers = { 'X-WP-Nonce': crm_object.nonce };
+}
+
+import.meta.env.VITE_APP_API_URL = apiURL;
+
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -16,10 +29,7 @@ declare module '@vue/runtime-core' {
 // for each client)
 const api = axios.create({
   baseURL: import.meta.env.VITE_APP_API_URL ? `${import.meta.env.VITE_APP_API_URL}/crm/v1` : '/crm/v1',
-  headers: {
-   // @ts-expect-error: crm_object is defined in the global scope
-   'X-WP-Nonce': crm_object.nonce,
-  }
+  headers
 });
 
 export default boot(({ app }) => {
