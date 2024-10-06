@@ -340,7 +340,19 @@ import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { map, latLng, tileLayer, marker, MapOptions, Marker } from 'leaflet';
+import { map, latLng, tileLayer, marker, MapOptions, Marker, Icon } from 'leaflet';
+
+const isAppMode = import.meta.env.VITE_APP_MODE === 'APP';
+
+if (!isAppMode) {
+  const publicPath = process.env.VUE_ROUTER_BASE;
+
+  Icon.Default.mergeOptions({
+    iconRetinaUrl: publicPath + 'public/css/lib/leaflet/images/marker-icon-2x.png',
+    iconUrl: publicPath + 'public/css/lib/leaflet/images/marker-icon.png',
+    shadowUrl: publicPath + 'public/css/lib/leaflet/images/marker-shadow.png',
+  });
+}
 
 // Interfaces
 import type { PropertyImageInterface, PropertyFormInterface } from 'src/interfaces/property.interface';
