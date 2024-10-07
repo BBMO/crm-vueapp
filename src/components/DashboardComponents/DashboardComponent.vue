@@ -6,25 +6,26 @@
         <dashboard-global-stats-component :stats="propertyStatistics" />
       </q-card>
       <div class="full-width graphs-section">
-        <q-card class="q-py-md">
-          <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.currentPreviousMonthSales') }}</h6>
-          <dashboard-graph-component :seriesData="graphSalesData" />
-        </q-card>
-        <q-card class="full-width q-py-md">
-          <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.currentPreviousMonthRents') }}</h6>
-          <dashboard-graph-component :seriesData="graphRentalsData" />
-        </q-card>
+        <dashboard-top-agents-graph :type="GLOBAL.SALE" :title="$t('agent.topAgentsSales')" />
+        <dashboard-top-agents-graph :type="GLOBAL.RENTAL" :title="$t('agent.topAgentsRentals')" />
       </div>
       <q-card class="full-width q-py-md">
         <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.opportunitiesStats') }}</h6>
         <dashboard-global-stats-component :stats="opportunityStatistics" />
       </q-card>
+      <div class="full-width graphs-section">
+        <dashboard-sales-rentals-qty-graph :title="$t('stats.salesRentalsQty')" />
+        <dashboard-current-prev-month-graph :title="$t('stats.currentPreviousMonth')" />
+      </div>
+      <div class="full-width graphs-section">
+        <dashboard-property-types-graph :title="$t('stats.propertyTypes')" />
+      </div>
       <div class="row full-width tables-section">
         <div class="col-lg-4 col-md-6 col-12 agent-sales">
-          <dashboard-agents-top-component class="full-height" :title="t('agent.topAgentsSales')" :agent-top-data="topAgentsSalesData" />
+
         </div>
         <div class="col-lg-4 col-md-6 col-12 agent-rentals">
-          <dashboard-agents-top-component class="full-height" :title="t('agent.topAgentsRentals')" :agent-top-data="topAgentsRentalsData" />
+
         </div>
         <div class="col-lg-4 col-12 properties">
           <dashboard-properties-component class="full-height" :title="t('property.latestProperties')" :properties-data="topPropertiesData" />
@@ -49,15 +50,17 @@ import { usePropertyStore } from 'src/stores/property.store';
 import { useOpportunityStore } from 'src/stores/opportunity.store';
 import { useContactStore } from 'src/stores/contact.store';
 // Services
-import DashboardService from 'src/services/dashboard.service';
 import PropertiesService from 'src/services/properties.service';
 // Constants
 import { GLOBAL } from 'src/constants/global.constant';
 // Components
 import DashboardGlobalStatsComponent from 'components/DashboardComponents/DashboardGlobalStatsComponent.vue';
-import DashboardGraphComponent from 'components/DashboardComponents/DashboardGraphComponent.vue';
-import DashboardAgentsTopComponent from 'components/DashboardComponents/DashboardAgentsTopComponent.vue';
 import DashboardPropertiesComponent from 'components/DashboardComponents/DashboardPropertiesComponent.vue';
+// Graphs
+import DashboardTopAgentsGraph from 'components/DashboardComponents/DashboardTopAgentsGraph.vue';
+import DashboardSalesRentalsQtyGraph from 'components/DashboardComponents/DashboardSalesRentalsQtyGraph.vue';
+import DashboardCurrentPrevMonthGraph from 'components/DashboardComponents/DashboardCurrentPrevMonthGraph.vue';
+import DashboardPropertyTypesGraph from 'components/DashboardComponents/DashboardPropertyTypesGraph.vue';
 
 const { t } = useI18n();
 const propertyStore = usePropertyStore();
@@ -65,10 +68,6 @@ const opportunityStore = useOpportunityStore();
 const contactStore = useContactStore();
 
 const isLoading = ref(false);
-const graphRentalsData = ref([]);
-const graphSalesData = ref([]);
-const topAgentsSalesData = ref([]);
-const topAgentsRentalsData = ref([]);
 const topPropertiesData = ref([]);
 
 const propertyStatistics = computed(() => propertyStore.getPropertyStats);
@@ -81,18 +80,6 @@ onMounted(async () => {
   await propertyStore.fetchPropertyStats(t);
   await opportunityStore.fetchOpportunityStats(t);
   await contactStore.fetchContactStats(t);
-
-  const { data: dataRentals } = await DashboardService.getDashboardGraphRentals();
-  graphRentalsData.value = dataRentals.data;
-
-  const { data: dataSales } = await DashboardService.getDashboardGraphSales();
-  graphSalesData.value = dataSales.data;
-
-  const { data: dataTopAgentsSales } = await DashboardService.getTopAgentsSales();
-  topAgentsSalesData.value = dataTopAgentsSales.data;
-
-  const { data: dataTopAgentsRentals } = await DashboardService.getTopAgentsRentals();
-  topAgentsRentalsData.value = dataTopAgentsRentals.data;
 
   const { data: dataTopProperties } = await PropertiesService.getProperties({
     enabled: 1,

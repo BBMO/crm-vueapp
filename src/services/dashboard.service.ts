@@ -5,20 +5,34 @@ class DashboardService {
   /**
    *
    */
-  getDashboardGraphRentals(): AxiosPromise {
-    return api.get('/dashboard/graph/rentals');
+  getTopAgentsGraphData(type: string, year: number, month: number): AxiosPromise {
+    let extraParams = '';
+    if (month !== -1) {
+      extraParams = `&month=${month}`;
+    }
+
+    return api.get(`/dashboard/agents?year=${year}&type=${type}${extraParams}`);
   }
 
-  getDashboardGraphSales(): AxiosPromise {
-    return api.get('/dashboard/graph/sales');
+  /**
+   *
+   */
+  getSalesRentalsData(year: number): AxiosPromise {
+    return api.get(`/dashboard/sales-rentals?year=${year}`);
   }
 
-  getTopAgentsSales(): AxiosPromise {
-    return api.get('/dashboard/agents/sales');
+  /**
+   *
+   */
+  getTopCurrentPrevMonthGraphData(type: string, month: number): AxiosPromise {
+    return api.get(`dashboard/monthly?month=${month}&type=${type}`);
   }
 
-  getTopAgentsRentals(): AxiosPromise {
-    return api.get('/dashboard/agents/rentals');
+  /**
+   *
+   */
+  getPropertyTypesGraphData(): AxiosPromise {
+    return api.get('dashboard/property-types');
   }
 }
 
