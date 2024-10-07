@@ -36,10 +36,11 @@
             </div>
           </q-td>
         </template>
-        <template v-slot:body-cell-email="props">
-          <q-td :props="props">
-            {{ props.row.email }}
-          </q-td>
+        <template v-slot:body-cell-total_rent_commissions="props">
+          <q-td :props="props">{{ props.row.total_rent_commissions }}$</q-td>
+        </template>
+        <template v-slot:body-cell-total_sales_commissions="props">
+          <q-td :props="props">{{ props.row.total_sales_commissions }}$</q-td>
         </template>
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="actions">
@@ -74,7 +75,7 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="agentFormDialog = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <agent-form-component
             ref="formData"
             :is-edit="formModeEdit"
@@ -123,7 +124,9 @@ const agentStore = useAgentStore();
 
 const columns = [
   { name: 'display_name', label: t('agent.name'), field: 'name', align: 'left' },
-  { name: 'user_email', label: t('global.email'), field: 'email', align: 'left' },
+  { name: 'email', label: t('agent.email'), field: 'email', align: 'left' },
+  { name: 'total_rent_commissions', label: t('agent.rentalCommissions'), field: 'total_rent_commissions', align: 'center' },
+  { name: 'total_sales_commissions', label: t('agent.salesCommissions'), field: 'total_sales_commissions', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]
 

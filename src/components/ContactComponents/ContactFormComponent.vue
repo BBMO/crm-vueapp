@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-form v-if="!isLoading" ref="formRef">
-      <div class="q-py-sm q-mb-lg">
+      <div class="q-py-sm q-mb-md">
         <div class="flex justify-center">
           <q-img
             :src="form.attachment ? form.attachment : 'https://i.ibb.co/0Jmshvb/no-image.png'"

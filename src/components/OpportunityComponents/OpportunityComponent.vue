@@ -152,7 +152,7 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="opportunityFormDialog = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <opportunity-form-component
             ref="formData"
             :is-edit="formModeEdit"

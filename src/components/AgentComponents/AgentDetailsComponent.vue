@@ -8,25 +8,25 @@
           <q-chip square class="text-weight-medium" color="grey-2" text-color="grey" :ripple="false">{{ $t('agent.title') }}</q-chip>
         </div>
         <div class="flex column gap-md stats-details-section">
-          <div class="flex items-center gap-sm">
+          <div class="flex items-start no-wrap gap-sm">
             <q-icon size="sm" color="primary" name="mdi-home-group" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
               <span class="text-weight-medium">{{ agentDetails.total_properties }}</span>
               <span class="text-weight-regular text-grey-5">{{ $t('agent.quantityProperties') }}</span>
             </div>
           </div>
-          <div class="flex items-center gap-sm">
+          <div class="flex items-start no-wrap gap-sm">
             <q-icon size="sm" color="primary" name="mdi-account-cash-outline" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
-              <span class="text-weight-medium">{{ agentDetails.total_sales_amount }} $</span>
-              <span class="text-weight-regular text-grey-5">{{ $t('agent.fromSales') }}</span>
+              <span class="text-weight-medium">{{ agentDetails.total_sales_commissions }} $</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.totalAmountSalesCommission') }}</span>
             </div>
           </div>
-          <div class="flex items-center gap-sm">
+          <div class="flex items-start no-wrap gap-sm">
             <q-icon size="sm" color="primary" name="mdi-account-key-outline" class="bg-secondary q-pa-sm" />
             <div class="flex column items-start">
-              <span class="text-weight-medium">{{ agentDetails.total_rent_amount }} $</span>
-              <span class="text-weight-regular text-grey-5">{{ $t('agent.rentalIncome') }}</span>
+              <span class="text-weight-medium">{{ agentDetails.total_rent_commissions }} $</span>
+              <span class="text-weight-regular text-grey-5">{{ $t('agent.totalAmountRentalsCommission') }}</span>
             </div>
           </div>
         </div>
@@ -63,7 +63,7 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="agentFormDialog = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <agent-form-component
             ref="formData"
             :is-edit="true"

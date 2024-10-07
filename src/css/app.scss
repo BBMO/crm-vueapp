@@ -153,6 +153,11 @@ body {
   }
 }
 
+// q-expansion
+.q-expansion-item__content {
+  overflow-x: hidden;
+}
+
 // q-dialog
 .q-dialog {
   .dialog-card {

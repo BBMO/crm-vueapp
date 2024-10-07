@@ -117,7 +117,7 @@
           ]"
         ></q-input>
       </div>
-      <div v-if="getIsAdmin()" class="q-pt-xs q-pb-md">
+      <div v-if="getIsAdmin()" class="q-py-xs">
         <label>{{ $t('calendar.form.agent') }}</label>
         <q-select
           outlined
@@ -139,7 +139,7 @@
           </template>
         </q-select>
       </div>
-      <div class="q-py-md flex column gap-lg">
+      <div class="q-mt-lg flex column gap-sm">
         <q-btn :loading="isLoadingSave" type="submit" color="primary" class="full-width text-capitalize">{{ props.isEdit ? $t('global.update') : $t('global.save') }}</q-btn>
         <q-btn
           v-if="props.isEdit"

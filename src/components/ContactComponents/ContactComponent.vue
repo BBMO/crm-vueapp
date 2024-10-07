@@ -151,7 +151,7 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="contactFormDialog = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <contact-form-component
             ref="formData"
             :is-edit="formModeEdit"

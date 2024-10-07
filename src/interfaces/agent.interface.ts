@@ -18,5 +18,7 @@ export interface AgentDetailsInterface {
   avatar: any
   total_properties: number
   total_rent_amount: number
+  total_rent_commissions: number
   total_sales_amount: number
+  total_sales_commissions: number
 }

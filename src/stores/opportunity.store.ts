@@ -30,8 +30,8 @@ export const useOpportunityStore = defineStore('opportunity', {
           isAmount: false,
         },
         {
-          title: t('stats.amount'),
-          subtitle: t('stats.amountTotal'),
+          title: t('stats.amountSale'),
+          subtitle: t('stats.amountTotalSale'),
           icon: 'mdi-currency-usd',
           color: 'green',
           quantity: data?.data.finished_last_month_amount | 0,

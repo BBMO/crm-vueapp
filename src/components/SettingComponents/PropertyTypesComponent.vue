@@ -45,7 +45,7 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="dialogSave = false" />
         </div>
         <q-separator />
-        <div class="q-pa-lg">
+        <div class="q-px-lg q-py-md">
           <basic-form-component
             ref="formData"
             :is-edit="formModeEdit"

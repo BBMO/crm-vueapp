@@ -25,15 +25,15 @@
                 <span
                   class="absolute full-width full-height border-radius"
                   style="top: 0; left: 0; opacity: 0.2;"
-                  :style="{ background: props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo' }"
+                  :style="{ background: props.row.purpose === GLOBAL.SALE ? 'cyan' : 'indigo' }"
                 ></span>
                 <q-icon
                   size="xs"
-                  :name="props.row.property.available_for === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
-                  :color="props.row.property.available_for === GLOBAL.SALE ? 'cyan' : 'indigo'"
+                  :name="props.row.purpose === GLOBAL.SALE ? 'mdi-account-cash-outline' : 'mdi-account-key-outline'"
+                  :color="props.row.purpose === GLOBAL.SALE ? 'cyan' : 'indigo'"
                 />
               </span>
-              {{ props.row.property.available_for === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
+              {{ props.row.purpose === GLOBAL.SALE ? t('property.sale') : t('property.rental') }}
             </span>
           </q-td>
           <q-td>${{ props.row.amount }}</q-td>

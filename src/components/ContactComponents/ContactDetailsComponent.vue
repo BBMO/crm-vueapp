@@ -72,12 +72,12 @@
           <q-icon name="close" size="sm" class="cursor-pointer" @click="contactFormDialog = false" />
         </div>
         <q-separator />
-        <div v-if="contactDetails" class="q-pa-lg">
+        <div v-if="contactDetails" class="q-px-lg q-py-md">
           <contact-form-component
             ref="formData"
             :is-edit="true"
           />
-          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize" @click="saveContact">{{ $t('global.save') }}</q-btn>
+          <q-btn :loading="isLoadingSave" color="primary" class="full-width text-capitalize q-mt-lg" @click="saveContact">{{ $t('global.save') }}</q-btn>
         </div>
       </q-card>
     </q-dialog>
