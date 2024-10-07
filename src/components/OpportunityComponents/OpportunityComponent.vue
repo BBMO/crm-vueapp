@@ -116,7 +116,16 @@
                 <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.state.color }"> {{ props.row.state.name }} </span>
               </span>
             </q-td>
-            <q-td>{{ props.row.commission }}$</q-td>
+            <q-td>
+              <div class="flex items-center justify-end gap-sm">
+                <span>{{ props.row.commission }}$</span>
+                <q-icon
+                  size="sm"
+                  :name="props.row.finished_at === null ? 'mdi-clock-outline' : 'mdi-check-circle-outline'"
+                  :color="props.row.finished_at === null ? 'orange' : 'green'"
+                />
+              </div>
+            </q-td>
             <q-td class="text-center">
               <q-toggle v-model="props.row.finished" color="primary" @update:modelValue="openDialogFinished(props.row)" />
             </q-td>
@@ -227,7 +236,7 @@ const columns = [
   { name: 'available_for', label: t('opportunity.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'amount', label: t('opportunity.form.amount'), field: 'amount', align: 'left' },
   { name: 'state', label: t('opportunity.form.state'), field: 'state', align: 'left' },
-  { name: 'commission', label: t('opportunity.form.commission'), field: 'commission', align: 'left' },
+  { name: 'commission', label: t('opportunity.form.commission'), field: 'commission', align: 'center' },
   { name: 'finished', label: t('opportunity.complete'), field: '', align: 'center' },
   { name: 'actions', label: t('global.actions'), field: '', align: 'right' },
 ]

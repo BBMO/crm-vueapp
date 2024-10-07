@@ -37,14 +37,14 @@
           </q-td>
           <q-td>${{ props.row.amount }}</q-td>
           <q-td>
-            <span class="relative-position q-pa-xs">
-              <span
-                class="absolute full-width full-height"
-                style="top: 0; left: 0; opacity: 0.1; border-radius: 6px;"
-                :style="{ background: props.row.state.color }"
-              ></span>
-              <span class="q-pa-sm text-weight-medium" :style="{ color: props.row.state.color }"> {{ props.row.state.name }} </span>
-            </span>
+            <div class="flex items-center justify-end gap-sm">
+              <span>{{ props.row.commission }}$</span>
+              <q-icon
+                  size="sm"
+                  :name="props.row.finished_at === null ? 'mdi-clock-outline' : 'mdi-check-circle-outline'"
+                  :color="props.row.finished_at === null ? 'orange' : 'green'"
+              />
+            </div>
           </q-td>
           <q-td class="text-center">
             <q-toggle v-model="props.row.finished" color="primary"/>
@@ -82,7 +82,7 @@ const columns = [
   { name: 'property', label: t('opportunity.form.property'), field: 'property', align: 'left' },
   { name: 'available_for', label: t('opportunity.form.availableFor'), field: 'available_for', align: 'left' },
   { name: 'amount', label: t('opportunity.form.amount'), field: 'amount', align: 'left' },
-  { name: 'state', label: t('opportunity.form.state'), field: 'state', align: 'left' },
+  { name: 'commission', label: t('opportunity.form.commission'), field: 'commission', align: 'center' },
   { name: 'finished', label: t('global.finished'), field: '', align: 'center' },
 ]
 
