@@ -108,7 +108,7 @@ const chartOptions = {
     }
   },
   grid: {
-    show: false,
+    show: true,
     padding: {
       left: 20,
       top: 0,

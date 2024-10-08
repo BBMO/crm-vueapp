@@ -19,6 +19,46 @@
           >
             <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
           </q-select>
+
+          <q-select
+            outlined
+            dense
+            v-model="agent"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="1000"
+            option-label="name"
+            option-value="id"
+            :options="agentOptions"
+            @filter="filterAgentSelect"
+            @update:modelValue="getStatsData"
+          >
+            <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+            <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" class="cursor-pointer" @click="cleanSelectedAgent" /></template>
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+
+
+          <q-select
+            outlined
+            dense
+            v-model="type"
+            use-input
+            hide-selected
+            fill-input
+            class="w-45"
+            option-label="label"
+            option-value="value"
+            :options="typeOptions"
+            @update:model-value="getStatsData"
+          >
+            <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
+          </q-select>
         </div>
       </div>
 
@@ -42,6 +82,8 @@ import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 // Services
 import DashboardService from 'src/services/dashboard.service';
+import AgentsService from 'src/services/agents.service';
+import { GLOBAL } from 'src/constants/global.constant';
 
 interface Props {
   title: string,
@@ -53,14 +95,24 @@ const { t } = useI18n();
 const currentYear = new Date().getFullYear();
 
 const yearOptions = ref<any>([
+  { value: null, label: t('global.all') },
   { value: currentYear, label: currentYear },
   { value: currentYear - 1, label: currentYear - 1 },
   { value: currentYear - 2, label: currentYear - 2 },
 ]);
 
+const typeOptions = ref<any>([
+  { value: GLOBAL.SALE, label: t('stats.sales') },
+  { value: GLOBAL.RENTAL, label: t('stats.rentals') },
+]);
+
+const agentOptions = ref([]);
+
 const series = ref<any>([]);
 
 const year = ref<any>(null);
+const agent = ref<any>(null);
+const type = ref<any>(null);
 const isLoading = ref(false);
 
 const chartOptions = {
@@ -73,37 +125,23 @@ const chartOptions = {
     },
   },
   dataLabels: {
-    enabled: false
+    enabled: false,
   },
-  stroke: {
-    width: 2,
-    lineCap: 'round',
-    colors: ['#fff']
-  },
-  colors: ['#696cff', '#8592A3'],
-  grid: {
-    show: false,
-    padding: {
-      left: 8,
-      top: -45,
-      right: 6,
-      bottom: 10
-    }
-  },
+  colors: ['#696cff'],
   plotOptions: {
     bar: {
-      borderRadius: 7,
-      columnWidth: '36%',
+      borderRadius: 10,
+      columnWidth: '80%',
       borderRadiusApplication: 'around',
-      borderRadiusWhenStacked: 'all'
+      borderRadiusWhenStacked: 'all',
+      dataLabels: {
+        position: 'top', // top, center, bottom
+      },
     }
   },
   xaxis: {
     axisTicks: {
       show: false
-    },
-    crosshairs: {
-      opacity: 0
     },
     axisBorder: {
       show: false
@@ -114,110 +152,62 @@ const chartOptions = {
         fontSize: '12px',
         colors: '#616161',
       }
-    }
+    },
+    crosshairs: {
+      fill: {
+        type: 'gradient',
+        gradient: {
+          colorFrom: '#D8E3F0',
+          colorTo: '#BED1E6',
+          stops: [0, 100],
+          opacityFrom: 0.4,
+          opacityTo: 0.5,
+        }
+      }
+    },
   },
   yaxis: {
     show: false
   },
-  responsive: [{
-    breakpoint: 1400,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '45%'
-        }
-      }
-    }
-  }, {
-    breakpoint: 1300,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '45%'
-        }
-      }
-    }
-  }, {
-    breakpoint: 992,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '40%',
-          borderRadius: 8
-        }
-      }
-    }
-  }, {
-    breakpoint: 768,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '48%'
-        }
-      }
-    }
-  }, {
-    breakpoint: 700,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '40%',
-          borderRadius: 8
-        }
-      }
-    }
-  }, {
-    breakpoint: 550,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '40%'
-        }
-      }
-    }
-  }, {
-    breakpoint: 400,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '45%'
-        }
-      }
-    }
-  }, {
-    breakpoint: 375,
-    options: {
-      plotOptions: {
-        bar: {
-          columnWidth: '50%'
-        }
-      }
-    }
-  }]
 };
+
+const filterAgentSelect = (value: string, update: any) => {
+  update( async () => {
+    const { data } = await AgentsService.getAgents(value);
+    agentOptions.value = data?.data?.items.map((agent: any) => ({
+      id: agent.id,
+      name: agent.display_name,
+    })) || [];
+  })
+}
+
+/**
+ *
+ */
+const cleanSelectedAgent = () => {
+  agent.value = null;
+  getStatsData();
+}
 
 const getStatsData = async () => {
   isLoading.value = true;
 
-  const { data } = await DashboardService.getSalesRentalsData(year.value.value);
+  const { data } = await DashboardService.getSalesRentalsAmountsData(type.value.value, year.value.value, agent.value?.id || null);
 
   series.value = [
     {
       name: t('stats.sales'),
-      data: Object.values(data?.data?.sale),
+      data: Object.values(data?.data),
     },
-    {
-      name: t('stats.rentals'),
-      data: Object.values(data?.data?.rent),
-    }
   ];
 
   isLoading.value = false;
 }
 
 onMounted(async () => {
-  // Set year
-  year.value = yearOptions.value[0];
+  // Set year (current year)
+  year.value = yearOptions.value[1];
+  type.value = typeOptions.value[0];
 
   await getStatsData();
 })

@@ -34,6 +34,23 @@ class DashboardService {
   getPropertyTypesGraphData(): AxiosPromise {
     return api.get('dashboard/property-types');
   }
+
+  /**
+   *
+   */
+  getSalesRentalsAmountsData(type: string, year: number, agentId: number): AxiosPromise {
+    let extraParams = '';
+
+    if (agentId !== null) {
+      extraParams += `&agent_id=${agentId}`;
+    }
+
+    if (year !== null) {
+      extraParams += `&year=${year}`;
+    }
+
+    return api.get(`dashboard/sales-rentals/amount?type=${type}${extraParams}`);
+  }
 }
 
 export default new DashboardService();

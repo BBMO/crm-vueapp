@@ -19,6 +19,7 @@
       </div>
       <div class="full-width graphs-section">
         <dashboard-property-types-graph :title="$t('stats.propertyTypes')" />
+        <dashboard-sales-rentals-amounts-graph :title="$t('stats.annualOpportunities')" />
       </div>
       <div class="row full-width tables-section">
         <div class="col-lg-4 col-md-6 col-12 agent-sales">
@@ -57,10 +58,11 @@ import { GLOBAL } from 'src/constants/global.constant';
 import DashboardGlobalStatsComponent from 'components/DashboardComponents/DashboardGlobalStatsComponent.vue';
 import DashboardPropertiesComponent from 'components/DashboardComponents/DashboardPropertiesComponent.vue';
 // Graphs
-import DashboardTopAgentsGraph from 'components/DashboardComponents/DashboardTopAgentsGraph.vue';
-import DashboardSalesRentalsQtyGraph from 'components/DashboardComponents/DashboardSalesRentalsQtyGraph.vue';
-import DashboardCurrentPrevMonthGraph from 'components/DashboardComponents/DashboardCurrentPrevMonthGraph.vue';
-import DashboardPropertyTypesGraph from 'components/DashboardComponents/DashboardPropertyTypesGraph.vue';
+import DashboardTopAgentsGraph from 'components/DashboardComponents/Graphs/DashboardTopAgentsGraph.vue';
+import DashboardSalesRentalsQtyGraph from 'components/DashboardComponents/Graphs/DashboardSalesRentalsQtyGraph.vue';
+import DashboardCurrentPrevMonthGraph from 'components/DashboardComponents/Graphs/DashboardCurrentPrevMonthGraph.vue';
+import DashboardPropertyTypesGraph from 'components/DashboardComponents/Graphs/DashboardPropertyTypesGraph.vue';
+import DashboardSalesRentalsAmountsGraph from 'components/DashboardComponents/Graphs/DashboardSalesRentalsAmountsGraph.vue';
 
 const { t } = useI18n();
 const propertyStore = usePropertyStore();

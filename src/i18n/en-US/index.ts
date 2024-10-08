@@ -142,11 +142,12 @@ export default {
     currentPreviousMonth: 'Monthly comparison',
     currentMonth: 'Current Month',
     previousMonth: 'Previous Month',
-    topAgentsDesc: 'Based on the total amount of the negotiation',
+    topAgentsDesc: 'Based on the total amount of the negotiations',
     salesRentalsQty: 'Sales vs Rentals',
     sales: 'Sales',
     rentals: 'Rentals',
     propertyTypes: 'Property Types',
+    annualOpportunities: 'Annual opportunity statistics',
   },
   auth: {
     newPassword: 'New Password',
