@@ -2,34 +2,38 @@
   <div>
     <div v-if="!isLoading" class="flex gap-md">
       <q-card class="full-width q-py-md">
-        <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.propertyStats') }}</h6>
-        <dashboard-global-stats-component :stats="propertyStatistics" />
-      </q-card>
-      <div class="full-width graphs-section">
-        <dashboard-top-agents-graph :type="GLOBAL.SALE" :title="$t('agent.topAgentsSales')" />
-        <dashboard-top-agents-graph :type="GLOBAL.RENTAL" :title="$t('agent.topAgentsRentals')" />
-      </div>
-      <q-card class="full-width q-py-md">
         <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.opportunitiesStats') }}</h6>
         <dashboard-global-stats-component :stats="opportunityStatistics" />
       </q-card>
-      <div class="full-width graphs-section">
-        <dashboard-sales-rentals-qty-graph :title="$t('stats.salesRentalsQty')" />
-        <dashboard-current-prev-month-graph :title="$t('stats.currentPreviousMonth')" />
+      <div class="row full-width graphs-section">
+        <div class="col-md-6 col-12 full-width">
+          <dashboard-sales-rentals-qty-graph class="full-height" :title="$t('stats.salesRentalsQty')" />
+        </div>
+        <div class="col-md-6 col-12 full-width">
+          <dashboard-current-prev-month-graph class="full-height" :title="$t('stats.currentPreviousMonth')" />
+        </div>
       </div>
-      <div class="full-width graphs-section">
-        <dashboard-property-types-graph :title="$t('stats.propertyTypes')" />
+      <div class="full-width">
         <dashboard-sales-rentals-amounts-graph :title="$t('stats.annualOpportunities')" />
       </div>
-      <div class="row full-width tables-section">
-        <div class="col-lg-4 col-md-6 col-12 agent-sales">
-
+      <q-card class="full-width q-py-md">
+        <h6 class="q-px-lg q-mt-none q-mb-md">{{ $t('stats.propertyStats') }}</h6>
+        <dashboard-global-stats-component :stats="propertyStatistics" />
+      </q-card>
+      <div class="row full-width graphs-section">
+        <div class="col-md-6 col-12 full-width">
+          <dashboard-top-agents-graph class="full-height" :type="GLOBAL.SALE" :title="$t('agent.topAgentsSales')" />
         </div>
-        <div class="col-lg-4 col-md-6 col-12 agent-rentals">
-
+        <div class="col-md-6 col-12 full-width">
+          <dashboard-top-agents-graph class="full-height" :type="GLOBAL.RENTAL" :title="$t('agent.topAgentsRentals')" />
         </div>
-        <div class="col-lg-4 col-12 properties">
+      </div>
+      <div class="row full-width table-graphs-section">
+        <div class="col-md-6 col-12 full-width">
           <dashboard-properties-component class="full-height" :title="t('property.latestProperties')" :properties-data="topPropertiesData" />
+        </div>
+        <div class="col-md-6 col-12 full-width">
+          <dashboard-property-types-graph class="full-height" :title="$t('stats.propertyTypes')" />
         </div>
       </div>
       <q-card class="full-width q-py-md">
@@ -105,25 +109,14 @@ onMounted(async () => {
   }
 }
 
-.tables-section {
-  .agent-rentals {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
+.table-graphs-section {
+  display: grid;
+  grid-template-columns: 1fr 40%;
+  gap: 15px;
 
-  @media screen and (max-width: 1440px) {
-    .agent-sales { padding-right: 10px; }
-    .agent-rentals { padding-right: 0; }
-    .properties { padding-top: 15px; }
-  }
-
-  @media screen and (max-width: 1023px) {
-    .agent-sales { padding-right: 0 }
-
-    .agent-rentals {
-      padding-left: 0;
-      padding-top: 15px;
-    }
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 </style>

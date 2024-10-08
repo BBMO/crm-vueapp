@@ -1,64 +1,67 @@
 <template>
   <div>
-    <q-card class="full-width q-py-md q-px-lg q-pb-lg">
-      <div class="flex justify-between items-center q-mb-sm no-wrap">
-        <h6 class="q-my-none w-full q-py-md">{{ props.title }}</h6>
-        <div class="flex gap-sm justify-end w-60">
-          <q-select
-            outlined
-            dense
-            v-model="year"
-            use-input
-            hide-selected
-            fill-input
-            class="w-45"
-            option-label="label"
-            option-value="value"
-            :options="yearOptions"
-            @update:model-value="getStatsData"
-          >
-            <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
-          </q-select>
-
-          <q-select
-            outlined
-            dense
-            v-model="agent"
-            use-input
-            hide-selected
-            fill-input
-            input-debounce="1000"
-            option-label="name"
-            option-value="id"
-            :options="agentOptions"
-            @filter="filterAgentSelect"
-            @update:modelValue="getStatsData"
-          >
-            <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
-            <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" class="cursor-pointer" @click="cleanSelectedAgent" /></template>
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-
-
-          <q-select
-            outlined
-            dense
-            v-model="type"
-            use-input
-            hide-selected
-            fill-input
-            class="w-45"
-            option-label="label"
-            option-value="value"
-            :options="typeOptions"
-            @update:model-value="getStatsData"
-          >
-            <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
-          </q-select>
+    <q-card class="full-width full-height q-py-md q-px-lg q-pb-lg">
+      <div class="row items-start header-table">
+        <div class="col-sm-5 col-12 q-pa-xs">
+          <h6 class="q-my-none">{{ props.title }}</h6>
+        </div>
+        <div class="col-sm-7 col-12 q-pa-xs flex justify-end">
+          <div class="q-pa-xs select-container">
+            <q-select
+              outlined
+              dense
+              v-model="agent"
+              use-input
+              hide-selected
+              fill-input
+              input-debounce="1000"
+              option-label="name"
+              option-value="id"
+              :options="agentOptions"
+              @filter="filterAgentSelect"
+              @update:modelValue="getStatsData"
+            >
+              <template v-slot:prepend><q-icon name="mdi-account-outline" /></template>
+              <template v-slot:append v-if="agent"><q-icon name="mdi-delete-outline" color="negative" class="cursor-pointer" @click="cleanSelectedAgent" /></template>
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">{{ $t('global.noResults') }}</q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div class="q-pa-xs select-container">
+            <q-select
+              outlined
+              dense
+              v-model="type"
+              use-input
+              hide-selected
+              fill-input
+              option-label="label"
+              option-value="value"
+              :options="typeOptions"
+              @update:model-value="getStatsData"
+            >
+              <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
+            </q-select>
+          </div>
+          <div class="q-pa-xs select-container">
+            <q-select
+              outlined
+              dense
+              v-model="year"
+              use-input
+              hide-selected
+              fill-input
+              option-label="label"
+              option-value="value"
+              :options="yearOptions"
+              @update:model-value="getStatsData"
+            >
+              <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
+            </q-select>
+          </div>
         </div>
       </div>
 
@@ -131,7 +134,7 @@ const chartOptions = {
   plotOptions: {
     bar: {
       borderRadius: 10,
-      columnWidth: '80%',
+      columnWidth: '50%',
       borderRadiusApplication: 'around',
       borderRadiusWhenStacked: 'all',
       dataLabels: {
@@ -215,10 +218,21 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.w-60 {
-  width: 60%;
-}
-.w-45 {
-  width: 45%;
+.header-table {
+  .select-container {
+    width: 30%;
+  }
+
+  @media screen and (max-width: 1440px) {
+    .select-container {
+      width: 50%;
+    }
+  }
+
+  @media screen and (max-width: 425px) {
+    .select-container {
+      width: 100%;
+    }
+  }
 }
 </style>

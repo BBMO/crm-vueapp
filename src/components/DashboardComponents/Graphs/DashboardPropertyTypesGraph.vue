@@ -1,7 +1,7 @@
 <template>
   <div>
-    <q-card class="full-width q-py-md q-px-lg q-pb-lg">
-      <h6 class="q-my-none w-full q-py-md">{{ props.title }}</h6>
+    <q-card class="full-width full-height q-py-md q-px-lg q-pb-lg">
+      <h6 class="q-my-none w-full q-pa-xs">{{ props.title }}</h6>
 
       <VueApexCharts
         v-if="series.length"

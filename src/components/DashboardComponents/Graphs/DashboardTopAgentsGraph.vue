@@ -1,39 +1,43 @@
 <template>
   <div>
     <q-card class="full-width q-py-md q-px-lg">
-      <div class="flex justify-between items-center q-mb-sm no-wrap">
-        <h6 class="q-my-none w-full q-py-md">{{ props.title }}</h6>
-        <div class="flex gap-sm justify-end w-60">
-          <q-select
-            outlined
-            dense
-            v-model="month"
-            use-input
-            hide-selected
-            fill-input
-            class="w-45"
-            option-label="label"
-            option-value="value"
-            :options="monthOptions"
-            @update:model-value="getStatsData"
-          >
-            <template v-slot:prepend><q-icon name="mdi-finance" /></template>
-          </q-select>
-          <q-select
-            outlined
-            dense
-            v-model="year"
-            use-input
-            hide-selected
-            fill-input
-            class="w-45"
-            option-label="label"
-            option-value="value"
-            :options="yearOptions"
-            @update:model-value="getStatsData"
-          >
-            <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
-          </q-select>
+      <div class="row items-start header-table">
+        <div class="col-sm-5 col-12 q-pa-xs">
+          <h6 class="q-my-none">{{ props.title }}</h6>
+        </div>
+        <div class="col-sm-7 col-12 q-pa-xs flex justify-end">
+          <div class="q-pa-xs select-container">
+            <q-select
+              outlined
+              dense
+              v-model="month"
+              use-input
+              hide-selected
+              fill-input
+              option-label="label"
+              option-value="value"
+              :options="monthOptions"
+              @update:model-value="getStatsData"
+            >
+              <template v-slot:prepend><q-icon name="mdi-finance" /></template>
+            </q-select>
+          </div>
+          <div class="q-pa-xs select-container">
+            <q-select
+              outlined
+              dense
+              v-model="year"
+              use-input
+              hide-selected
+              fill-input
+              option-label="label"
+              option-value="value"
+              :options="yearOptions"
+              @update:model-value="getStatsData"
+            >
+              <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
+            </q-select>
+          </div>
         </div>
       </div>
 
@@ -192,10 +196,27 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
-.w-60 {
-  width: 60%;
-}
-.w-45 {
-  width: 45%;
+.header-table {
+  .select-container {
+    width: 50%;
+  }
+
+  @media screen and (max-width: 1440px) {
+    .select-container {
+      width: 80%;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .select-container {
+      width: 50%;
+    }
+  }
+
+  @media screen and (max-width: 425px) {
+    .select-container {
+      width: 100%;
+    }
+  }
 }
 </style>
