@@ -12,7 +12,7 @@
           <q-card>
             <q-card-section class="q-px-none q-py-sm">
               <div class="row">
-                <div class="col-sm-4 col-12 q-pa-sm">
+                <div class="col-lg-3 col-md-6 col-12 q-pa-sm">
                   <label>{{ $t('contact.form.address') }}</label>
                   <q-input
                     outlined
@@ -20,8 +20,8 @@
                     v-model="filters.address"
                   ><template v-slot:prepend><q-icon name="mdi-home-map-marker" /></template></q-input>
                 </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
-                  <label>{{ $t('contact.form.type') }}</label>
+                <div class="col-lg-3 col-md-6 col-12 q-pa-sm">
+                  <label>{{ $t('contact.form.role') }}</label>
                   <q-select
                     outlined
                     dense
@@ -31,7 +31,7 @@
                     :options="typeContact"
                   ></q-select>
                 </div>
-                <div class="col-sm-4 col-12 q-pa-sm">
+                <div class="col-lg-3 col-md-6 col-12 q-pa-sm">
                   <label>{{ $t('property.form.agent') }}</label>
                   <q-select
                     outlined
@@ -55,9 +55,7 @@
                     </template>
                   </q-select>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-6 col-12 q-pa-sm">
+                <div class="col-lg-3 col-md-6 col-12 q-pa-sm">
                   <label>{{ $t('global.search') }}</label>
                   <q-input
                     outlined

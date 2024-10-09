@@ -204,6 +204,7 @@ export default {
       type: 'Type',
       features: 'Features',
       agent: 'Agent',
+      role: 'Role',
     }
   },
   calendar: {

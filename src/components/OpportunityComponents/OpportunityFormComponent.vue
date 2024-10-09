@@ -69,6 +69,7 @@
           option-label="name"
           option-value="id"
           :options="contactsSelect"
+          :disable="hasProperties || props.isEdit"
           :rules="[
             (val: any) => validateRequiredSelect(val.id) || $t('validation.requiredField'),
           ]"
@@ -192,7 +193,6 @@ const getSelectPropertiesData = async (keyword?: string) => {
     status: GLOBAL.AVAILABLE,
     keyword: keyword || ''
   });
-
   propertiesSelect.value = data?.data?.items.map((item: any) => ({
     id: item.id,
     name: item.title,
@@ -203,13 +203,21 @@ const getSelectPropertiesData = async (keyword?: string) => {
 /**
  *
  */
-const getSelectsData = async () => {
-  const { data: contactsData } = await ContactsService.getContacts();
+const getSelectContactData = async (search?: string) => {
+  const { data: contactsData } = await ContactsService.getContacts({
+    agent_id: agentId.value,
+    search: search || ''
+  });
   contactsSelect.value = contactsData?.data?.items.map((item: any) => ({
     id: item.id,
     name: `${item.first_name} ${item.last_name}`
   })) || [];
+}
 
+/**
+ *
+ */
+const getSelectsData = async () => {
   const { data: opportunityStatesData } = await OpportunitiesService.getOpportunityStates();
   opportunityStatesSelect.value = opportunityStatesData?.data?.map((item: any) => ({
     id: item.id,
@@ -241,11 +249,7 @@ const filterAgentSelect = (value: string, update: any) => {
  */
 const filterContactSelect = (value: string, update: any) => {
   update(async () => {
-    const { data } = await ContactsService.getContacts({ search: value });
-    contactsSelect.value = data?.data?.items.map((item: any) => ({
-      id: item.id,
-      name: `${item.first_name} ${item.last_name}`
-    })) || [];
+    await getSelectContactData(value);
   })
 }
 
@@ -264,6 +268,7 @@ const filterPropertySelect = (value: string, update: any) => {
 const updateAgentSelect = async (value: CommonSelectInterface) => {
   agentId.value = value.id;
   await getSelectPropertiesData();
+  await getSelectContactData();
   hasProperties.value = false;
 }
 
@@ -316,6 +321,7 @@ onMounted(async () => {
     }
 
     await getSelectPropertiesData();
+    await getSelectContactData();
     hasProperties.value = false;
   }
 

@@ -117,7 +117,7 @@
               </span>
             </q-td>
             <q-td>
-              <div class="flex items-center justify-end gap-sm">
+              <div class="flex items-center justify-end no-wrap gap-sm">
                 <span>{{ props.row.commission }}$</span>
                 <q-icon
                   size="sm"
