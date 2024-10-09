@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="full-width full-height q-py-md q-px-lg q-pb-lg">
+    <q-card class="full-width full-height flex column justify-between q-py-md q-px-lg q-pb-lg">
       <div class="row items-start header-table">
         <div class="col-sm-5 col-12 q-pa-xs">
           <h6 class="q-my-none">{{ props.title }}</h6>
@@ -32,7 +32,7 @@
         :options="chartOptions"
         :series="series"
       />
-      <div v-else class="full-width full-height flex items-center justify-center q-py-xl">
+      <div v-else class="full-width flex items-center justify-center q-py-xl">
         <q-spinner v-if="isLoading" color="primary" size="3em" class="q-my-md" />
       </div>
     </q-card>

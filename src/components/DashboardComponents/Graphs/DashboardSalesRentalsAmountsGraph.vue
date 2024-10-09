@@ -43,7 +43,7 @@
               :options="typeOptions"
               @update:model-value="getStatsData"
             >
-              <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
+              <template v-slot:prepend><q-icon name="mdi-finance" /></template>
             </q-select>
           </div>
           <div class="q-pa-xs select-container">

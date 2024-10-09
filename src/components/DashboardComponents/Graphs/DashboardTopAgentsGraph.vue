@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-card class="full-width q-py-md q-px-lg">
+    <q-card class="full-width full-height flex column justify-between q-py-md q-px-lg">
       <div class="row items-start header-table">
         <div class="col-sm-5 col-12 q-pa-xs">
           <h6 class="q-my-none">{{ props.title }}</h6>
@@ -19,7 +19,7 @@
               :options="monthOptions"
               @update:model-value="getStatsData"
             >
-              <template v-slot:prepend><q-icon name="mdi-finance" /></template>
+              <template v-slot:prepend><q-icon name="mdi-chart-timeline-variant" /></template>
             </q-select>
           </div>
           <div class="q-pa-xs select-container">
@@ -48,7 +48,7 @@
         :options="chartOptions"
         :series="series"
       />
-      <div v-else class="full-width full-height flex items-center justify-center q-py-xl">
+      <div v-else class="full-width flex items-center justify-center q-py-xl">
         <div v-if="!isLoading" class="full-width flex column items-center q-my-md">
           <q-icon size="md" name="mdi-alert" color="grey" />
           <p class="text-weight-medium q-ma-none q-py-xs text-grey">{{ $t('global.noDataAvailable') }}</p>

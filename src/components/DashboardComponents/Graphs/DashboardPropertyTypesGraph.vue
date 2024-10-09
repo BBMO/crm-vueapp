@@ -10,7 +10,7 @@
         :options="chartOptions"
         :series="series"
       />
-      <div v-else class="full-width full-height flex items-center justify-center q-py-xl">
+      <div v-else class="full-width flex items-center justify-center q-py-xl">
         <q-spinner v-if="isLoading" color="primary" size="3em" class="q-my-md" />
       </div>
     </q-card>
