@@ -58,6 +58,7 @@ const menuItems = [
   { path: 'properties', icon: 'mdi-home-silo-outline', label: 'properties' },
   { path: 'opportunities', icon: 'mdi-file-sign', label: 'opportunities'},
   { path: 'settings', icon: 'mdi-cog-outline', label: 'settings' },
+  { path: 'about', icon: 'mdi-file-document-multiple-outline', label: 'about' },
 ]
 
 const navigateTo = (path: string) => {

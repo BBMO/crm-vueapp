@@ -19,6 +19,7 @@ import PropertyPage from 'pages/PropertyPage/PropertyPage.vue';
 import PropertyFormPage from 'pages/PropertyPage/PropertyFormPage.vue';
 import OpportunityPage from 'pages/OpportunityPage.vue';
 import SettingPage from 'pages/SettingPage.vue';
+import AboutPage from 'pages/AboutPage.vue';
 
 /**
  * Check if the app is running in app mode
@@ -108,7 +109,12 @@ const routes: RouteRecordRaw[] = [
         meta: { module: 'settings' },
         component: SettingPage,
       },
-
+      {
+        name: 'about',
+        path: '/about',
+        meta: { module: 'about' },
+        component: AboutPage,
+      },
     ],
   },
 

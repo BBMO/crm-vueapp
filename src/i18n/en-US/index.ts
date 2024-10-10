@@ -107,6 +107,7 @@ export default {
     opportunities: 'Opportunities',
     settings: 'Settings',
     profile: 'Profile',
+    about: 'About',
   },
   validation: {
     requiredField: 'Required field',
@@ -330,4 +331,15 @@ export default {
       time: 'Time',
     }
   },
+  about: {
+    title: 'Real Estate CRM',
+    topDescription: 'Welcome to the Real Estate CRM Real Estate plugin, the most complete and easy to use solution to manage your real estate business on WordPress. We have developed software that allows agents and managers to efficiently manage all aspects of their operation, from property management to contact management and negotiations.',
+    bottomDescription: 'Managing properties, contacts and agents has been a common challenge in the real estate industry. Aware of this need, we have created a plugin that simplifies these processes, providing the necessary tools to identify, manage and satisfy the needs of clients, through an intuitive, adaptable and reliable interface.',
+    documentation: 'Documentation',
+    userManual: 'User manual',
+    developerDocumentation: 'Developer documentation',
+    developedBy: 'Developed by',
+    versionMessage: 'This is version 1.0.0, for any improvement or issue please contact us.',
+    open: 'Open',
+  }
 };
