@@ -28,7 +28,7 @@ import.meta.env.VITE_APP_API_URL = apiURL;
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: import.meta.env.VITE_APP_API_URL ? `${import.meta.env.VITE_APP_API_URL}/crm/v1` : '/crm/v1',
+  baseURL: apiURL ? `${apiURL}/crm/v1` : '/crm/v1',
   headers
 });
 
