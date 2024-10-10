@@ -70,17 +70,17 @@
               <div><p class="text-subtitle1 text-weight-medium text-grey-14 q-ma-none">{{ $t('property.imagesProperty') }}</p></div>
               <div>
                 <input type="file" ref="fileInputRef" multiple @change="handleFileUpload" style="display: none" />
-                <p class="text-subtitle2 text-weight-medium text-primary q-ma-none cursor-pointer" @click="openFileExplorer">{{ $t('property.addBrowserImage') }}</p>
+                <p class="text-subtitle2 text-weight-medium text-primary q-ma-none cursor-pointer" @click="openFileExplorer">{{ $t('property.addBrowseImage') }}</p>
               </div>
             </div>
             <div class="q-py-xs">
-              <div class="browser-images-section">
+              <div class="browse-images-section">
                 <div v-if="selectedFiles.length <= 0" class="flex column justify-center items-center gap-sm q-my-lg">
                   <q-icon size="sm" color="grey" name="mdi-tray-arrow-up" class="bg-grey-12 q-pa-sm"></q-icon>
                   <h6 class="q-ma-none">{{ $t('property.noImagesAdded') }}</h6>
                   <div>
                     <input type="file" ref="fileInputRef" multiple @change="handleFileUpload" style="display: none" />
-                    <q-btn class="text-capitalize btn-browser" @click="openFileExplorer">{{ $t('property.browserImages') }}</q-btn>
+                    <q-btn class="text-capitalize btn-browse" @click="openFileExplorer">{{ $t('property.browseImages') }}</q-btn>
                   </div>
                 </div>
 
@@ -706,17 +706,17 @@ onUnmounted(() => {
   label { color: rgba(0, 0, 0, 0.6); }
   .mts-label { font-size: 13px; }
 
-  .browser-images-section {
+  .browse-images-section {
     border: 1px dashed rgba(0, 0, 0, 0.2);
     border-radius: 6px;
     padding: 30px;
 
-    .q-btn.btn-browser {
+    .q-btn.btn-browse {
       background-color: var(--q-secondary);
       color: var(--q-primary);
     }
 
-    .q-btn.btn-browser:hover {
+    .q-btn.btn-browse:hover {
       background-color: var(--q-primary);
       color: white;
     }

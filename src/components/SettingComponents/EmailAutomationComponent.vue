@@ -80,13 +80,11 @@ import type { AppConfigEmailInterface } from 'src/interfaces/app.interface';
 import { GLOBAL } from 'src/constants/global.constant';
 // Composable
 import useValidate from 'src/composable/useValidate';
-import useDate from 'src/composable/useDate';
 // Services
 import SettingsService from 'src/services/settings.service';
 
 const { t } = useI18n();
 const { validateRequired, validateRequiredSelect } = useValidate();
-const { getHourUTC, getHourLocale } = useDate();
 const $q = useQuasar();
 
 const frequencySelect = [
@@ -142,7 +140,7 @@ const saveAutomation = async () => {
   if (await validateForm()) {
     const payload = {
       frequency: form.value.frequency.value,
-      time: getHourUTC(form.value.time)
+      time: form.value.time
     }
 
     console.log(payload)
@@ -167,7 +165,7 @@ onMounted(async () => {
         label: frequencySelect.find((freq: any) => freq.value === data?.data.frequency)?.label || '',
         value: data?.data.frequency,
       },
-      time: getHourLocale(data?.data.time),
+      time: data?.data.time,
       is_active: data?.data.is_active,
     }
 
