@@ -329,6 +329,11 @@ export default {
       rentalCommission: 'Rental commission',
       frequency: 'Frequency',
       time: 'Time',
+    },
+    cron: {
+      recommendation: 'To optimize the performance of your WordPress site and ensure that scheduled tasks run efficiently, it is recommended to disable the WordPress internal cron system and configure it in the server\'s crontab.',
+      stepOne: 'Disable the internal cron, add the following line to your wp-config.php file:',
+      stepTwo: 'Configure the cron on the server, add the following line to the server\'s crontab:',
     }
   },
   about: {

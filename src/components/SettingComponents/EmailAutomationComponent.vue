@@ -57,7 +57,15 @@
       <q-btn :loading="isLoadingSave" :disable="!isEditable" color="primary" class="text-capitalize q-px-xl q-mt-sm" :ripple="false" @click="saveAutomation">{{ $t('global.save') }}</q-btn>
     </q-form>
     <div class="q-mt-xl q-mb-md q-pa-sm bg-blue-1 text-blue note-section">
-      <p class="q-ma-none">Pending...</p>
+      <p class="q-mx-none q-mt-none q-mb-md">{{ $t('setting.cron.recommendation') }}</p>
+      <p class="q-mx-none q-mt-none q-mb-md">
+        {{ $t('setting.cron.stepOne') }}
+        <span class="text-weight-bold block q-mt-sm">define('DISABLE_WP_CRON', true);</span>
+      </p>
+      <p class="q-mx-none q-mt-none q-mb-sm">
+        {{ $t('setting.cron.stepTwo') }}
+        <span class="text-weight-bold block q-mt-sm">*/15 * * * * wget -q -O - https://yourdomain.com/wp-cron.php?doing_wp_cron</span>
+      </p>
     </div>
   </div>
 </template>
