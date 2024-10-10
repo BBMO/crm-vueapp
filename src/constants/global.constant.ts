@@ -6,7 +6,10 @@ export const GLOBAL = {
   RENTAL: 'rent',
   AVAILABLE: 'available',
   RENTED: 'rented',
-  SOLD: 'sold'
+  SOLD: 'sold',
+  WEEKLY: 'weekly',
+  TWO_WEEKS: 'two_weeks',
+  MONTHLY: 'monthly',
 };
 
 export const ROWS_PER_PAGE = 12;

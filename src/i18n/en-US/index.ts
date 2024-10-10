@@ -38,6 +38,9 @@ export default {
     successSaveMessage: 'Successfully save',
     errorMessage: 'An error has occurred',
     pageNotFound: 'Page not found',
+    weekly: 'Weekly',
+    two_weeks: 'Two weeks',
+    monthly: 'Monthly'
   },
   months: {
     january: 'January',
@@ -314,11 +317,17 @@ export default {
     addCategory: 'Add category',
     editCategory: 'Edit category',
     quantity: 'Quantity',
+    automation: 'Automation',
+    emails: 'Emails',
+    messageWarningEmails: 'This feature is an experimental version, it depends on your provider\'s mailing limit and the number of contacts. It may tend to fail if the number of emails to be sent is too high.',
+    enableMailSending: 'Enable automatic mail sending',
     form: {
       name: 'Name',
       color: 'Color',
       salesCommission: 'Sales commission',
       rentalCommission: 'Rental commission',
+      frequency: 'Frequency',
+      time: 'Time',
     }
   },
 };

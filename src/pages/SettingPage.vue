@@ -39,6 +39,13 @@
                 <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.salesRental') }}</span>
               </div>
             </q-tab>
+            <q-tab name="emailAutomation" class="flex items-center gap-sm q-py-md" :ripple="false">
+              <q-icon size="sm" name="mdi-email-fast-outline" />
+              <div class="flex column items-start">
+                <span class="text-capitalize text-weight-medium tab-title">{{ $t('setting.automation') }}</span>
+                <span class="text-capitalize text-weight-regular text-grey-5 tab-subtitle">{{ $t('setting.emails') }}</span>
+              </div>
+            </q-tab>
           </q-tabs>
         </template>
 
@@ -66,6 +73,9 @@
             <q-tab-panel name="opportunityCommissions">
               <opportunity-commissions-component />
             </q-tab-panel>
+            <q-tab-panel name="emailAutomation">
+              <email-automation-component />
+            </q-tab-panel>
           </q-tab-panels>
         </template>
       </q-splitter>
@@ -85,6 +95,7 @@ import PropertyTypesComponent from 'components/SettingComponents/PropertyTypesCo
 import PropertyFeaturesComponent from 'components/SettingComponents/PropertyFeaturesComponent.vue';
 import CalendarCategoriesComponent from 'components/SettingComponents/CalendarCategoriesComponent.vue';
 import OpportunityCommissionsComponent from 'components/SettingComponents/OpportunityCommissionsComponent.vue';
+import EmailAutomationComponent from 'components/SettingComponents/EmailAutomationComponent.vue';
 
 const router = useRouter();
 const { getIsAdmin } = useRole();
