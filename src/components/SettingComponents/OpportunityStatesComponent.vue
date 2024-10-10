@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="q-pb-lg flex row justify-between gap-sm">
-      <h5 class="q-ma-none">{{ $t('setting.opportunity') }} {{ $t('setting.states') }}</h5>
+      <h5 class="q-ma-none">{{ $t('setting.opportunity') }} - {{ $t('setting.states') }}</h5>
       <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="openDialogSave(false)">{{ $t('setting.addState') }}</q-btn>
     </div>
     <div>

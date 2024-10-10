@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="q-pb-lg flex row justify-between gap-sm">
-      <h5 class="q-ma-none">{{ $t('setting.automation') }} {{ $t('setting.emails') }}</h5>
+      <h5 class="q-ma-none">{{ $t('setting.automation') }} - {{ $t('setting.emails') }}</h5>
     </div>
     <q-separator/>
     <div class="q-my-lg q-pa-sm bg-amber-1 text-amber-14 flex items-center no-wrap gap-sm warning-section">

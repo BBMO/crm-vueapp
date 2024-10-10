@@ -2,7 +2,7 @@
   <div>
     <q-form ref="formRef">
       <div class="q-pb-lg flex row justify-between gap-sm">
-        <h5 class="q-ma-none">{{ $t('setting.commissions') }} {{ $t('setting.salesRental') }}</h5>
+        <h5 class="q-ma-none">{{ $t('setting.commissions') }} - {{ $t('setting.salesRental') }}</h5>
       </div>
       <q-separator/>
       <div class="q-mt-md">

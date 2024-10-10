@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="q-pb-lg flex row justify-between gap-sm">
-      <h5 class="q-ma-none">{{ $t('setting.calendar') }} {{ $t('setting.categories') }}</h5>
+      <h5 class="q-ma-none">{{ $t('setting.calendar') }} - {{ $t('setting.categories') }}</h5>
       <q-btn color="primary" icon="mdi-plus-circle-outline" :ripple="false" @click="openDialogSave(false)">{{ $t('setting.addCategory') }}</q-btn>
     </div>
     <div>
