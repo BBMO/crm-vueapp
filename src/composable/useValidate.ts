@@ -1,9 +1,9 @@
 const useValidate = () => {
-  /*interface validationMatchInterface {
+  interface validationMatchInterface {
     [key: string]: RegExp;
     password: RegExp
     email: RegExp
-  }*/
+  }
 
   const validateRequired = (val: any): boolean => val && val.trim() !== '';
 
@@ -15,7 +15,7 @@ const useValidate = () => {
 
   const validatePercentageCommission = (val: any): boolean => val >= 0 && val <= 100;
 
-  /*const validateFile = (val: any): boolean => val && val.length > 0;
+  const validateFile = (val: any): boolean => val && val.length > 0;
 
   const validateMatch = (val: any, type: string): boolean => {
     const matchType: validationMatchInterface = {
@@ -26,14 +26,16 @@ const useValidate = () => {
     }
 
     return val && !!val.match(matchType[type])
-  }*/
+  }
 
   return {
     validateRequired,
     validateRequiredSelect,
     validateNumber,
     validatePercentage,
-    validatePercentageCommission
+    validatePercentageCommission,
+    validateFile,
+    validateMatch
   }
 }
 

@@ -31,6 +31,10 @@
           <p class="q-my-sm text-weight-medium">{{ $t('about.developerDocumentation') }}</p>
           <q-btn color="primary" icon="mdi-open-in-new" :ripple="false">{{ $t('about.open') }}</q-btn>
         </div>
+        <div class="q-py-md download-documentation">
+          <p class="q-my-sm text-weight-medium">{{ $t('about.youtubeChannel') }}</p>
+          <q-btn color="red" icon="mdi-youtube" :ripple="false"></q-btn>
+        </div>
       </div>
     </q-card>
   </q-page>

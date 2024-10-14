@@ -346,5 +346,6 @@ export default {
     developedBy: 'Developed by',
     versionMessage: 'This is version 1.0.0, for any improvement or issue please contact us.',
     open: 'Open',
+    youtubeChannel: 'YouTube Channel',
   }
 };

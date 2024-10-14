@@ -434,13 +434,13 @@ const saveOpportunity = async () => {
         $q.notify({ message: t('global.errorMessage'), color: 'red', position: 'bottom' });
       }
     }
+
+    await opportunityStore.fetchOpportunityStats(t);
+    await getOpportunities();
+    opportunityFormDialog.value = false;
   }
 
   isLoadingSave.value = false;
-  opportunityFormDialog.value = false;
-
-  await opportunityStore.fetchOpportunityStats(t);
-  await getOpportunities();
 }
 
 /**
