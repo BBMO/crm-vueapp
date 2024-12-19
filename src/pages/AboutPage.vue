@@ -25,15 +25,15 @@
         <h6 class="q-mt-none q-mb-sm">{{ $t('about.documentation') }}</h6>
         <div class="q-py-md download-documentation">
           <p class="q-my-sm text-weight-medium">{{ $t('about.userManual') }}</p>
-          <q-btn color="primary" icon="mdi-open-in-new" :ripple="false">{{ $t('about.open') }}</q-btn>
+          <q-btn color="primary" icon="mdi-open-in-new" :ripple="false" @click="openUserManual">{{ $t('about.open') }}</q-btn>
         </div>
         <div class="q-py-md download-documentation">
           <p class="q-my-sm text-weight-medium">{{ $t('about.developerDocumentation') }}</p>
-          <q-btn color="primary" icon="mdi-open-in-new" :ripple="false">{{ $t('about.open') }}</q-btn>
+          <q-btn color="primary" icon="mdi-open-in-new" :ripple="false" @click="openDeveloperDocumentation">{{ $t('about.open') }}</q-btn>
         </div>
         <div class="q-py-md download-documentation">
           <p class="q-my-sm text-weight-medium">{{ $t('about.youtubeChannel') }}</p>
-          <q-btn color="red" icon="mdi-youtube" :ripple="false"></q-btn>
+          <q-btn color="red" icon="mdi-youtube" :ripple="false" @click="openYoutubeChannel"></q-btn>
         </div>
       </div>
     </q-card>
@@ -41,7 +41,25 @@
 </template>
 
 <script setup lang="ts">
+const openUserManual = () => {
+  //@ts-expect-error: crm_object is defined in the global scope
+  if (typeof crm_object !== 'undefined') {
+    //@ts-expect-error: crm_object is defined in the global scope
+    window.open(crm_object.user_guide, '_blank');
+  }
+};
 
+const openDeveloperDocumentation = () => {
+  //@ts-expect-error: crm_object is defined in the global scope
+  if (typeof crm_object !== 'undefined') {
+    //@ts-expect-error: crm_object is defined in the global scope
+    window.open(crm_object.developer_guide, '_blank');
+  }
+};
+
+const openYoutubeChannel = () => {
+  window.open('https://www.youtube.com/@BKYSoftware', '_blank');
+};
 </script>
 
 <style scoped lang="scss">
